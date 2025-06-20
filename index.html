@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Minus, DollarSign, Calendar, Tag, Trash2, Home, TrendingUp, List, Target, ArrowUp, ArrowDown, PieChart, Wallet, CreditCard, Send } from 'lucide-react';
+import { Plus, Minus, DollarSign, Calendar, Tag, Trash2, Home, TrendingUp, List, Target, ArrowUp, ArrowDown, PieChart, Wallet, CreditCard } from 'lucide-react';
 
 export default function MyFinancialPlanningApp() {
   const [transactions, setTransactions] = useState([]);
@@ -10,17 +10,22 @@ export default function MyFinancialPlanningApp() {
   const [category, setCategory] = useState('');
   const [type, setType] = useState('expense');
   const [paymentMethod, setPaymentMethod] = useState('');
+  const [isPaymentMode, setIsPaymentMode] = useState(false);
 
   const categories = [
     'Food & Dining', 'Transportation', 'Shopping', 'Entertainment',
     'Bills & Utilities', 'Healthcare', 'Education', 'Travel',
-    'Salary', 'Business', 'Investment', 'Gift', 'Savings', 
-    'Payment to Friend', 'Bill Payment', 'Loan Payment', 'Other'
+    'Salary', 'Business', 'Investment', 'Gift', 'Savings', 'Other'
   ];
 
   const paymentMethods = [
     'Cash', 'Credit Card', 'Debit Card', 'Bank Transfer', 
     'Digital Wallet', 'Check', 'Mobile Payment', 'Online Banking', 'Other'
+  ];
+
+  const paymentCategories = [
+    'Bills & Utilities', 'Healthcare', 'Education', 'Transportation',
+    'Food & Dining', 'Shopping', 'Other'
   ];
 
   const addTransaction = () => {
@@ -48,6 +53,7 @@ export default function MyFinancialPlanningApp() {
       category,
       type,
       paymentMethod,
+      isPayment: isPaymentMode,
       date: new Date().toLocaleDateString(),
       time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
     };
@@ -57,6 +63,7 @@ export default function MyFinancialPlanningApp() {
     setAmount('');
     setCategory('');
     setPaymentMethod('');
+    setIsPaymentMode(false);
     setShowAddForm(false);
   };
 
@@ -72,12 +79,9 @@ export default function MyFinancialPlanningApp() {
     .filter(t => t.type === 'expense')
     .reduce((sum, t) => sum + t.amount, 0);
 
-  const totalPayments = transactions
-    .filter(t => t.type === 'payment')
-    .reduce((sum, t) => sum + t.amount, 0);
-
-  const balance = totalIncome - totalExpenses - totalPayments;
+  const balance = totalIncome - totalExpenses;
   const recentTransactions = transactions.slice(0, 5);
+  const recentPayments = transactions.filter(t => t.isPayment).slice(0, 3);
 
   // Calculate category breakdown
   const categoryBreakdown = categories.map(cat => {
@@ -131,7 +135,7 @@ export default function MyFinancialPlanningApp() {
           <DollarSign className="w-8 h-8 text-purple-200" />
         </div>
         
-        <div className="grid grid-cols-3 gap-3 mt-6">
+        <div className="grid grid-cols-2 gap-4 mt-6">
           <div className="bg-white bg-opacity-20 rounded-xl p-3">
             <div className="flex items-center mb-1">
               <ArrowUp className="w-4 h-4 text-green-300 mr-1" />
@@ -146,13 +150,6 @@ export default function MyFinancialPlanningApp() {
             </div>
             <p className="text-lg font-semibold">${totalExpenses.toFixed(2)}</p>
           </div>
-          <div className="bg-white bg-opacity-20 rounded-xl p-3">
-            <div className="flex items-center mb-1">
-              <Send className="w-4 h-4 text-blue-300 mr-1" />
-              <span className="text-xs text-purple-100">Payments</span>
-            </div>
-            <p className="text-lg font-semibold">${totalPayments.toFixed(2)}</p>
-          </div>
         </div>
       </div>
 
@@ -164,18 +161,18 @@ export default function MyFinancialPlanningApp() {
         </div>
         <div className="space-y-3">
           <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-600">Spending Ratio</span>
-            <span className={`text-sm font-medium ${totalIncome > 0 && ((totalExpenses + totalPayments)/totalIncome) < 0.8 ? 'text-green-600' : 'text-orange-600'}`}>
-              {totalIncome > 0 ? `${(((totalExpenses + totalPayments)/totalIncome) * 100).toFixed(1)}%` : 'N/A'}
+            <span className="text-sm text-gray-600">Expense Ratio</span>
+            <span className={`text-sm font-medium ${totalIncome > 0 && (totalExpenses/totalIncome) < 0.8 ? 'text-green-600' : 'text-orange-600'}`}>
+              {totalIncome > 0 ? `${((totalExpenses/totalIncome) * 100).toFixed(1)}%` : 'N/A'}
             </span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div 
-              className={`h-2 rounded-full ${totalIncome > 0 && ((totalExpenses + totalPayments)/totalIncome) < 0.8 ? 'bg-green-500' : 'bg-orange-500'}`}
-              style={{width: `${totalIncome > 0 ? Math.min(((totalExpenses + totalPayments)/totalIncome) * 100, 100) : 0}%`}}
+              className={`h-2 rounded-full ${totalIncome > 0 && (totalExpenses/totalIncome) < 0.8 ? 'bg-green-500' : 'bg-orange-500'}`}
+              style={{width: `${totalIncome > 0 ? Math.min((totalExpenses/totalIncome) * 100, 100) : 0}%`}}
             ></div>
           </div>
-          <p className="text-xs text-gray-500">Recommended: Keep total spending below 80% of income</p>
+          <p className="text-xs text-gray-500">Recommended: Keep expenses below 80% of income</p>
           
           {/* Most Used Payment Method */}
           {transactions.length > 0 && (
@@ -195,27 +192,33 @@ export default function MyFinancialPlanningApp() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-3 gap-2 mb-6">
+      <div className="grid grid-cols-3 gap-3 mb-6">
         <button 
-          onClick={() => {setType('income'); setShowAddForm(true);}}
-          className="bg-green-500 text-white p-3 rounded-xl flex flex-col items-center justify-center space-y-1 shadow-md active:scale-95 transition-transform"
+          onClick={() => {setType('income'); setIsPaymentMode(false); setShowAddForm(true);}}
+          className="bg-green-500 text-white p-4 rounded-xl flex flex-col items-center justify-center space-y-1 shadow-md active:scale-95 transition-transform"
         >
-          <Plus className="w-4 h-4" />
-          <span className="font-medium text-xs">Income</span>
+          <Plus className="w-5 h-5" />
+          <span className="font-medium text-xs">Add Income</span>
         </button>
         <button 
-          onClick={() => {setType('expense'); setShowAddForm(true);}}
-          className="bg-red-500 text-white p-3 rounded-xl flex flex-col items-center justify-center space-y-1 shadow-md active:scale-95 transition-transform"
+          onClick={() => {setType('expense'); setIsPaymentMode(false); setShowAddForm(true);}}
+          className="bg-red-500 text-white p-4 rounded-xl flex flex-col items-center justify-center space-y-1 shadow-md active:scale-95 transition-transform"
         >
-          <Minus className="w-4 h-4" />
-          <span className="font-medium text-xs">Expense</span>
+          <Minus className="w-5 h-5" />
+          <span className="font-medium text-xs">Add Expense</span>
         </button>
         <button 
-          onClick={() => {setType('payment'); setShowAddForm(true);}}
-          className="bg-blue-500 text-white p-3 rounded-xl flex flex-col items-center justify-center space-y-1 shadow-md active:scale-95 transition-transform"
+          onClick={() => {
+            setType('expense'); 
+            setCategory('Bills & Utilities'); 
+            setPaymentMethod('Bank Transfer');
+            setIsPaymentMode(true);
+            setShowAddForm(true);
+          }}
+          className="bg-blue-500 text-white p-4 rounded-xl flex flex-col items-center justify-center space-y-1 shadow-md active:scale-95 transition-transform"
         >
-          <Send className="w-4 h-4" />
-          <span className="font-medium text-xs">Payment</span>
+          <CreditCard className="w-5 h-5" />
+          <span className="font-medium text-xs">Record Payment</span>
         </button>
       </div>
 
@@ -250,15 +253,10 @@ export default function MyFinancialPlanningApp() {
             {recentTransactions.map(transaction => (
               <div key={transaction.id} className="flex items-center justify-between py-2">
                 <div className="flex items-center space-x-3">
-                  <div className={`p-2 rounded-full ${
-                    transaction.type === 'income' ? 'bg-green-100' : 
-                    transaction.type === 'expense' ? 'bg-red-100' : 'bg-blue-100'
-                  }`}>
+                  <div className={`p-2 rounded-full ${transaction.type === 'income' ? 'bg-green-100' : 'bg-red-100'}`}>
                     {transaction.type === 'income' ? 
                       <ArrowUp className="w-4 h-4 text-green-600" /> : 
-                      transaction.type === 'expense' ?
-                      <ArrowDown className="w-4 h-4 text-red-600" /> :
-                      <Send className="w-4 h-4 text-blue-600" />
+                      <ArrowDown className="w-4 h-4 text-red-600" />
                     }
                   </div>
                   <div>
@@ -274,10 +272,7 @@ export default function MyFinancialPlanningApp() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className={`font-semibold ${
-                    transaction.type === 'income' ? 'text-green-600' : 
-                    transaction.type === 'expense' ? 'text-red-600' : 'text-blue-600'
-                  }`}>
+                  <p className={`font-semibold ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
                     {transaction.type === 'income' ? '+' : '-'}${transaction.amount.toFixed(2)}
                   </p>
                   <p className="text-xs text-gray-400">{transaction.time}</p>
@@ -287,6 +282,42 @@ export default function MyFinancialPlanningApp() {
           </div>
         )}
       </div>
+
+      {/* Recent Payments */}
+      {recentPayments.length > 0 && (
+        <div className="bg-white rounded-2xl p-4 shadow-sm mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-800">Recent Payments</h2>
+            <div className="bg-blue-100 p-2 rounded-full">
+              <CreditCard className="w-4 h-4 text-blue-600" />
+            </div>
+          </div>
+          
+          <div className="space-y-3">
+            {recentPayments.map(payment => (
+              <div key={payment.id} className="flex items-center justify-between py-2 border-l-4 border-blue-500 pl-3 bg-blue-50 rounded-r-lg">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 rounded-full bg-blue-100">
+                    <CreditCard className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-800 text-sm">{payment.description}</p>
+                    <div className="flex items-center space-x-2 text-xs text-gray-500">
+                      <span>{payment.category}</span>
+                      <span>•</span>
+                      <span>{payment.paymentMethod}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="font-semibold text-blue-600">-${payment.amount.toFixed(2)}</p>
+                  <p className="text-xs text-gray-400">{payment.time}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 
@@ -322,15 +353,10 @@ export default function MyFinancialPlanningApp() {
               <div key={transaction.id} className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3 flex-1">
-                    <div className={`p-2 rounded-full ${
-                      transaction.type === 'income' ? 'bg-green-100' : 
-                      transaction.type === 'expense' ? 'bg-red-100' : 'bg-blue-100'
-                    }`}>
+                    <div className={`p-2 rounded-full ${transaction.type === 'income' ? 'bg-green-100' : 'bg-red-100'}`}>
                       {transaction.type === 'income' ? 
                         <ArrowUp className="w-4 h-4 text-green-600" /> : 
-                        transaction.type === 'expense' ?
-                        <ArrowDown className="w-4 h-4 text-red-600" /> :
-                        <Send className="w-4 h-4 text-blue-600" />
+                        <ArrowDown className="w-4 h-4 text-red-600" />
                       }
                     </div>
                     <div className="flex-1">
@@ -353,10 +379,7 @@ export default function MyFinancialPlanningApp() {
                   </div>
                   <div className="flex items-center space-x-2">
                     <div className="text-right">
-                      <p className={`font-semibold ${
-                        transaction.type === 'income' ? 'text-green-600' : 
-                        transaction.type === 'expense' ? 'text-red-600' : 'text-blue-600'
-                      }`}>
+                      <p className={`font-semibold ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
                         {transaction.type === 'income' ? '+' : '-'}${transaction.amount.toFixed(2)}
                       </p>
                     </div>
@@ -386,7 +409,7 @@ export default function MyFinancialPlanningApp() {
   const AnalyticsTab = () => {
     const incomeTransactions = transactions.filter(t => t.type === 'income');
     const expenseTransactions = transactions.filter(t => t.type === 'expense');
-    const paymentTransactions = transactions.filter(t => t.type === 'payment');
+    const paymentTransactions = transactions.filter(t => t.isPayment);
     
     return (
       <div className="p-4 pb-20">
@@ -414,13 +437,9 @@ export default function MyFinancialPlanningApp() {
                 <span className="text-gray-600">Total Expenses</span>
                 <span className="text-red-600 font-semibold text-lg">${totalExpenses.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">Total Payments</span>
-                <span className="text-blue-600 font-semibold text-lg">${totalPayments.toFixed(2)}</span>
-              </div>
               <div className="border-t pt-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-800 font-medium">Net Balance</span>
+                  <span className="text-gray-800 font-medium">Net Savings</span>
                   <span className={`font-bold text-xl ${balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                     ${balance.toFixed(2)}
                   </span>
@@ -496,21 +515,47 @@ export default function MyFinancialPlanningApp() {
             </div>
           )}
 
+          {/* Payment Analytics */}
+          {paymentTransactions.length > 0 && (
+            <div className="bg-white rounded-2xl p-6 shadow-sm">
+              <h2 className="text-lg font-semibold text-gray-800 mb-4">Payment Analytics</h2>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="text-center bg-blue-50 p-4 rounded-xl">
+                  <div className="flex items-center justify-center mb-2">
+                    <CreditCard className="w-5 h-5 text-blue-600 mr-1" />
+                    <span className="text-2xl font-bold text-blue-600">{paymentTransactions.length}</span>
+                  </div>
+                  <p className="text-sm text-gray-600">Total Payments</p>
+                </div>
+                <div className="text-center bg-blue-50 p-4 rounded-xl">
+                  <p className="text-2xl font-bold text-blue-600">
+                    ${paymentTransactions.reduce((sum, t) => sum + t.amount, 0).toFixed(2)}
+                  </p>
+                  <p className="text-sm text-gray-600">Payment Volume</p>
+                </div>
+              </div>
+              {paymentTransactions.length > 0 && (
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  <p className="text-sm text-gray-600">Average Payment</p>
+                  <p className="text-lg font-semibold text-blue-600">
+                    ${(paymentTransactions.reduce((sum, t) => sum + t.amount, 0) / paymentTransactions.length).toFixed(2)}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Transaction Counts */}
           <div className="bg-white rounded-2xl p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Activity Summary</h2>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <div className="text-center">
                 <p className="text-2xl font-bold text-green-600">{incomeTransactions.length}</p>
-                <p className="text-sm text-gray-500">Income</p>
+                <p className="text-sm text-gray-500">Income Entries</p>
               </div>
               <div className="text-center">
                 <p className="text-2xl font-bold text-red-600">{expenseTransactions.length}</p>
-                <p className="text-sm text-gray-500">Expenses</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-blue-600">{paymentTransactions.length}</p>
-                <p className="text-sm text-gray-500">Payments</p>
+                <p className="text-sm text-gray-500">Expense Entries</p>
               </div>
             </div>
           </div>
@@ -519,7 +564,7 @@ export default function MyFinancialPlanningApp() {
           {transactions.length > 0 && (
             <div className="bg-white rounded-2xl p-6 shadow-sm">
               <h2 className="text-lg font-semibold text-gray-800 mb-4">Transaction Averages</h2>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 {incomeTransactions.length > 0 && (
                   <div className="text-center">
                     <p className="text-xl font-bold text-green-600">
@@ -534,14 +579,6 @@ export default function MyFinancialPlanningApp() {
                       ${(totalExpenses / expenseTransactions.length).toFixed(2)}
                     </p>
                     <p className="text-sm text-gray-500">Avg Expense</p>
-                  </div>
-                )}
-                {paymentTransactions.length > 0 && (
-                  <div className="text-center">
-                    <p className="text-xl font-bold text-blue-600">
-                      ${(totalPayments / paymentTransactions.length).toFixed(2)}
-                    </p>
-                    <p className="text-sm text-gray-500">Avg Payment</p>
                   </div>
                 )}
               </div>
@@ -561,15 +598,11 @@ export default function MyFinancialPlanningApp() {
                     {balance > totalIncome * 0.2 ? 'A+' : 
                      balance > 0 ? 'B' : 'C'}
                   </div>
-                  <p className="text-sm text-gray-600 mb-2">
+                  <p className="text-sm text-gray-600">
                     {balance > totalIncome * 0.2 ? 'Excellent! You\'re saving well.' : 
-                     balance > 0 ? 'Good! Consider optimizing spending.' : 
-                     'Review your spending and payment habits.'}
+                     balance > 0 ? 'Good! Consider saving more.' : 
+                     'Review your spending habits.'}
                   </p>
-                  <div className="text-xs text-gray-500 space-y-1">
-                    <p>Total Outflow: ${(totalExpenses + totalPayments).toFixed(2)}</p>
-                    <p>Savings Rate: {((balance / totalIncome) * 100).toFixed(1)}%</p>
-                  </div>
                 </>
               ) : (
                 <p className="text-gray-500">Add income to see your score</p>
@@ -633,14 +666,18 @@ export default function MyFinancialPlanningApp() {
           <div className="bg-white w-full rounded-t-3xl p-6 transform transition-transform">
             <div className="flex justify-between items-center mb-6">
               <div>
-                <h2 className="text-xl font-semibold">Add {
-                  type === 'income' ? 'Income' : 
-                  type === 'expense' ? 'Expense' : 'Payment'
-                }</h2>
-                <p className="text-sm text-gray-500">My Financial Planning</p>
+                <h2 className="text-xl font-semibold">
+                  {isPaymentMode ? 'Record Payment' : `Add ${type === 'income' ? 'Income' : 'Expense'}`}
+                </h2>
+                <p className="text-sm text-gray-500">
+                  {isPaymentMode ? 'Track your bill payments & transactions' : 'My Financial Planning'}
+                </p>
               </div>
               <button 
-                onClick={() => setShowAddForm(false)}
+                onClick={() => {
+                  setShowAddForm(false);
+                  setIsPaymentMode(false);
+                }}
                 className="text-gray-400 hover:text-gray-600 p-2"
               >
                 ✕
@@ -648,33 +685,38 @@ export default function MyFinancialPlanningApp() {
             </div>
 
             <div className="space-y-4">
-              {/* Type Toggle */}
-              <div className="flex bg-gray-100 rounded-xl p-1">
-                <button
-                  onClick={() => setType('expense')}
-                  className={`flex-1 py-2 px-3 rounded-lg font-medium transition-colors text-sm ${
-                    type === 'expense' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500'
-                  }`}
-                >
-                  Expense
-                </button>
-                <button
-                  onClick={() => setType('payment')}
-                  className={`flex-1 py-2 px-3 rounded-lg font-medium transition-colors text-sm ${
-                    type === 'payment' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500'
-                  }`}
-                >
-                  Payment
-                </button>
-                <button
-                  onClick={() => setType('income')}
-                  className={`flex-1 py-2 px-3 rounded-lg font-medium transition-colors text-sm ${
-                    type === 'income' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500'
-                  }`}
-                >
-                  Income
-                </button>
-              </div>
+              {/* Type Toggle - Hidden in Payment Mode */}
+              {!isPaymentMode && (
+                <div className="flex bg-gray-100 rounded-xl p-1">
+                  <button
+                    onClick={() => setType('expense')}
+                    className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
+                      type === 'expense' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500'
+                    }`}
+                  >
+                    Expense
+                  </button>
+                  <button
+                    onClick={() => setType('income')}
+                    className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
+                      type === 'income' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500'
+                    }`}
+                  >
+                    Income
+                  </button>
+                </div>
+              )}
+
+              {/* Payment Mode Indicator */}
+              {isPaymentMode && (
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-3">
+                  <div className="flex items-center">
+                    <CreditCard className="w-5 h-5 text-blue-600 mr-2" />
+                    <span className="text-blue-800 font-medium">Payment Recording Mode</span>
+                  </div>
+                  <p className="text-blue-600 text-sm mt-1">Recording a bill payment or transaction</p>
+                </div>
+              )}
 
               {/* Amount Input */}
               <div>
@@ -706,14 +748,16 @@ export default function MyFinancialPlanningApp() {
 
               {/* Category Select */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {isPaymentMode ? 'Payment Category' : 'Category'}
+                </label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                 >
                   <option value="">Select category</option>
-                  {categories.map(cat => (
+                  {(isPaymentMode ? paymentCategories : categories).map(cat => (
                     <option key={cat} value={cat}>{cat}</option>
                   ))}
                 </select>
@@ -737,7 +781,10 @@ export default function MyFinancialPlanningApp() {
               {/* Action Buttons */}
               <div className="flex space-x-3 pt-4">
                 <button
-                  onClick={() => setShowAddForm(false)}
+                  onClick={() => {
+                    setShowAddForm(false);
+                    setIsPaymentMode(false);
+                  }}
                   className="flex-1 py-3 px-4 border border-gray-300 text-gray-700 rounded-xl font-medium active:scale-95 transition-transform"
                 >
                   Cancel
@@ -745,12 +792,11 @@ export default function MyFinancialPlanningApp() {
                 <button
                   onClick={addTransaction}
                   className={`flex-1 py-3 px-4 text-white rounded-xl font-medium active:scale-95 transition-transform ${
-                    type === 'income' ? 'bg-green-500 hover:bg-green-600' : 
-                    type === 'expense' ? 'bg-red-500 hover:bg-red-600' :
-                    'bg-blue-500 hover:bg-blue-600'
+                    isPaymentMode ? 'bg-blue-500 hover:bg-blue-600' :
+                    type === 'income' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'
                   }`}
                 >
-                  Add {type === 'income' ? 'Income' : type === 'expense' ? 'Expense' : 'Payment'}
+                  {isPaymentMode ? 'Record Payment' : `Add ${type === 'income' ? 'Income' : 'Expense'}`}
                 </button>
               </div>
             </div>
