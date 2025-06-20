@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#4b5563">
-    <title>My Financial Planning</title>
+    <title>My Financial Planning - Demo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         * {
@@ -36,6 +36,14 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+        .demo-banner {
+            background: linear-gradient(90deg, #6b7280, #4b5563);
+            color: white;
+            font-size: 11px;
+            padding: 4px 8px;
+            text-align: center;
+            font-weight: 500;
         }
         .main-content {
             padding: 16px;
@@ -149,6 +157,7 @@
         .btn-red { background-color: #9ca3af; color: white; }
         .btn-blue { background-color: #4b5563; color: white; }
         .btn-secondary { background-color: #ffffff; color: #374151; border: 1px solid #d1d5db; }
+        .btn-demo { background-color: #f59e0b; color: white; font-size: 11px; padding: 6px 12px; }
         .transaction-item {
             display: flex;
             justify-content: space-between;
@@ -182,9 +191,25 @@
         .text-grey { color: #6b7280; }
         .text-dark-grey { color: #374151; }
         .text-light-grey { color: #9ca3af; }
+        .stateless-info {
+            background-color: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 16px;
+            font-size: 12px;
+            color: #92400e;
+        }
         svg {
             width: 20px;
             height: 20px;
+        }
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
     </style>
 </head>
@@ -193,17 +218,28 @@
         <!-- Status Bar -->
         <div class="status-bar">
             <span>9:41</span>
-            <span>My Financial Planning</span>
+            <span>My Financial Planning - Demo</span>
             <span>100%</span>
+        </div>
+
+        <!-- Demo Banner -->
+        <div class="demo-banner">
+            ⚡ STATELESS DEMO - Data resets on page refresh • Try all features!
         </div>
 
         <!-- Home Tab -->
         <div id="home-tab" class="main-content">
+            <!-- Stateless Info -->
+            <div class="stateless-info">
+                <strong>🔄 Stateless Deployment:</strong> All data is temporary and resets on refresh. Perfect for demos and testing!
+                <button onclick="loadDemoData()" class="btn btn-demo" style="margin-left: 8px;">Load Demo Data</button>
+            </div>
+
             <!-- Header -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                 <div>
                     <h1 style="font-size: 24px; font-weight: bold; color: #1f2937; margin: 0;">My Financial Planning</h1>
-                    <p style="color: #6b7280; font-size: 14px; margin: 4px 0 0 0;">Smart Money Management</p>
+                    <p style="color: #6b7280; font-size: 14px; margin: 4px 0 0 0;">Stateless Smart Money Management</p>
                 </div>
                 <div class="grey-accent" style="padding: 12px; border-radius: 50%;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2">
@@ -218,9 +254,9 @@
             <div class="balance-card">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
                     <div>
-                        <p style="color: rgba(255,255,255,0.8); font-size: 14px; margin: 0;">Current Balance</p>
+                        <p style="color: rgba(255,255,255,0.8); font-size: 14px; margin: 0;">Current Balance (Session)</p>
                         <h1 id="balance-display" style="font-size: 32px; font-weight: bold; margin: 4px 0;">$0.00</h1>
-                        <p id="balance-message" style="color: rgba(255,255,255,0.9); font-size: 12px; margin: 4px 0 0 0;">Start tracking your finances!</p>
+                        <p id="balance-message" style="color: rgba(255,255,255,0.9); font-size: 12px; margin: 4px 0 0 0;">Start tracking or load demo data!</p>
                     </div>
                     <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" style="width: 32px; height: 32px;">
                         <line x1="12" y1="1" x2="12" y2="23"/>
@@ -248,6 +284,17 @@
                         </div>
                         <p id="expenses-display" style="font-size: 18px; font-weight: 600; margin: 0;">$0.00</p>
                     </div>
+                </div>
+            </div>
+
+            <!-- Session Status -->
+            <div style="background-color: #e0f2fe; border: 1px solid #0284c7; border-radius: 12px; padding: 12px; margin-bottom: 24px;">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center;">
+                        <div class="pulse" style="width: 8px; height: 8px; background-color: #0284c7; border-radius: 50%; margin-right: 8px;"></div>
+                        <span style="color: #0c4a6e; font-size: 14px; font-weight: 500;">Session Active</span>
+                    </div>
+                    <span id="session-transactions" style="color: #0c4a6e; font-size: 12px;">0 transactions this session</span>
                 </div>
             </div>
 
@@ -307,6 +354,16 @@
                 </button>
             </div>
 
+            <!-- Demo Actions -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
+                <button onclick="loadDemoData()" class="btn" style="background-color: #f59e0b; color: white; padding: 12px; font-size: 12px;">
+                    🎯 Load Demo Data
+                </button>
+                <button onclick="clearAllData()" class="btn" style="background-color: #ef4444; color: white; padding: 12px; font-size: 12px;">
+                    🗑️ Clear All Data
+                </button>
+            </div>
+
             <!-- Recent Transactions -->
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
@@ -322,9 +379,12 @@
                                 <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
                             </svg>
                         </div>
-                        <h3 style="font-weight: 500; color: #1f2937; margin: 0 0 4px 0;">Welcome to Financial Planning!</h3>
-                        <p style="font-size: 14px; margin: 0 0 16px 0; color: #6b7280;">Start your journey to financial freedom</p>
-                        <button onclick="openAddForm('expense')" class="btn btn-primary">Add First Transaction</button>
+                        <h3 style="font-weight: 500; color: #1f2937; margin: 0 0 4px 0;">Welcome to Stateless Demo!</h3>
+                        <p style="font-size: 14px; margin: 0 0 16px 0; color: #6b7280;">Try adding transactions or load demo data</p>
+                        <div style="display: flex; gap: 8px; justify-content: center;">
+                            <button onclick="openAddForm('expense')" class="btn btn-primary">Add Transaction</button>
+                            <button onclick="loadDemoData()" class="btn btn-demo">Demo Data</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -352,7 +412,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                 <div>
                     <h1 style="font-size: 20px; font-weight: bold; color: #1f2937; margin: 0;">Transaction History</h1>
-                    <p style="color: #6b7280; font-size: 14px; margin: 4px 0 0 0;">My Financial Planning</p>
+                    <p style="color: #6b7280; font-size: 14px; margin: 4px 0 0 0;">Stateless Session Data</p>
                 </div>
                 <div class="grey-accent" style="padding: 12px; border-radius: 50%;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2">
@@ -366,10 +426,15 @@
                 </div>
             </div>
 
+            <!-- Stateless Info -->
+            <div class="stateless-info">
+                <strong>📊 Session Data:</strong> This data exists only in memory and will be lost on page refresh.
+            </div>
+
             <div class="card">
                 <div style="padding: 0 0 16px 0; border-bottom: 1px solid #f3f4f6; margin-bottom: 16px;">
                     <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0;">All Transactions</h2>
-                    <p id="transaction-count" style="font-size: 14px; color: #6b7280; margin: 4px 0 0 0;">0 total entries</p>
+                    <p id="transaction-count" style="font-size: 14px; color: #6b7280; margin: 4px 0 0 0;">0 total entries in session</p>
                 </div>
                 
                 <div id="all-transactions">
@@ -382,8 +447,9 @@
                             <line x1="3" y1="12" x2="3.01" y2="12"/>
                             <line x1="3" y1="18" x2="3.01" y2="18"/>
                         </svg>
-                        <p style="font-size: 18px; margin: 0 0 8px 0;">No transactions yet</p>
-                        <p style="font-size: 14px; margin: 0;">Begin your financial tracking journey</p>
+                        <p style="font-size: 18px; margin: 0 0 8px 0;">No transactions in this session</p>
+                        <p style="font-size: 14px; margin: 0 0 16px 0;">Add transactions or load demo data to see them here</p>
+                        <button onclick="loadDemoData()" class="btn btn-demo">Load Demo Data</button>
                     </div>
                 </div>
             </div>
@@ -394,7 +460,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                 <div>
                     <h1 style="font-size: 20px; font-weight: bold; color: #1f2937; margin: 0;">Financial Analytics</h1>
-                    <p style="color: #6b7280; font-size: 14px; margin: 4px 0 0 0;">My Financial Planning</p>
+                    <p style="color: #6b7280; font-size: 14px; margin: 4px 0 0 0;">Session Analytics</p>
                 </div>
                 <div class="grey-accent" style="padding: 12px; border-radius: 50%;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2">
@@ -404,22 +470,27 @@
                 </div>
             </div>
 
+            <!-- Stateless Info -->
+            <div class="stateless-info">
+                <strong>📈 Live Analytics:</strong> Real-time calculations from current session data only.
+            </div>
+
             <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
                 <!-- Summary Card -->
                 <div class="card">
-                    <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Financial Summary</h2>
+                    <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Session Financial Summary</h2>
                     <div style="display: flex; flex-direction: column; gap: 16px;">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span style="color: #6b7280;">Total Income</span>
+                            <span style="color: #6b7280;">Session Income</span>
                             <span id="analytics-income" style="color: #374151; font-weight: 600; font-size: 18px;">$0.00</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span style="color: #6b7280;">Total Expenses</span>
+                            <span style="color: #6b7280;">Session Expenses</span>
                             <span id="analytics-expenses" style="color: #6b7280; font-weight: 600; font-size: 18px;">$0.00</span>
                         </div>
                         <div style="border-top: 1px solid #f3f4f6; padding-top: 16px;">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span style="color: #1f2937; font-weight: 500;">Net Savings</span>
+                                <span style="color: #1f2937; font-weight: 500;">Session Balance</span>
                                 <span id="analytics-balance" style="font-weight: bold; font-size: 20px; color: #374151;">$0.00</span>
                             </div>
                         </div>
@@ -440,7 +511,7 @@
 
                 <!-- Activity Summary -->
                 <div class="card">
-                    <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Activity Summary</h2>
+                    <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Session Activity</h2>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                         <div style="text-align: center; padding: 16px; background-color: #f9fafb; border-radius: 12px;">
                             <p id="income-count" style="font-size: 24px; font-weight: bold; color: #374151; margin: 0;">0</p>
@@ -455,10 +526,23 @@
 
                 <!-- Health Score -->
                 <div class="card">
-                    <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Financial Health Score</h2>
+                    <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Session Health Score</h2>
                     <div style="text-align: center;">
                         <div id="health-score" style="font-size: 48px; font-weight: bold; margin-bottom: 8px; color: #6b7280;">-</div>
-                        <p id="health-message" style="font-size: 14px; color: #6b7280; margin: 0;">Add income to see your score</p>
+                        <p id="health-message" style="font-size: 14px; color: #6b7280; margin: 0;">Add income to calculate session score</p>
+                    </div>
+                </div>
+
+                <!-- Demo Actions -->
+                <div class="card">
+                    <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Demo Controls</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <button onclick="loadDemoData()" class="btn" style="background-color: #f59e0b; color: white;">
+                            Load Sample Data
+                        </button>
+                        <button onclick="clearAllData()" class="btn" style="background-color: #ef4444; color: white;">
+                            Reset Session
+                        </button>
                     </div>
                 </div>
             </div>
@@ -500,7 +584,7 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                     <div>
                         <h2 id="modal-title" style="font-size: 20px; font-weight: 600; margin: 0; color: #1f2937;">Add Transaction</h2>
-                        <p style="font-size: 14px; color: #6b7280; margin: 4px 0 0 0;">My Financial Planning</p>
+                        <p style="font-size: 14px; color: #6b7280; margin: 4px 0 0 0;">Stateless Session Data</p>
                     </div>
                     <button onclick="closeModal()" style="color: #9ca3af; font-size: 24px; background: none; border: none; padding: 8px;">✕</button>
                 </div>
@@ -589,23 +673,107 @@
     </div>
 
     <script>
-        // Global state
+        // Global state - NO localStorage, purely in-memory
         let transactions = [];
         let currentType = 'expense';
         let isPaymentMode = false;
 
-        // Load data from localStorage
-        function loadData() {
-            const saved = localStorage.getItem('financialData');
-            if (saved) {
-                transactions = JSON.parse(saved);
-                updateDisplays();
+        // Demo data for showcasing features
+        const demoTransactions = [
+            {
+                id: 1001,
+                type: 'income',
+                amount: 5000,
+                description: 'Monthly Salary',
+                category: 'Salary',
+                payment: 'Bank Transfer',
+                isPayment: false,
+                date: new Date().toLocaleDateString(),
+                time: '09:00'
+            },
+            {
+                id: 1002,
+                type: 'expense',
+                amount: 1200,
+                description: 'Rent Payment',
+                category: 'Bills & Utilities',
+                payment: 'Bank Transfer',
+                isPayment: true,
+                date: new Date().toLocaleDateString(),
+                time: '10:30'
+            },
+            {
+                id: 1003,
+                type: 'expense',
+                amount: 85.50,
+                description: 'Grocery Shopping',
+                category: 'Food & Dining',
+                payment: 'Credit Card',
+                isPayment: false,
+                date: new Date().toLocaleDateString(),
+                time: '14:15'
+            },
+            {
+                id: 1004,
+                type: 'expense',
+                amount: 45,
+                description: 'Gas Station',
+                category: 'Transportation',
+                payment: 'Debit Card',
+                isPayment: false,
+                date: new Date().toLocaleDateString(),
+                time: '16:22'
+            },
+            {
+                id: 1005,
+                type: 'income',
+                amount: 250,
+                description: 'Freelance Project',
+                category: 'Business',
+                payment: 'Digital Wallet',
+                isPayment: false,
+                date: new Date().toLocaleDateString(),
+                time: '18:45'
+            },
+            {
+                id: 1006,
+                type: 'expense',
+                amount: 12.99,
+                description: 'Netflix Subscription',
+                category: 'Entertainment',
+                payment: 'Credit Card',
+                isPayment: true,
+                date: new Date().toLocaleDateString(),
+                time: '20:00'
             }
+        ];
+
+        // Load demo data
+        function loadDemoData() {
+            transactions = [...demoTransactions];
+            updateDisplays();
+            
+            // Show success message
+            const originalText = document.querySelector('.demo-banner').textContent;
+            document.querySelector('.demo-banner').textContent = '✅ Demo data loaded! Explore all features with sample transactions.';
+            setTimeout(() => {
+                document.querySelector('.demo-banner').textContent = originalText;
+            }, 3000);
         }
 
-        // Save data to localStorage
-        function saveData() {
-            localStorage.setItem('financialData', JSON.stringify(transactions));
+        // Clear all data
+        function clearAllData() {
+            if (confirm('Clear all session data? This cannot be undone.')) {
+                transactions = [];
+                updateDisplays();
+                
+                // Show success message
+                const originalText = document.querySelector('.demo-banner').textContent;
+                document.querySelector('.demo-banner').textContent = '🗑️ All session data cleared! Start fresh or load demo data.';
+                setTimeout(() => {
+                    document.querySelector('.demo-banner').textContent = originalText;
+                }, 3000);
+            }
         }
 
         // Show tab
@@ -726,18 +894,16 @@
                 time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
             };
 
-            // Add to transactions
+            // Add to transactions (in memory only)
             transactions.unshift(transaction);
-            saveData();
             updateDisplays();
             closeModal();
         }
 
         // Delete transaction
         function deleteTransaction(id) {
-            if (confirm('Delete this transaction?')) {
+            if (confirm('Delete this transaction from session?')) {
                 transactions = transactions.filter(t => t.id !== id);
-                saveData();
                 updateDisplays();
             }
         }
@@ -749,6 +915,12 @@
             updateAllTransactions();
             updateAnalytics();
             updateHealthIndicator();
+            updateSessionInfo();
+        }
+
+        // Update session info
+        function updateSessionInfo() {
+            document.getElementById('session-transactions').textContent = `${transactions.length} transactions this session`;
         }
 
         // Update balance card
@@ -761,7 +933,12 @@
             document.getElementById('income-display').textContent = `$${income.toFixed(2)}`;
             document.getElementById('expenses-display').textContent = `$${expenses.toFixed(2)}`;
 
-            const message = balance >= 0 ? "You're doing great!" : "Review your spending";
+            let message;
+            if (transactions.length === 0) {
+                message = "Start tracking or load demo data!";
+            } else {
+                message = balance >= 0 ? "Great session progress!" : "Review session spending";
+            }
             document.getElementById('balance-message').textContent = message;
         }
 
@@ -823,9 +1000,12 @@
                                 <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
                             </svg>
                         </div>
-                        <h3 style="font-weight: 500; color: #1f2937; margin: 0 0 4px 0;">Welcome to Financial Planning!</h3>
-                        <p style="font-size: 14px; margin: 0 0 16px 0; color: #6b7280;">Start your journey to financial freedom</p>
-                        <button onclick="openAddForm('expense')" class="btn btn-primary">Add First Transaction</button>
+                        <h3 style="font-weight: 500; color: #1f2937; margin: 0 0 4px 0;">Welcome to Stateless Demo!</h3>
+                        <p style="font-size: 14px; margin: 0 0 16px 0; color: #6b7280;">Try adding transactions or load demo data</p>
+                        <div style="display: flex; gap: 8px; justify-content: center;">
+                            <button onclick="openAddForm('expense')" class="btn btn-primary">Add Transaction</button>
+                            <button onclick="loadDemoData()" class="btn btn-demo">Demo Data</button>
+                        </div>
                     </div>
                 `;
             } else {
@@ -889,7 +1069,7 @@
         // Update all transactions
         function updateAllTransactions() {
             const container = document.getElementById('all-transactions');
-            document.getElementById('transaction-count').textContent = `${transactions.length} total entries`;
+            document.getElementById('transaction-count').textContent = `${transactions.length} total entries in session`;
 
             if (transactions.length === 0) {
                 container.innerHTML = `
@@ -902,8 +1082,9 @@
                             <line x1="3" y1="12" x2="3.01" y2="12"/>
                             <line x1="3" y1="18" x2="3.01" y2="18"/>
                         </svg>
-                        <p style="font-size: 18px; margin: 0 0 8px 0;">No transactions yet</p>
-                        <p style="font-size: 14px; margin: 0;">Begin your financial tracking journey</p>
+                        <p style="font-size: 18px; margin: 0 0 8px 0;">No transactions in this session</p>
+                        <p style="font-size: 14px; margin: 0 0 16px 0;">Add transactions or load demo data to see them here</p>
+                        <button onclick="loadDemoData()" class="btn btn-demo">Load Demo Data</button>
                     </div>
                 `;
             } else {
@@ -970,15 +1151,15 @@
                 let score, message, color;
                 if (balance > income * 0.2) {
                     score = 'A+';
-                    message = "Excellent! You're saving well.";
+                    message = "Excellent session! Great saving ratio.";
                     color = '#374151';
                 } else if (balance > 0) {
                     score = 'B';
-                    message = 'Good! Consider saving more.';
+                    message = 'Good session! Consider saving more.';
                     color = '#6b7280';
                 } else {
                     score = 'C';
-                    message = 'Review your spending habits.';
+                    message = 'Review your session spending habits.';
                     color = '#9ca3af';
                 }
                 scoreElement.textContent = score;
@@ -987,7 +1168,7 @@
             } else {
                 scoreElement.textContent = '-';
                 scoreElement.style.color = '#6b7280';
-                messageElement.textContent = 'Add income to see your score';
+                messageElement.textContent = 'Add income to calculate session score';
             }
 
             // Category analytics
@@ -1081,10 +1262,14 @@
             }
         }
 
-        // Initialize app
+        // Initialize app - NO localStorage loading
         document.addEventListener('DOMContentLoaded', function() {
-            loadData();
             updateDisplays();
+            
+            // Show welcome message
+            console.log('🎯 Stateless Financial Planning App Loaded');
+            console.log('💡 All data is temporary and resets on page refresh');
+            console.log('🔄 Try loading demo data to explore features!');
         });
     </script>
 </body>
