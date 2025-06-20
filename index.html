@@ -17,17 +17,33 @@
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: #f3f4f6;
-            overflow-x: hidden;
+            overflow: hidden;
+            height: 100vh;
         }
         .container {
             max-width: 384px;
             margin: 0 auto;
-            min-height: 100vh;
+            height: 100vh;
             position: relative;
             background-color: #f3f4f6;
+            display: flex;
+            flex-direction: column;
         }
         .hidden { display: none !important; }
         .active-tab { color: #374151 !important; background-color: #e5e7eb !important; }
+        
+        /* Fixed Header Styles */
+        .fixed-header {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 384px;
+            z-index: 40;
+            background-color: #f3f4f6;
+        }
+        
         .status-bar {
             background-color: #111827;
             color: #d1d5db;
@@ -37,6 +53,7 @@
             justify-content: space-between;
             align-items: center;
         }
+        
         .demo-banner {
             background: linear-gradient(90deg, #6b7280, #4b5563);
             color: white;
@@ -45,10 +62,28 @@
             text-align: center;
             font-weight: 500;
         }
+        
+        .app-header {
+            background-color: #f3f4f6;
+            padding: 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        /* Scrollable Content Area */
+        .scrollable-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            margin-top: 120px; /* Height of fixed header */
+            margin-bottom: 80px; /* Height of bottom nav */
+            -webkit-overflow-scrolling: touch;
+        }
+        
         .main-content {
             padding: 16px;
-            padding-bottom: 100px;
+            min-height: calc(100vh - 200px);
         }
+        
         .balance-card {
             background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
             border-radius: 16px;
@@ -84,7 +119,10 @@
             padding: 16px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             border: 1px solid #e5e7eb;
+            margin-bottom: 16px;
         }
+        
+        /* Fixed Bottom Navigation */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -97,6 +135,7 @@
             padding: 8px 16px;
             display: flex;
             justify-content: space-around;
+            z-index: 30;
         }
         .nav-btn {
             display: flex;
@@ -128,6 +167,8 @@
             padding: 24px;
             transform: translateY(0);
             transition: transform 0.3s;
+            max-height: 80vh;
+            overflow-y: auto;
         }
         .form-input {
             width: 100%;
@@ -217,344 +258,356 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
+        
+        /* Smooth scrolling for iOS */
+        .scrollable-content {
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+        }
+        
+        /* Hide scrollbar but keep functionality */
+        .scrollable-content::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollable-content {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Status Bar -->
-        <div class="status-bar">
-            <span>9:41</span>
-            <span>My Financial Planning - Malaysia</span>
-            <span>100%</span>
-        </div>
-
-        <!-- Demo Banner -->
-        <div class="demo-banner malaysia-flag">
-            🇲🇾 MALAYSIAN RINGGIT (RM) DEMO • Data resets on page refresh
-        </div>
-
-        <!-- Home Tab -->
-        <div id="home-tab" class="main-content">
-            <!-- Stateless Info -->
-            <div class="stateless-info">
-                <strong>🇲🇾 Malaysian Format:</strong> All amounts in Ringgit Malaysia (RM) • Temporary session data only.
-                <button onclick="loadDemoData()" class="btn btn-demo" style="margin-left: 8px;">Load Demo Data</button>
+        <!-- Fixed Header -->
+        <div class="fixed-header">
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>My Financial Planning - Malaysia</span>
+                <span>100%</span>
             </div>
 
-            <!-- Header -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                <div>
-                    <h1 style="font-size: 24px; font-weight: bold; color: #1f2937; margin: 0;">My Financial Planning</h1>
-                    <p style="color: #6b7280; font-size: 14px; margin: 4px 0 0 0;">Malaysia Money Management</p>
-                </div>
-                <div class="grey-accent" style="padding: 12px; border-radius: 50%;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2">
-                        <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/>
-                        <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/>
-                        <line x1="18" y1="12" x2="18" y2="12"/>
-                    </svg>
-                </div>
+            <!-- Demo Banner -->
+            <div class="demo-banner malaysia-flag">
+                🇲🇾 MALAYSIAN RINGGIT (RM) DEMO • Data resets on page refresh
             </div>
 
-            <!-- Balance Card -->
-            <div class="balance-card">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+            <!-- App Header -->
+            <div class="app-header">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <p style="color: rgba(255,255,255,0.8); font-size: 14px; margin: 0;">Current Balance (Session)</p>
-                        <h1 id="balance-display" style="font-size: 32px; font-weight: bold; margin: 4px 0;">RM 0.00</h1>
-                        <p id="balance-message" style="color: rgba(255,255,255,0.9); font-size: 12px; margin: 4px 0 0 0;">Start tracking or load demo data!</p>
+                        <h1 style="font-size: 20px; font-weight: bold; color: #1f2937; margin: 0;">My Financial Planning</h1>
+                        <p style="color: #6b7280; font-size: 14px; margin: 4px 0 0 0;">Malaysia Money Management</p>
                     </div>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" style="width: 32px; height: 32px;">
-                        <circle cx="12" cy="12" r="10"/>
-                        <path d="M12 6v6l4 2"/>
-                    </svg>
-                </div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px;">
-                    <div style="background: rgba(255,255,255,0.15); border-radius: 12px; padding: 12px;">
-                        <div style="display: flex; align-items: center; margin-bottom: 4px;">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" style="width: 16px; height: 16px; margin-right: 4px;">
-                                <line x1="12" y1="5" x2="12" y2="19"/>
-                                <line x1="5" y1="12" x2="19" y2="12"/>
-                            </svg>
-                            <span style="font-size: 12px; color: rgba(255,255,255,0.8);">Income</span>
-                        </div>
-                        <p id="income-display" style="font-size: 18px; font-weight: 600; margin: 0;">RM 0.00</p>
-                    </div>
-                    <div style="background: rgba(255,255,255,0.15); border-radius: 12px; padding: 12px;">
-                        <div style="display: flex; align-items: center; margin-bottom: 4px;">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" style="width: 16px; height: 16px; margin-right: 4px;">
-                                <line x1="5" y1="12" x2="19" y2="12"/>
-                            </svg>
-                            <span style="font-size: 12px; color: rgba(255,255,255,0.8);">Expenses</span>
-                        </div>
-                        <p id="expenses-display" style="font-size: 18px; font-weight: 600; margin: 0;">RM 0.00</p>
+                    <div class="grey-accent" style="padding: 10px; border-radius: 50%;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 24px; height: 24px;">
+                            <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/>
+                            <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/>
+                            <line x1="18" y1="12" x2="18" y2="12"/>
+                        </svg>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Session Status -->
-            <div style="background-color: #e0f2fe; border: 1px solid #0284c7; border-radius: 12px; padding: 12px; margin-bottom: 24px;">
-                <div style="display: flex; align-items: center; justify-content: space-between;">
-                    <div style="display: flex; align-items: center;">
-                        <div class="pulse" style="width: 8px; height: 8px; background-color: #0284c7; border-radius: 50%; margin-right: 8px;"></div>
-                        <span style="color: #0c4a6e; font-size: 14px; font-weight: 500;">Session Active</span>
-                    </div>
-                    <span id="session-transactions" style="color: #0c4a6e; font-size: 12px;">0 transactions this session</span>
+        <!-- Scrollable Content Area -->
+        <div class="scrollable-content">
+            <!-- Home Tab -->
+            <div id="home-tab" class="main-content">
+                <!-- Stateless Info -->
+                <div class="stateless-info">
+                    <strong>🇲🇾 Malaysian Format:</strong> All amounts in Ringgit Malaysia (RM) • Temporary session data only.
+                    <button onclick="loadDemoData()" class="btn btn-demo" style="margin-left: 8px;">Load Demo Data</button>
                 </div>
-            </div>
 
-            <!-- Financial Health -->
-            <div class="health-indicator">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-                    <h2 style="font-size: 18px; font-weight: 600; color: #374151; margin: 0;">Financial Health</h2>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 20px; height: 20px;">
-                        <circle cx="12" cy="12" r="10"/>
-                        <polyline points="12,6 12,12 16,14"/>
-                    </svg>
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <span style="font-size: 14px; color: #6b7280;">Expense Ratio</span>
-                    <span id="expense-ratio" style="font-size: 14px; font-weight: 500; color: #6b7280;">N/A</span>
-                </div>
-                <div class="progress-bar" style="margin-bottom: 8px;">
-                    <div id="expense-progress" class="progress-fill" style="width: 0%; background-color: #6b7280;"></div>
-                </div>
-                <p style="font-size: 12px; color: #9ca3af; margin: 0;">Recommended: Keep expenses below 80% of income</p>
-                
-                <div id="payment-method-info" class="hidden" style="padding-top: 12px; border-top: 1px solid #e5e7eb; margin-top: 12px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 14px; color: #6b7280;">Most Used Payment</span>
-                        <div style="display: flex; align-items: center; font-size: 14px; font-weight: 500; color: #374151;">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 12px; height: 12px; margin-right: 4px;">
-                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-                                <line x1="1" y1="10" x2="23" y2="10"/>
-                            </svg>
-                            <span id="most-used-payment">N/A</span>
+                <!-- Balance Card -->
+                <div class="balance-card">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+                        <div>
+                            <p style="color: rgba(255,255,255,0.8); font-size: 14px; margin: 0;">Current Balance (Session)</p>
+                            <h1 id="balance-display" style="font-size: 32px; font-weight: bold; margin: 4px 0;">RM 0.00</h1>
+                            <p id="balance-message" style="color: rgba(255,255,255,0.9); font-size: 12px; margin: 4px 0 0 0;">Start tracking or load demo data!</p>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 24px;">
-                <button class="quick-action bg-green" onclick="openAddForm('income')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="12" y1="5" x2="12" y2="19"/>
-                        <line x1="5" y1="12" x2="19" y2="12"/>
-                    </svg>
-                    <span>Add Income</span>
-                </button>
-                <button class="quick-action bg-red" onclick="openAddForm('expense')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="5" y1="12" x2="19" y2="12"/>
-                    </svg>
-                    <span>Add Expense</span>
-                </button>
-                <button class="quick-action bg-blue" onclick="openPaymentForm()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-                        <line x1="1" y1="10" x2="23" y2="10"/>
-                    </svg>
-                    <span>Record Payment</span>
-                </button>
-            </div>
-
-            <!-- Demo Actions -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
-                <button onclick="loadDemoData()" class="btn" style="background-color: #f59e0b; color: white; padding: 12px; font-size: 12px;">
-                    🎯 Load Demo Data
-                </button>
-                <button onclick="clearAllData()" class="btn" style="background-color: #ef4444; color: white; padding: 12px; font-size: 12px;">
-                    🗑️ Clear All Data
-                </button>
-            </div>
-
-            <!-- Recent Transactions -->
-            <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                    <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0;">Recent Activity</h2>
-                    <button onclick="showTab('transactions')" style="color: #6b7280; font-size: 14px; font-weight: 500; background: none; border: none;">View All</button>
-                </div>
-                
-                <div id="recent-transactions">
-                    <div style="text-align: center; padding: 32px 0; color: #9ca3af;">
-                        <div class="grey-accent" style="width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 32px; height: 32px;">
-                                <circle cx="12" cy="12" r="10"/>
-                                <path d="M12 6v6l4 2"/>
-                            </svg>
-                        </div>
-                        <h3 style="font-weight: 500; color: #1f2937; margin: 0 0 4px 0;">Welcome to Malaysian Demo!</h3>
-                        <p style="font-size: 14px; margin: 0 0 16px 0; color: #6b7280;">Financial tracking in Ringgit Malaysia</p>
-                        <div style="display: flex; gap: 8px; justify-content: center;">
-                            <button onclick="openAddForm('expense')" class="btn btn-primary">Add Transaction</button>
-                            <button onclick="loadDemoData()" class="btn btn-demo">Demo Data</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Payments -->
-            <div id="recent-payments" class="hidden" style="margin-top: 24px;">
-                <div class="card">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-                        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0;">Recent Payments</h2>
-                        <div class="grey-accent" style="padding: 8px; border-radius: 50%;">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 16px; height: 16px;">
-                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-                                <line x1="1" y1="10" x2="23" y2="10"/>
-                            </svg>
-                        </div>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" style="width: 32px; height: 32px;">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
                     </div>
                     
-                    <div id="payment-list"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Transactions Tab -->
-        <div id="transactions-tab" class="main-content hidden">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <div>
-                    <h1 style="font-size: 20px; font-weight: bold; color: #1f2937; margin: 0;">Transaction History</h1>
-                    <p style="color: #6b7280; font-size: 14px; margin: 4px 0 0 0;">Malaysian Ringgit Session Data</p>
-                </div>
-                <div class="grey-accent" style="padding: 12px; border-radius: 50%;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2">
-                        <line x1="8" y1="6" x2="21" y2="6"/>
-                        <line x1="8" y1="12" x2="21" y2="12"/>
-                        <line x1="8" y1="18" x2="21" y2="18"/>
-                        <line x1="3" y1="6" x2="3.01" y2="6"/>
-                        <line x1="3" y1="12" x2="3.01" y2="12"/>
-                        <line x1="3" y1="18" x2="3.01" y2="18"/>
-                    </svg>
-                </div>
-            </div>
-
-            <!-- Stateless Info -->
-            <div class="stateless-info">
-                <strong>📊 Session Data:</strong> All amounts displayed in Malaysian Ringgit (RM) format.
-            </div>
-
-            <div class="card">
-                <div style="padding: 0 0 16px 0; border-bottom: 1px solid #f3f4f6; margin-bottom: 16px;">
-                    <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0;">All Transactions</h2>
-                    <p id="transaction-count" style="font-size: 14px; color: #6b7280; margin: 4px 0 0 0;">0 total entries in session</p>
-                </div>
-                
-                <div id="all-transactions">
-                    <div style="text-align: center; padding: 48px 0; color: #9ca3af;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 64px; height: 64px; margin: 0 auto 16px; opacity: 0.3;">
-                            <line x1="8" y1="6" x2="21" y2="6"/>
-                            <line x1="8" y1="12" x2="21" y2="12"/>
-                            <line x1="8" y1="18" x2="21" y2="18"/>
-                            <line x1="3" y1="6" x2="3.01" y2="6"/>
-                            <line x1="3" y1="12" x2="3.01" y2="12"/>
-                            <line x1="3" y1="18" x2="3.01" y2="18"/>
-                        </svg>
-                        <p style="font-size: 18px; margin: 0 0 8px 0;">No transactions in this session</p>
-                        <p style="font-size: 14px; margin: 0 0 16px 0;">Add transactions or load demo data to see them here</p>
-                        <button onclick="loadDemoData()" class="btn btn-demo">Load Demo Data</button>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px;">
+                        <div style="background: rgba(255,255,255,0.15); border-radius: 12px; padding: 12px;">
+                            <div style="display: flex; align-items: center; margin-bottom: 4px;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" style="width: 16px; height: 16px; margin-right: 4px;">
+                                    <line x1="12" y1="5" x2="12" y2="19"/>
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                </svg>
+                                <span style="font-size: 12px; color: rgba(255,255,255,0.8);">Income</span>
+                            </div>
+                            <p id="income-display" style="font-size: 18px; font-weight: 600; margin: 0;">RM 0.00</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.15); border-radius: 12px; padding: 12px;">
+                            <div style="display: flex; align-items: center; margin-bottom: 4px;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" style="width: 16px; height: 16px; margin-right: 4px;">
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                </svg>
+                                <span style="font-size: 12px; color: rgba(255,255,255,0.8);">Expenses</span>
+                            </div>
+                            <p id="expenses-display" style="font-size: 18px; font-weight: 600; margin: 0;">RM 0.00</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Analytics Tab -->
-        <div id="analytics-tab" class="main-content hidden">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                <div>
-                    <h1 style="font-size: 20px; font-weight: bold; color: #1f2937; margin: 0;">Financial Analytics</h1>
-                    <p style="color: #6b7280; font-size: 14px; margin: 4px 0 0 0;">Malaysian Ringgit Analytics</p>
-                </div>
-                <div class="grey-accent" style="padding: 12px; border-radius: 50%;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2">
-                        <path d="M21.21 15.89A10 10 0 1 1 8 2.83"/>
-                        <path d="M22 12A10 10 0 0 0 12 2v10z"/>
-                    </svg>
-                </div>
-            </div>
-
-            <!-- Stateless Info -->
-            <div class="stateless-info">
-                <strong>📈 RM Analytics:</strong> All calculations and insights in Malaysian Ringgit currency.
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
-                <!-- Summary Card -->
-                <div class="card">
-                    <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Session Financial Summary</h2>
-                    <div style="display: flex; flex-direction: column; gap: 16px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span style="color: #6b7280;">Session Income</span>
-                            <span id="analytics-income" style="color: #374151; font-weight: 600; font-size: 18px;">RM 0.00</span>
+                <!-- Session Status -->
+                <div style="background-color: #e0f2fe; border: 1px solid #0284c7; border-radius: 12px; padding: 12px; margin-bottom: 24px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center;">
+                            <div class="pulse" style="width: 8px; height: 8px; background-color: #0284c7; border-radius: 50%; margin-right: 8px;"></div>
+                            <span style="color: #0c4a6e; font-size: 14px; font-weight: 500;">Session Active</span>
                         </div>
+                        <span id="session-transactions" style="color: #0c4a6e; font-size: 12px;">0 transactions this session</span>
+                    </div>
+                </div>
+
+                <!-- Financial Health -->
+                <div class="health-indicator">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                        <h2 style="font-size: 18px; font-weight: 600; color: #374151; margin: 0;">Financial Health</h2>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 20px; height: 20px;">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12,6 12,12 16,14"/>
+                        </svg>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 14px; color: #6b7280;">Expense Ratio</span>
+                        <span id="expense-ratio" style="font-size: 14px; font-weight: 500; color: #6b7280;">N/A</span>
+                    </div>
+                    <div class="progress-bar" style="margin-bottom: 8px;">
+                        <div id="expense-progress" class="progress-fill" style="width: 0%; background-color: #6b7280;"></div>
+                    </div>
+                    <p style="font-size: 12px; color: #9ca3af; margin: 0;">Recommended: Keep expenses below 80% of income</p>
+                    
+                    <div id="payment-method-info" class="hidden" style="padding-top: 12px; border-top: 1px solid #e5e7eb; margin-top: 12px;">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span style="color: #6b7280;">Session Expenses</span>
-                            <span id="analytics-expenses" style="color: #6b7280; font-weight: 600; font-size: 18px;">RM 0.00</span>
-                        </div>
-                        <div style="border-top: 1px solid #f3f4f6; padding-top: 16px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span style="color: #1f2937; font-weight: 500;">Session Balance</span>
-                                <span id="analytics-balance" style="font-weight: bold; font-size: 20px; color: #374151;">RM 0.00</span>
+                            <span style="font-size: 14px; color: #6b7280;">Most Used Payment</span>
+                            <div style="display: flex; align-items: center; font-size: 14px; font-weight: 500; color: #374151;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 12px; height: 12px; margin-right: 4px;">
+                                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                                    <line x1="1" y1="10" x2="23" y2="10"/>
+                                </svg>
+                                <span id="most-used-payment">N/A</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Category Breakdown -->
-                <div id="category-analytics" class="card hidden">
-                    <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Spending by Category</h2>
-                    <div id="category-list"></div>
-                </div>
-
-                <!-- Payment Method Analytics -->
-                <div id="payment-analytics" class="card hidden">
-                    <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Payment Methods</h2>
-                    <div id="payment-method-list"></div>
-                </div>
-
-                <!-- Activity Summary -->
-                <div class="card">
-                    <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Session Activity</h2>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                        <div style="text-align: center; padding: 16px; background-color: #f9fafb; border-radius: 12px;">
-                            <p id="income-count" style="font-size: 24px; font-weight: bold; color: #374151; margin: 0;">0</p>
-                            <p style="font-size: 14px; color: #6b7280; margin: 4px 0 0 0;">Income Entries</p>
-                        </div>
-                        <div style="text-align: center; padding: 16px; background-color: #f9fafb; border-radius: 12px;">
-                            <p id="expense-count" style="font-size: 24px; font-weight: bold; color: #6b7280; margin: 0;">0</p>
-                            <p style="font-size: 14px; color: #6b7280; margin: 4px 0 0 0;">Expense Entries</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Health Score -->
-                <div class="card">
-                    <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Session Health Score</h2>
-                    <div style="text-align: center;">
-                        <div id="health-score" style="font-size: 48px; font-weight: bold; margin-bottom: 8px; color: #6b7280;">-</div>
-                        <p id="health-message" style="font-size: 14px; color: #6b7280; margin: 0;">Add income to calculate session score</p>
-                    </div>
+                <!-- Quick Actions -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 24px;">
+                    <button class="quick-action bg-green" onclick="openAddForm('income')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        <span>Add Income</span>
+                    </button>
+                    <button class="quick-action bg-red" onclick="openAddForm('expense')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        <span>Add Expense</span>
+                    </button>
+                    <button class="quick-action bg-blue" onclick="openPaymentForm()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                            <line x1="1" y1="10" x2="23" y2="10"/>
+                        </svg>
+                        <span>Record Payment</span>
+                    </button>
                 </div>
 
                 <!-- Demo Actions -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
+                    <button onclick="loadDemoData()" class="btn" style="background-color: #f59e0b; color: white; padding: 12px; font-size: 12px;">
+                        🎯 Load Demo Data
+                    </button>
+                    <button onclick="clearAllData()" class="btn" style="background-color: #ef4444; color: white; padding: 12px; font-size: 12px;">
+                        🗑️ Clear All Data
+                    </button>
+                </div>
+
+                <!-- Recent Transactions -->
                 <div class="card">
-                    <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Demo Controls</h2>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                        <button onclick="loadDemoData()" class="btn" style="background-color: #f59e0b; color: white;">
-                            Load Sample Data
-                        </button>
-                        <button onclick="clearAllData()" class="btn" style="background-color: #ef4444; color: white;">
-                            Reset Session
-                        </button>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0;">Recent Activity</h2>
+                        <button onclick="showTab('transactions')" style="color: #6b7280; font-size: 14px; font-weight: 500; background: none; border: none;">View All</button>
+                    </div>
+                    
+                    <div id="recent-transactions">
+                        <div style="text-align: center; padding: 32px 0; color: #9ca3af;">
+                            <div class="grey-accent" style="width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 32px; height: 32px;">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M12 6v6l4 2"/>
+                                </svg>
+                            </div>
+                            <h3 style="font-weight: 500; color: #1f2937; margin: 0 0 4px 0;">Welcome to Malaysian Demo!</h3>
+                            <p style="font-size: 14px; margin: 0 0 16px 0; color: #6b7280;">Financial tracking in Ringgit Malaysia</p>
+                            <div style="display: flex; gap: 8px; justify-content: center;">
+                                <button onclick="openAddForm('expense')" class="btn btn-primary">Add Transaction</button>
+                                <button onclick="loadDemoData()" class="btn btn-demo">Demo Data</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Payments -->
+                <div id="recent-payments" class="hidden">
+                    <div class="card">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                            <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0;">Recent Payments</h2>
+                            <div class="grey-accent" style="padding: 8px; border-radius: 50%;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 16px; height: 16px;">
+                                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                                    <line x1="1" y1="10" x2="23" y2="10"/>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <div id="payment-list"></div>
+                    </div>
+                </div>
+
+                <!-- Extra Content for Scroll Testing -->
+                <div class="card">
+                    <h3 style="font-size: 16px; font-weight: 600; color: #1f2937; margin: 0 0 12px 0;">Scroll Test Section</h3>
+                    <p style="color: #6b7280; margin: 0 0 12px 0;">This section demonstrates that the body content scrolls while the header remains fixed at the top.</p>
+                    <p style="color: #6b7280; margin: 0 0 12px 0;">You can scroll up and down through all the content, and the header with the Malaysian flag and app title will always stay visible.</p>
+                    <p style="color: #6b7280; margin: 0;">The bottom navigation also remains fixed, creating a native app-like experience.</p>
+                </div>
+
+                <div class="card">
+                    <h3 style="font-size: 16px; font-weight: 600; color: #1f2937; margin: 0 0 12px 0;">Features</h3>
+                    <ul style="color: #6b7280; margin: 0; padding-left: 20px;">
+                        <li>Fixed header with status bar and banner</li>
+                        <li>Scrollable content area with smooth iOS-style scrolling</li>
+                        <li>Fixed bottom navigation</li>
+                        <li>Modal forms that overlay everything</li>
+                        <li>Professional mobile app experience</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Transactions Tab -->
+            <div id="transactions-tab" class="main-content hidden">
+                <!-- Stateless Info -->
+                <div class="stateless-info">
+                    <strong>📊 Session Data:</strong> All amounts displayed in Malaysian Ringgit (RM) format.
+                </div>
+
+                <div class="card">
+                    <div style="padding: 0 0 16px 0; border-bottom: 1px solid #f3f4f6; margin-bottom: 16px;">
+                        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0;">All Transactions</h2>
+                        <p id="transaction-count" style="font-size: 14px; color: #6b7280; margin: 4px 0 0 0;">0 total entries in session</p>
+                    </div>
+                    
+                    <div id="all-transactions">
+                        <div style="text-align: center; padding: 48px 0; color: #9ca3af;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 64px; height: 64px; margin: 0 auto 16px; opacity: 0.3;">
+                                <line x1="8" y1="6" x2="21" y2="6"/>
+                                <line x1="8" y1="12" x2="21" y2="12"/>
+                                <line x1="8" y1="18" x2="21" y2="18"/>
+                                <line x1="3" y1="6" x2="3.01" y2="6"/>
+                                <line x1="3" y1="12" x2="3.01" y2="12"/>
+                                <line x1="3" y1="18" x2="3.01" y2="18"/>
+                            </svg>
+                            <p style="font-size: 18px; margin: 0 0 8px 0;">No transactions in this session</p>
+                            <p style="font-size: 14px; margin: 0 0 16px 0;">Add transactions or load demo data to see them here</p>
+                            <button onclick="loadDemoData()" class="btn btn-demo">Load Demo Data</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div id="analytics-tab" class="main-content hidden">
+                <!-- Stateless Info -->
+                <div class="stateless-info">
+                    <strong>📈 RM Analytics:</strong> All calculations and insights in Malaysian Ringgit currency.
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
+                    <!-- Summary Card -->
+                    <div class="card">
+                        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Session Financial Summary</h2>
+                        <div style="display: flex; flex-direction: column; gap: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="color: #6b7280;">Session Income</span>
+                                <span id="analytics-income" style="color: #374151; font-weight: 600; font-size: 18px;">RM 0.00</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="color: #6b7280;">Session Expenses</span>
+                                <span id="analytics-expenses" style="color: #6b7280; font-weight: 600; font-size: 18px;">RM 0.00</span>
+                            </div>
+                            <div style="border-top: 1px solid #f3f4f6; padding-top: 16px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="color: #1f2937; font-weight: 500;">Session Balance</span>
+                                    <span id="analytics-balance" style="font-weight: bold; font-size: 20px; color: #374151;">RM 0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category Breakdown -->
+                    <div id="category-analytics" class="card hidden">
+                        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Spending by Category</h2>
+                        <div id="category-list"></div>
+                    </div>
+
+                    <!-- Payment Method Analytics -->
+                    <div id="payment-analytics" class="card hidden">
+                        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Payment Methods</h2>
+                        <div id="payment-method-list"></div>
+                    </div>
+
+                    <!-- Activity Summary -->
+                    <div class="card">
+                        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Session Activity</h2>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div style="text-align: center; padding: 16px; background-color: #f9fafb; border-radius: 12px;">
+                                <p id="income-count" style="font-size: 24px; font-weight: bold; color: #374151; margin: 0;">0</p>
+                                <p style="font-size: 14px; color: #6b7280; margin: 4px 0 0 0;">Income Entries</p>
+                            </div>
+                            <div style="text-align: center; padding: 16px; background-color: #f9fafb; border-radius: 12px;">
+                                <p id="expense-count" style="font-size: 24px; font-weight: bold; color: #6b7280; margin: 0;">0</p>
+                                <p style="font-size: 14px; color: #6b7280; margin: 4px 0 0 0;">Expense Entries</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Health Score -->
+                    <div class="card">
+                        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Session Health Score</h2>
+                        <div style="text-align: center;">
+                            <div id="health-score" style="font-size: 48px; font-weight: bold; margin-bottom: 8px; color: #6b7280;">-</div>
+                            <p id="health-message" style="font-size: 14px; color: #6b7280; margin: 0;">Add income to calculate session score</p>
+                        </div>
+                    </div>
+
+                    <!-- Demo Actions -->
+                    <div class="card">
+                        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Demo Controls</h2>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <button onclick="loadDemoData()" class="btn" style="background-color: #f59e0b; color: white;">
+                                Load Sample Data
+                            </button>
+                            <button onclick="clearAllData()" class="btn" style="background-color: #ef4444; color: white;">
+                                Reset Session
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Bottom Navigation -->
+        <!-- Fixed Bottom Navigation -->
         <div class="bottom-nav">
             <button class="nav-btn active-tab" onclick="showTab('home')" data-tab="home">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -809,6 +862,9 @@
             
             // Update displays when switching tabs
             updateDisplays();
+            
+            // Scroll to top when switching tabs
+            document.querySelector('.scrollable-content').scrollTop = 0;
         }
 
         // Open add form
@@ -1287,6 +1343,7 @@
             
             // Show welcome message
             console.log('🇲🇾 Malaysian Financial Planning App Loaded');
+            console.log('📱 Fixed header with scrollable body design');
             console.log('💰 All amounts displayed in Malaysian Ringgit (RM)');
             console.log('🔄 All data is temporary and resets on page refresh');
             console.log('🎯 Try loading demo data to explore Malaysian financial features!');
