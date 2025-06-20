@@ -195,17 +195,17 @@ export default function MyFinancialPlanningApp() {
       <div className="grid grid-cols-3 gap-3 mb-6">
         <button 
           onClick={() => {setType('income'); setIsPaymentMode(false); setShowAddForm(true);}}
-          className="bg-green-500 text-white p-4 rounded-xl flex flex-col items-center justify-center space-y-1 shadow-md active:scale-95 transition-transform"
+          className="bg-green-500 hover:bg-green-600 text-white p-4 md:p-6 rounded-xl flex flex-col items-center justify-center space-y-1 shadow-md active:scale-95 hover:scale-105 transition-transform"
         >
-          <Plus className="w-5 h-5" />
-          <span className="font-medium text-xs">Add Income</span>
+          <Plus className="w-5 h-5 md:w-6 md:h-6" />
+          <span className="font-medium text-xs md:text-sm">Add Income</span>
         </button>
         <button 
           onClick={() => {setType('expense'); setIsPaymentMode(false); setShowAddForm(true);}}
-          className="bg-red-500 text-white p-4 rounded-xl flex flex-col items-center justify-center space-y-1 shadow-md active:scale-95 transition-transform"
+          className="bg-red-500 hover:bg-red-600 text-white p-4 md:p-6 rounded-xl flex flex-col items-center justify-center space-y-1 shadow-md active:scale-95 hover:scale-105 transition-transform"
         >
-          <Minus className="w-5 h-5" />
-          <span className="font-medium text-xs">Add Expense</span>
+          <Minus className="w-5 h-5 md:w-6 md:h-6" />
+          <span className="font-medium text-xs md:text-sm">Add Expense</span>
         </button>
         <button 
           onClick={() => {
@@ -215,10 +215,10 @@ export default function MyFinancialPlanningApp() {
             setIsPaymentMode(true);
             setShowAddForm(true);
           }}
-          className="bg-blue-500 text-white p-4 rounded-xl flex flex-col items-center justify-center space-y-1 shadow-md active:scale-95 transition-transform"
+          className="bg-blue-500 hover:bg-blue-600 text-white p-4 md:p-6 rounded-xl flex flex-col items-center justify-center space-y-1 shadow-md active:scale-95 hover:scale-105 transition-transform"
         >
-          <CreditCard className="w-5 h-5" />
-          <span className="font-medium text-xs">Record Payment</span>
+          <CreditCard className="w-5 h-5 md:w-6 md:h-6" />
+          <span className="font-medium text-xs md:text-sm">Record Payment</span>
         </button>
       </div>
 
@@ -621,12 +621,33 @@ export default function MyFinancialPlanningApp() {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-gray-50 min-h-screen relative">
-      {/* Status Bar Simulation */}
-      <div className="bg-gray-900 text-white text-xs p-2 flex justify-between items-center">
+    <div className="max-w-md mx-auto bg-gray-50 min-h-screen relative lg:max-w-lg xl:max-w-xl">
+      {/* Status Bar Simulation - Hidden on Desktop */}
+      <div className="bg-gray-900 text-white text-xs p-2 flex justify-between items-center md:hidden">
         <span>9:41</span>
         <span>My Financial Planning</span>
         <span>100%</span>
+      </div>
+
+      {/* Desktop Header - Shown only on larger screens */}
+      <div className="hidden md:block bg-white shadow-sm p-4 border-b">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="bg-gradient-to-r from-purple-100 to-blue-100 p-3 rounded-full">
+              <Wallet className="w-6 h-6 text-purple-600" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-gray-800">My Financial Planning</h1>
+              <p className="text-gray-500 text-sm">Smart Money Management</p>
+            </div>
+          </div>
+          <div className="text-right">
+            <p className="text-sm text-gray-500">Current Balance</p>
+            <p className={`text-2xl font-bold ${balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              ${balance.toFixed(2)}
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Main Content */}
@@ -637,7 +658,7 @@ export default function MyFinancialPlanningApp() {
       </div>
 
       {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 px-4 py-2">
+      <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md lg:max-w-lg xl:max-w-xl bg-white border-t border-gray-200 px-4 py-2 md:py-3">
         <div className="flex justify-around">
           {[
             { id: 'home', icon: Home, label: 'Home' },
@@ -647,14 +668,14 @@ export default function MyFinancialPlanningApp() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${
+              className={`flex flex-col items-center py-2 px-3 md:px-6 rounded-lg transition-colors ${
                 activeTab === tab.id 
                   ? 'text-purple-600 bg-purple-50' 
                   : 'text-gray-400 hover:text-gray-600'
               }`}
             >
               <tab.icon className="w-5 h-5 mb-1" />
-              <span className="text-xs font-medium">{tab.label}</span>
+              <span className="text-xs md:text-sm font-medium">{tab.label}</span>
             </button>
           ))}
         </div>
