@@ -1,803 +1,815 @@
-import React, { useState } from 'react';
-import { Plus, Minus, DollarSign, Calendar, Tag, Trash2, Home, TrendingUp, List, Target, ArrowUp, ArrowDown, PieChart, Wallet, CreditCard } from 'lucide-react';
-
-export default function MyFinancialPlanningApp() {
-  const [transactions, setTransactions] = useState([]);
-  const [activeTab, setActiveTab] = useState('home');
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [description, setDescription] = useState('');
-  const [amount, setAmount] = useState('');
-  const [category, setCategory] = useState('');
-  const [type, setType] = useState('expense');
-  const [paymentMethod, setPaymentMethod] = useState('');
-  const [isPaymentMode, setIsPaymentMode] = useState(false);
-
-  const categories = [
-    'Food & Dining', 'Transportation', 'Shopping', 'Entertainment',
-    'Bills & Utilities', 'Healthcare', 'Education', 'Travel',
-    'Salary', 'Business', 'Investment', 'Gift', 'Savings', 'Other'
-  ];
-
-  const paymentMethods = [
-    'Cash', 'Credit Card', 'Debit Card', 'Bank Transfer', 
-    'Digital Wallet', 'Check', 'Mobile Payment', 'Online Banking', 'Other'
-  ];
-
-  const paymentCategories = [
-    'Bills & Utilities', 'Healthcare', 'Education', 'Transportation',
-    'Food & Dining', 'Shopping', 'Other'
-  ];
-
-  const addTransaction = () => {
-    if (!description.trim()) {
-      alert('Please enter a description');
-      return;
-    }
-    if (!amount || parseFloat(amount) <= 0) {
-      alert('Please enter a valid amount');
-      return;
-    }
-    if (!category) {
-      alert('Please select a category');
-      return;
-    }
-    if (!paymentMethod) {
-      alert('Please select a payment method');
-      return;
-    }
-
-    const newTransaction = {
-      id: Date.now(),
-      description: description.trim(),
-      amount: parseFloat(amount),
-      category,
-      type,
-      paymentMethod,
-      isPayment: isPaymentMode,
-      date: new Date().toLocaleDateString(),
-      time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-    };
-
-    setTransactions([newTransaction, ...transactions]);
-    setDescription('');
-    setAmount('');
-    setCategory('');
-    setPaymentMethod('');
-    setIsPaymentMode(false);
-    setShowAddForm(false);
-  };
-
-  const deleteTransaction = (id) => {
-    setTransactions(transactions.filter(t => t.id !== id));
-  };
-
-  const totalIncome = transactions
-    .filter(t => t.type === 'income')
-    .reduce((sum, t) => sum + t.amount, 0);
-
-  const totalExpenses = transactions
-    .filter(t => t.type === 'expense')
-    .reduce((sum, t) => sum + t.amount, 0);
-
-  const balance = totalIncome - totalExpenses;
-  const recentTransactions = transactions.slice(0, 5);
-  const recentPayments = transactions.filter(t => t.isPayment).slice(0, 3);
-
-  // Calculate category breakdown
-  const categoryBreakdown = categories.map(cat => {
-    const categoryTransactions = transactions.filter(t => t.category === cat);
-    const totalAmount = categoryTransactions.reduce((sum, t) => sum + t.amount, 0);
-    return {
-      category: cat,
-      amount: totalAmount,
-      count: categoryTransactions.length,
-      percentage: totalExpenses > 0 ? (totalAmount / totalExpenses) * 100 : 0
-    };
-  }).filter(item => item.amount > 0).sort((a, b) => b.amount - a.amount);
-
-  // Calculate payment method breakdown
-  const paymentBreakdown = paymentMethods.map(method => {
-    const methodTransactions = transactions.filter(t => t.paymentMethod === method);
-    const totalAmount = methodTransactions.reduce((sum, t) => sum + t.amount, 0);
-    const totalTransactions = transactions.reduce((sum, t) => sum + t.amount, 0);
-    return {
-      method: method,
-      amount: totalAmount,
-      count: methodTransactions.length,
-      percentage: totalTransactions > 0 ? (totalAmount / totalTransactions) * 100 : 0
-    };
-  }).filter(item => item.amount > 0).sort((a, b) => b.amount - a.amount);
-
-  // Home Tab Component
-  const HomeTab = () => (
-    <div className="p-4 pb-24">
-      {/* App Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">My Financial Planning</h1>
-          <p className="text-gray-500 text-sm">Smart Money Management</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#6366f1">
+    <title>My Financial Planning</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f9fafb;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 384px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+            background-color: #f9fafb;
+        }
+        .hidden { display: none !important; }
+        .active-tab { color: #9333ea !important; background-color: #f3e8ff !important; }
+        .status-bar {
+            background-color: #111827;
+            color: white;
+            font-size: 12px;
+            padding: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .main-content {
+            padding: 16px;
+            padding-bottom: 100px;
+        }
+        .balance-card {
+            background: linear-gradient(135deg, #9333ea 0%, #1d4ed8 100%);
+            border-radius: 16px;
+            padding: 24px;
+            color: white;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .quick-action {
+            padding: 16px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.1s;
+            border: none;
+            cursor: pointer;
+        }
+        .quick-action:active {
+            transform: scale(0.95);
+        }
+        .bg-green { background-color: #10b981; }
+        .bg-red { background-color: #ef4444; }
+        .bg-blue { background-color: #3b82f6; }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 384px;
+            background-color: white;
+            border-top: 1px solid #e5e7eb;
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-around;
+        }
+        .nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 8px;
+            color: #9ca3af;
+            font-size: 12px;
+            font-weight: 500;
+            border: none;
+            background: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .modal {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 50;
+            display: flex;
+            align-items: flex-end;
+        }
+        .modal-content {
+            background-color: white;
+            width: 100%;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            padding: 24px;
+            transform: translateY(0);
+            transition: transform 0.3s;
+        }
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            font-size: 16px;
+            margin-top: 8px;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #9333ea;
+            box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
+        }
+        .btn {
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+        .btn:active { transform: scale(0.95); }
+        .btn-primary { background-color: #9333ea; color: white; }
+        .btn-green { background-color: #10b981; color: white; }
+        .btn-red { background-color: #ef4444; color: white; }
+        .btn-blue { background-color: #3b82f6; color: white; }
+        .btn-secondary { background-color: white; color: #374151; border: 1px solid #d1d5db; }
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background-color: white;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            transition: width 0.3s;
+        }
+        svg {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span>9:41</span>
+            <span>My Financial Planning</span>
+            <span>100%</span>
         </div>
-        <div className="bg-gradient-to-r from-purple-100 to-blue-100 p-3 rounded-full">
-          <Wallet className="w-6 h-6 text-purple-600" />
-        </div>
-      </div>
 
-      {/* Balance Card */}
-      <div className="bg-gradient-to-br from-purple-600 to-blue-700 rounded-2xl p-6 text-white mb-6 shadow-lg">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <p className="text-purple-100 text-sm">Current Balance</p>
-            <h1 className="text-3xl font-bold">${balance.toFixed(2)}</h1>
-            <p className="text-purple-200 text-xs mt-1">
-              {balance >= 0 ? 'You\'re doing great!' : 'Review your spending'}
-            </p>
-          </div>
-          <DollarSign className="w-8 h-8 text-purple-200" />
-        </div>
-        
-        <div className="grid grid-cols-2 gap-4 mt-6">
-          <div className="bg-white bg-opacity-20 rounded-xl p-3">
-            <div className="flex items-center mb-1">
-              <ArrowUp className="w-4 h-4 text-green-300 mr-1" />
-              <span className="text-xs text-purple-100">Income</span>
-            </div>
-            <p className="text-lg font-semibold">${totalIncome.toFixed(2)}</p>
-          </div>
-          <div className="bg-white bg-opacity-20 rounded-xl p-3">
-            <div className="flex items-center mb-1">
-              <ArrowDown className="w-4 h-4 text-red-300 mr-1" />
-              <span className="text-xs text-purple-100">Expenses</span>
-            </div>
-            <p className="text-lg font-semibold">${totalExpenses.toFixed(2)}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Financial Health */}
-      <div className="bg-white rounded-2xl p-4 shadow-sm mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-800">Financial Health</h2>
-          <Target className="w-5 h-5 text-blue-600" />
-        </div>
-        <div className="space-y-3">
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-600">Expense Ratio</span>
-            <span className={`text-sm font-medium ${totalIncome > 0 && (totalExpenses/totalIncome) < 0.8 ? 'text-green-600' : 'text-orange-600'}`}>
-              {totalIncome > 0 ? `${((totalExpenses/totalIncome) * 100).toFixed(1)}%` : 'N/A'}
-            </span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div 
-              className={`h-2 rounded-full ${totalIncome > 0 && (totalExpenses/totalIncome) < 0.8 ? 'bg-green-500' : 'bg-orange-500'}`}
-              style={{width: `${totalIncome > 0 ? Math.min((totalExpenses/totalIncome) * 100, 100) : 0}%`}}
-            ></div>
-          </div>
-          <p className="text-xs text-gray-500">Recommended: Keep expenses below 80% of income</p>
-          
-          {transactions.length > 0 && (
-            <div className="pt-2 border-t border-gray-100">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Most Used Payment</span>
-                <div className="flex items-center text-sm font-medium text-gray-700">
-                  <CreditCard className="w-3 h-3 mr-1" />
-                  <span>
-                    {paymentBreakdown.length > 0 ? paymentBreakdown[0].method : 'N/A'}
-                  </span>
+        <!-- Home Tab -->
+        <div id="home-tab" class="main-content">
+            <!-- Header -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <div>
+                    <h1 style="font-size: 24px; font-weight: bold; color: #1f2937; margin: 0;">My Financial Planning</h1>
+                    <p style="color: #6b7280; font-size: 14px; margin: 4px 0 0 0;">Smart Money Management</p>
                 </div>
-              </div>
+                <div style="background: linear-gradient(135deg, #e0e7ff 0%, #dbeafe 100%); padding: 12px; border-radius: 50%;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2">
+                        <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/>
+                        <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/>
+                        <line x1="18" y1="12" x2="18" y2="12"/>
+                    </svg>
+                </div>
             </div>
-          )}
-        </div>
-      </div>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-3 gap-3 mb-6">
-        <button 
-          onClick={() => {setType('income'); setIsPaymentMode(false); setShowAddForm(true);}}
-          className="bg-green-500 text-white p-4 rounded-xl flex flex-col items-center justify-center space-y-1 shadow-md active:scale-95 transition-transform"
-        >
-          <Plus className="w-5 h-5" />
-          <span className="font-medium text-xs">Add Income</span>
-        </button>
-        <button 
-          onClick={() => {setType('expense'); setIsPaymentMode(false); setShowAddForm(true);}}
-          className="bg-red-500 text-white p-4 rounded-xl flex flex-col items-center justify-center space-y-1 shadow-md active:scale-95 transition-transform"
-        >
-          <Minus className="w-5 h-5" />
-          <span className="font-medium text-xs">Add Expense</span>
-        </button>
-        <button 
-          onClick={() => {
-            setType('expense'); 
-            setCategory('Bills & Utilities'); 
-            setPaymentMethod('Bank Transfer');
-            setIsPaymentMode(true);
-            setShowAddForm(true);
-          }}
-          className="bg-blue-500 text-white p-4 rounded-xl flex flex-col items-center justify-center space-y-1 shadow-md active:scale-95 transition-transform"
-        >
-          <CreditCard className="w-5 h-5" />
-          <span className="font-medium text-xs">Record Payment</span>
-        </button>
-      </div>
-
-      {/* Recent Transactions */}
-      <div className="bg-white rounded-2xl p-4 shadow-sm">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-gray-800">Recent Activity</h2>
-          <button 
-            onClick={() => setActiveTab('transactions')}
-            className="text-purple-600 text-sm font-medium"
-          >
-            View All
-          </button>
-        </div>
-        
-        {recentTransactions.length === 0 ? (
-          <div className="text-center py-8 text-gray-400">
-            <div className="bg-purple-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <DollarSign className="w-8 h-8 text-purple-400" />
-            </div>
-            <h3 className="font-medium text-gray-800 mb-1">Welcome to Financial Planning!</h3>
-            <p className="text-sm mb-4">Start your journey to financial freedom</p>
-            <button 
-              onClick={() => setShowAddForm(true)}
-              className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium active:scale-95 transition-transform"
-            >
-              Add First Transaction
-            </button>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {recentTransactions.map(transaction => (
-              <div key={transaction.id} className="flex items-center justify-between py-2">
-                <div className="flex items-center space-x-3">
-                  <div className={`p-2 rounded-full ${transaction.type === 'income' ? 'bg-green-100' : 'bg-red-100'}`}>
-                    {transaction.type === 'income' ? 
-                      <ArrowUp className="w-4 h-4 text-green-600" /> : 
-                      <ArrowDown className="w-4 h-4 text-red-600" />
-                    }
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-800 text-sm">{transaction.description}</p>
-                    <div className="flex items-center space-x-2 text-xs text-gray-500">
-                      <span>{transaction.category}</span>
-                      <span>•</span>
-                      <div className="flex items-center">
-                        <CreditCard className="w-3 h-3 mr-1" />
-                        <span>{transaction.paymentMethod}</span>
-                      </div>
+            <!-- Balance Card -->
+            <div class="balance-card">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+                    <div>
+                        <p style="color: rgba(255,255,255,0.7); font-size: 14px; margin: 0;">Current Balance</p>
+                        <h1 id="balance-display" style="font-size: 32px; font-weight: bold; margin: 4px 0;">$0.00</h1>
+                        <p id="balance-message" style="color: rgba(255,255,255,0.8); font-size: 12px; margin: 4px 0 0 0;">Start tracking your finances!</p>
                     </div>
-                  </div>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" style="width: 32px; height: 32px;">
+                        <line x1="12" y1="1" x2="12" y2="23"/>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
                 </div>
-                <div className="text-right">
-                  <p className={`font-semibold ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
-                    {transaction.type === 'income' ? '+' : '-'}${transaction.amount.toFixed(2)}
-                  </p>
-                  <p className="text-xs text-gray-400">{transaction.time}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Recent Payments */}
-      {recentPayments.length > 0 && (
-        <div className="bg-white rounded-2xl p-4 shadow-sm mt-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-800">Recent Payments</h2>
-            <div className="bg-blue-100 p-2 rounded-full">
-              <CreditCard className="w-4 h-4 text-blue-600" />
-            </div>
-          </div>
-          
-          <div className="space-y-3">
-            {recentPayments.map(payment => (
-              <div key={payment.id} className="flex items-center justify-between py-2 border-l-4 border-blue-500 pl-3 bg-blue-50 rounded-r-lg">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 rounded-full bg-blue-100">
-                    <CreditCard className="w-4 h-4 text-blue-600" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-800 text-sm">{payment.description}</p>
-                    <div className="flex items-center space-x-2 text-xs text-gray-500">
-                      <span>{payment.category}</span>
-                      <span>•</span>
-                      <span>{payment.paymentMethod}</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="font-semibold text-blue-600">-${payment.amount.toFixed(2)}</p>
-                  <p className="text-xs text-gray-400">{payment.time}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-
-  // Transactions Tab Component
-  const TransactionsTab = () => (
-    <div className="p-4 pb-24">
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h1 className="text-xl font-bold text-gray-800">Transaction History</h1>
-          <p className="text-gray-500 text-sm">My Financial Planning</p>
-        </div>
-        <div className="bg-blue-100 p-3 rounded-full">
-          <List className="w-5 h-5 text-blue-600" />
-        </div>
-      </div>
-
-      <div className="bg-white rounded-2xl shadow-sm">
-        <div className="p-4 border-b border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-800">All Transactions</h2>
-          <p className="text-sm text-gray-500">{transactions.length} total entries</p>
-        </div>
-        
-        {transactions.length === 0 ? (
-          <div className="text-center py-12 text-gray-400">
-            <List className="w-16 h-16 mx-auto mb-4 opacity-30" />
-            <p className="text-lg mb-2">No transactions yet</p>
-            <p className="text-sm">Begin your financial tracking journey</p>
-          </div>
-        ) : (
-          <div className="divide-y divide-gray-100">
-            {transactions.map(transaction => (
-              <div key={transaction.id} className="p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3 flex-1">
-                    <div className={`p-2 rounded-full ${transaction.type === 'income' ? 'bg-green-100' : 'bg-red-100'}`}>
-                      {transaction.type === 'income' ? 
-                        <ArrowUp className="w-4 h-4 text-green-600" /> : 
-                        <ArrowDown className="w-4 h-4 text-red-600" />
-                      }
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-medium text-gray-800">{transaction.description}</p>
-                      <div className="flex items-center text-xs text-gray-500 mt-1 space-x-3">
-                        <div className="flex items-center">
-                          <Tag className="w-3 h-3 mr-1" />
-                          <span>{transaction.category}</span>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px;">
+                    <div style="background: rgba(255,255,255,0.2); border-radius: 12px; padding: 12px;">
+                        <div style="display: flex; align-items: center; margin-bottom: 4px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(34,197,94,0.8)" stroke-width="2" style="width: 16px; height: 16px; margin-right: 4px;">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            <span style="font-size: 12px; color: rgba(255,255,255,0.7);">Income</span>
                         </div>
-                        <div className="flex items-center">
-                          <CreditCard className="w-3 h-3 mr-1" />
-                          <span>{transaction.paymentMethod}</span>
+                        <p id="income-display" style="font-size: 18px; font-weight: 600; margin: 0;">$0.00</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.2); border-radius: 12px; padding: 12px;">
+                        <div style="display: flex; align-items: center; margin-bottom: 4px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(239,68,68,0.8)" stroke-width="2" style="width: 16px; height: 16px; margin-right: 4px;">
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            <span style="font-size: 12px; color: rgba(255,255,255,0.7);">Expenses</span>
                         </div>
-                        <div className="flex items-center">
-                          <Calendar className="w-3 h-3 mr-1" />
-                          <span>{transaction.date}</span>
-                        </div>
-                      </div>
+                        <p id="expenses-display" style="font-size: 18px; font-weight: 600; margin: 0;">$0.00</p>
                     </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="text-right">
-                      <p className={`font-semibold ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
-                        {transaction.type === 'income' ? '+' : '-'}${transaction.amount.toFixed(2)}
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => deleteTransaction(transaction.id)}
-                      className="text-red-400 hover:text-red-600 p-1 rounded active:scale-95 transition-all"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
-        
-        <div className="mt-8 text-center pb-4">
-          <p className="text-xs text-gray-400">My Financial Planning v1.0</p>
-          <p className="text-xs text-gray-300">Complete Transaction History</p>
-        </div>
-      </div>
-    </div>
-  );
-
-  // Analytics Tab Component
-  const AnalyticsTab = () => {
-    const incomeTransactions = transactions.filter(t => t.type === 'income');
-    const expenseTransactions = transactions.filter(t => t.type === 'expense');
-    const paymentTransactions = transactions.filter(t => t.isPayment);
-    
-    return (
-      <div className="p-4 pb-24">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-xl font-bold text-gray-800">Financial Analytics</h1>
-            <p className="text-gray-500 text-sm">My Financial Planning</p>
-          </div>
-          <div className="bg-green-100 p-3 rounded-full">
-            <PieChart className="w-5 h-5 text-green-600" />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-4">
-          {/* Overview Cards */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Financial Summary</h2>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">Total Income</span>
-                <span className="text-green-600 font-semibold text-lg">${totalIncome.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">Total Expenses</span>
-                <span className="text-red-600 font-semibold text-lg">${totalExpenses.toFixed(2)}</span>
-              </div>
-              <div className="border-t pt-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-800 font-medium">Net Savings</span>
-                  <span className={`font-bold text-xl ${balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    ${balance.toFixed(2)}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Category Breakdown */}
-          {categoryBreakdown.length > 0 && (
-            <div className="bg-white rounded-2xl p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">Spending by Category</h2>
-              <div className="space-y-3">
-                {categoryBreakdown.slice(0, 5).map((item, index) => (
-                  <div key={item.category} className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="text-sm font-medium text-gray-700">{item.category}</span>
-                        <span className="text-sm text-gray-500">${item.amount.toFixed(2)}</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div 
-                          className={`h-2 rounded-full ${
-                            index === 0 ? 'bg-red-500' : 
-                            index === 1 ? 'bg-orange-500' : 
-                            index === 2 ? 'bg-yellow-500' : 
-                            index === 3 ? 'bg-blue-500' : 'bg-purple-500'
-                          }`}
-                          style={{width: `${item.percentage}%`}}
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Payment Method Breakdown */}
-          {paymentBreakdown.length > 0 && (
-            <div className="bg-white rounded-2xl p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">Payment Methods</h2>
-              <div className="space-y-3">
-                {paymentBreakdown.slice(0, 5).map((item, index) => (
-                  <div key={item.method} className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex justify-between items-center mb-1">
-                        <div className="flex items-center">
-                          <CreditCard className="w-4 h-4 text-gray-400 mr-2" />
-                          <span className="text-sm font-medium text-gray-700">{item.method}</span>
-                        </div>
-                        <span className="text-sm text-gray-500">${item.amount.toFixed(2)}</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div 
-                          className={`h-2 rounded-full ${
-                            index === 0 ? 'bg-blue-500' : 
-                            index === 1 ? 'bg-green-500' : 
-                            index === 2 ? 'bg-purple-500' : 
-                            index === 3 ? 'bg-pink-500' : 'bg-indigo-500'
-                          }`}
-                          style={{width: `${item.percentage}%`}}
-                        ></div>
-                      </div>
-                      <div className="flex justify-between items-center mt-1">
-                        <span className="text-xs text-gray-400">{item.count} transactions</span>
-                        <span className="text-xs text-gray-400">{item.percentage.toFixed(1)}%</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Payment Analytics */}
-          {paymentTransactions.length > 0 && (
-            <div className="bg-white rounded-2xl p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">Payment Analytics</h2>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center bg-blue-50 p-4 rounded-xl">
-                  <div className="flex items-center justify-center mb-2">
-                    <CreditCard className="w-5 h-5 text-blue-600 mr-1" />
-                    <span className="text-2xl font-bold text-blue-600">{paymentTransactions.length}</span>
-                  </div>
-                  <p className="text-sm text-gray-600">Total Payments</p>
-                </div>
-                <div className="text-center bg-blue-50 p-4 rounded-xl">
-                  <p className="text-2xl font-bold text-blue-600">
-                    ${paymentTransactions.reduce((sum, t) => sum + t.amount, 0).toFixed(2)}
-                  </p>
-                  <p className="text-sm text-gray-600">Payment Volume</p>
-                </div>
-              </div>
-              {paymentTransactions.length > 0 && (
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                  <p className="text-sm text-gray-600">Average Payment</p>
-                  <p className="text-lg font-semibold text-blue-600">
-                    ${(paymentTransactions.reduce((sum, t) => sum + t.amount, 0) / paymentTransactions.length).toFixed(2)}
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Transaction Counts */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Activity Summary</h2>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-center">
-                <p className="text-2xl font-bold text-green-600">{incomeTransactions.length}</p>
-                <p className="text-sm text-gray-500">Income Entries</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-red-600">{expenseTransactions.length}</p>
-                <p className="text-sm text-gray-500">Expense Entries</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Average Transaction */}
-          {transactions.length > 0 && (
-            <div className="bg-white rounded-2xl p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">Transaction Averages</h2>
-              <div className="grid grid-cols-2 gap-4">
-                {incomeTransactions.length > 0 && (
-                  <div className="text-center">
-                    <p className="text-xl font-bold text-green-600">
-                      ${(totalIncome / incomeTransactions.length).toFixed(2)}
-                    </p>
-                    <p className="text-sm text-gray-500">Avg Income</p>
-                  </div>
-                )}
-                {expenseTransactions.length > 0 && (
-                  <div className="text-center">
-                    <p className="text-xl font-bold text-red-600">
-                      ${(totalExpenses / expenseTransactions.length).toFixed(2)}
-                    </p>
-                    <p className="text-sm text-gray-500">Avg Expense</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Financial Health Score */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Financial Health Score</h2>
-            <div className="text-center">
-              {totalIncome > 0 ? (
-                <>
-                  <div className={`text-4xl font-bold mb-2 ${
-                    balance > totalIncome * 0.2 ? 'text-green-600' : 
-                    balance > 0 ? 'text-yellow-600' : 'text-red-600'
-                  }`}>
-                    {balance > totalIncome * 0.2 ? 'A+' : 
-                     balance > 0 ? 'B' : 'C'}
-                  </div>
-                  <p className="text-sm text-gray-600">
-                    {balance > totalIncome * 0.2 ? 'Excellent! You\'re saving well.' : 
-                     balance > 0 ? 'Good! Consider saving more.' : 
-                     'Review your spending habits.'}
-                  </p>
-                </>
-              ) : (
-                <p className="text-gray-500">Add income to see your score</p>
-              )}
-            </div>
-          </div>
-        </div>
-        
-        <div className="mt-8 text-center">
-          <p className="text-xs text-gray-400">My Financial Planning v1.0</p>
-          <p className="text-xs text-gray-300">Advanced Analytics & Insights</p>
-        </div>
-      </div>
-    );
-  };
-
-  return (
-    <div className="w-full max-w-sm mx-auto bg-gray-50 min-h-screen relative">
-      {/* Mobile Status Bar */}
-      <div className="bg-gray-900 text-white text-xs p-2 flex justify-between items-center">
-        <span>9:41</span>
-        <span>My Financial Planning</span>
-        <span>100%</span>
-      </div>
-
-      {/* Main Content */}
-      <div className="relative">
-        {activeTab === 'home' && <HomeTab />}
-        {activeTab === 'transactions' && <TransactionsTab />}
-        {activeTab === 'analytics' && <AnalyticsTab />}
-      </div>
-
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-sm bg-white border-t border-gray-200 px-4 py-2">
-        <div className="flex justify-around">
-          {[
-            { id: 'home', icon: Home, label: 'Home' },
-            { id: 'transactions', icon: List, label: 'History' },
-            { id: 'analytics', icon: TrendingUp, label: 'Analytics' }
-          ].map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${
-                activeTab === tab.id 
-                  ? 'text-purple-600 bg-purple-50' 
-                  : 'text-gray-400 hover:text-gray-600'
-              }`}
-            >
-              <tab.icon className="w-5 h-5 mb-1" />
-              <span className="text-xs font-medium">{tab.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Add Transaction Modal */}
-      {showAddForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end">
-          <div className="bg-white w-full rounded-t-3xl p-6 transform transition-transform">
-            <div className="flex justify-between items-center mb-6">
-              <div>
-                <h2 className="text-xl font-semibold">
-                  {isPaymentMode ? 'Record Payment' : `Add ${type === 'income' ? 'Income' : 'Expense'}`}
-                </h2>
-                <p className="text-sm text-gray-500">
-                  {isPaymentMode ? 'Track your bill payments & transactions' : 'My Financial Planning'}
-                </p>
-              </div>
-              <button 
-                onClick={() => {
-                  setShowAddForm(false);
-                  setIsPaymentMode(false);
-                }}
-                className="text-gray-400 hover:text-gray-600 p-2"
-              >
-                ✕
-              </button>
             </div>
 
-            <div className="space-y-4">
-              {/* Type Toggle - Hidden in Payment Mode */}
-              {!isPaymentMode && (
-                <div className="flex bg-gray-100 rounded-xl p-1">
-                  <button
-                    onClick={() => setType('expense')}
-                    className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
-                      type === 'expense' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500'
-                    }`}
-                  >
-                    Expense
-                  </button>
-                  <button
-                    onClick={() => setType('income')}
-                    className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
-                      type === 'income' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500'
-                    }`}
-                  >
-                    Income
-                  </button>
-                </div>
-              )}
-
-              {/* Payment Mode Indicator */}
-              {isPaymentMode && (
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-3">
-                  <div className="flex items-center">
-                    <CreditCard className="w-5 h-5 text-blue-600 mr-2" />
-                    <span className="text-blue-800 font-medium">Payment Recording Mode</span>
-                  </div>
-                  <p className="text-blue-600 text-sm mt-1">Recording a bill payment or transaction</p>
-                </div>
-              )}
-
-              {/* Amount Input */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Amount</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-3 text-gray-400">$</span>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder="0.00"
-                    className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-lg"
-                  />
-                </div>
-              </div>
-
-              {/* Description Input */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                <input
-                  type="text"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Enter description"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                />
-              </div>
-
-              {/* Category Select */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {isPaymentMode ? 'Payment Category' : 'Category'}
-                </label>
-                <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                >
-                  <option value="">Select category</option>
-                  {(isPaymentMode ? paymentCategories : categories).map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Payment Method Select */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Payment Method</label>
-                <select
-                  value={paymentMethod}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                >
-                  <option value="">Select payment method</option>
-                  {paymentMethods.map(method => (
-                    <option key={method} value={method}>{method}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex space-x-3 pt-4">
-                <button
-                  onClick={() => {
-                    setShowAddForm(false);
-                    setIsPaymentMode(false);
-                  }}
-                  className="flex-1 py-3 px-4 border border-gray-300 text-gray-700 rounded-xl font-medium active:scale-95 transition-transform"
-                >
-                  Cancel
+            <!-- Quick Actions -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 24px;">
+                <button class="quick-action bg-green" onclick="openAddForm('income')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    <span>Add Income</span>
                 </button>
-                <button
-                  onClick={addTransaction}
-                  className={`flex-1 py-3 px-4 text-white rounded-xl font-medium active:scale-95 transition-transform ${
-                    isPaymentMode ? 'bg-blue-500 hover:bg-blue-600' :
-                    type === 'income' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'
-                  }`}
-                >
-                  {isPaymentMode ? 'Record Payment' : `Add ${type === 'income' ? 'Income' : 'Expense'}`}
+                <button class="quick-action bg-red" onclick="openAddForm('expense')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    <span>Add Expense</span>
                 </button>
-              </div>
+                <button class="quick-action bg-blue" onclick="openPaymentForm()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                        <line x1="1" y1="10" x2="23" y2="10"/>
+                    </svg>
+                    <span>Record Payment</span>
+                </button>
             </div>
-          </div>
+
+            <!-- Recent Transactions -->
+            <div style="background-color: white; border-radius: 16px; padding: 16px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0;">Recent Activity</h2>
+                    <button onclick="showTab('transactions')" style="color: #9333ea; font-size: 14px; font-weight: 500; background: none; border: none;">View All</button>
+                </div>
+                
+                <div id="recent-transactions">
+                    <div style="text-align: center; padding: 32px 0; color: #9ca3af;">
+                        <div style="background-color: #f3e8ff; width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2" style="width: 32px; height: 32px;">
+                                <line x1="12" y1="1" x2="12" y2="23"/>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                        </div>
+                        <h3 style="font-weight: 500; color: #1f2937; margin: 0 0 4px 0;">Welcome to Financial Planning!</h3>
+                        <p style="font-size: 14px; margin: 0 0 16px 0;">Start your journey to financial freedom</p>
+                        <button onclick="openAddForm('expense')" class="btn btn-primary">Add First Transaction</button>
+                    </div>
+                </div>
+            </div>
         </div>
-      )}
+
+        <!-- Transactions Tab -->
+        <div id="transactions-tab" class="main-content hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <div>
+                    <h1 style="font-size: 20px; font-weight: bold; color: #1f2937; margin: 0;">Transaction History</h1>
+                    <p style="color: #6b7280; font-size: 14px; margin: 4px 0 0 0;">My Financial Planning</p>
+                </div>
+                <div style="background-color: #dbeafe; padding: 12px; border-radius: 50%;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
+                        <line x1="8" y1="6" x2="21" y2="6"/>
+                        <line x1="8" y1="12" x2="21" y2="12"/>
+                        <line x1="8" y1="18" x2="21" y2="18"/>
+                        <line x1="3" y1="6" x2="3.01" y2="6"/>
+                        <line x1="3" y1="12" x2="3.01" y2="12"/>
+                        <line x1="3" y1="18" x2="3.01" y2="18"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div style="background-color: white; border-radius: 16px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                <div style="padding: 16px; border-bottom: 1px solid #f3f4f6;">
+                    <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0;">All Transactions</h2>
+                    <p id="transaction-count" style="font-size: 14px; color: #6b7280; margin: 4px 0 0 0;">0 total entries</p>
+                </div>
+                
+                <div id="all-transactions">
+                    <div style="text-align: center; padding: 48px 0; color: #9ca3af;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 64px; height: 64px; margin: 0 auto 16px; opacity: 0.3;">
+                            <line x1="8" y1="6" x2="21" y2="6"/>
+                            <line x1="8" y1="12" x2="21" y2="12"/>
+                            <line x1="8" y1="18" x2="21" y2="18"/>
+                            <line x1="3" y1="6" x2="3.01" y2="6"/>
+                            <line x1="3" y1="12" x2="3.01" y2="12"/>
+                            <line x1="3" y1="18" x2="3.01" y2="18"/>
+                        </svg>
+                        <p style="font-size: 18px; margin: 0 0 8px 0;">No transactions yet</p>
+                        <p style="font-size: 14px; margin: 0;">Begin your financial tracking journey</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analytics-tab" class="main-content hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <div>
+                    <h1 style="font-size: 20px; font-weight: bold; color: #1f2937; margin: 0;">Financial Analytics</h1>
+                    <p style="color: #6b7280; font-size: 14px; margin: 4px 0 0 0;">My Financial Planning</p>
+                </div>
+                <div style="background-color: #dcfce7; padding: 12px; border-radius: 50%;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2">
+                        <path d="M21.21 15.89A10 10 0 1 1 8 2.83"/>
+                        <path d="M22 12A10 10 0 0 0 12 2v10z"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
+                <!-- Summary Card -->
+                <div style="background-color: white; border-radius: 16px; padding: 24px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                    <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Financial Summary</h2>
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: #6b7280;">Total Income</span>
+                            <span id="analytics-income" style="color: #16a34a; font-weight: 600; font-size: 18px;">$0.00</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: #6b7280;">Total Expenses</span>
+                            <span id="analytics-expenses" style="color: #dc2626; font-weight: 600; font-size: 18px;">$0.00</span>
+                        </div>
+                        <div style="border-top: 1px solid #f3f4f6; padding-top: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="color: #1f2937; font-weight: 500;">Net Savings</span>
+                                <span id="analytics-balance" style="font-weight: bold; font-size: 20px;">$0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Health Score -->
+                <div style="background-color: white; border-radius: 16px; padding: 24px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                    <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Financial Health Score</h2>
+                    <div style="text-align: center;">
+                        <div id="health-score" style="font-size: 48px; font-weight: bold; margin-bottom: 8px; color: #6b7280;">-</div>
+                        <p id="health-message" style="font-size: 14px; color: #6b7280; margin: 0;">Add income to see your score</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <button class="nav-btn active-tab" onclick="showTab('home')" data-tab="home">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9,22 9,12 15,12 15,22"/>
+                </svg>
+                <span>Home</span>
+            </button>
+            <button class="nav-btn" onclick="showTab('transactions')" data-tab="transactions">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="8" y1="6" x2="21" y2="6"/>
+                    <line x1="8" y1="12" x2="21" y2="12"/>
+                    <line x1="8" y1="18" x2="21" y2="18"/>
+                    <line x1="3" y1="6" x2="3.01" y2="6"/>
+                    <line x1="3" y1="12" x2="3.01" y2="12"/>
+                    <line x1="3" y1="18" x2="3.01" y2="18"/>
+                </svg>
+                <span>History</span>
+            </button>
+            <button class="nav-btn" onclick="showTab('analytics')" data-tab="analytics">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="20" x2="12" y2="10"/>
+                    <line x1="18" y1="20" x2="18" y2="4"/>
+                    <line x1="6" y1="20" x2="6" y2="16"/>
+                </svg>
+                <span>Analytics</span>
+            </button>
+        </div>
+
+        <!-- Add Transaction Modal -->
+        <div id="add-modal" class="modal hidden">
+            <div class="modal-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <div>
+                        <h2 id="modal-title" style="font-size: 20px; font-weight: 600; margin: 0;">Add Transaction</h2>
+                        <p style="font-size: 14px; color: #6b7280; margin: 4px 0 0 0;">My Financial Planning</p>
+                    </div>
+                    <button onclick="closeModal()" style="color: #9ca3af; font-size: 24px; background: none; border: none; padding: 8px;">✕</button>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                    <!-- Type Toggle -->
+                    <div id="type-toggle" style="display: flex; background-color: #f3f4f6; border-radius: 12px; padding: 4px;">
+                        <button id="expense-btn" onclick="setType('expense')" style="flex: 1; padding: 8px 16px; border-radius: 8px; font-weight: 500; background: white; color: #1f2937; border: none; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);">Expense</button>
+                        <button id="income-btn" onclick="setType('income')" style="flex: 1; padding: 8px 16px; border-radius: 8px; font-weight: 500; background: none; color: #6b7280; border: none;">Income</button>
+                    </div>
+
+                    <!-- Amount -->
+                    <div>
+                        <label style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 8px;">Amount</label>
+                        <div style="position: relative;">
+                            <span style="position: absolute; left: 12px; top: 12px; color: #9ca3af;">$</span>
+                            <input type="number" id="amount-input" placeholder="0.00" step="0.01" class="form-input" style="padding-left: 32px; font-size: 18px;">
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div>
+                        <label style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 8px;">Description</label>
+                        <input type="text" id="description-input" placeholder="Enter description" class="form-input">
+                    </div>
+
+                    <!-- Category -->
+                    <div>
+                        <label style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 8px;">Category</label>
+                        <select id="category-input" class="form-input">
+                            <option value="">Select category</option>
+                            <option value="Food & Dining">Food & Dining</option>
+                            <option value="Transportation">Transportation</option>
+                            <option value="Shopping">Shopping</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Bills & Utilities">Bills & Utilities</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Education">Education</option>
+                            <option value="Travel">Travel</option>
+                            <option value="Salary">Salary</option>
+                            <option value="Business">Business</option>
+                            <option value="Investment">Investment</option>
+                            <option value="Gift">Gift</option>
+                            <option value="Savings">Savings</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div>
+                        <label style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 8px;">Payment Method</label>
+                        <select id="payment-input" class="form-input">
+                            <option value="">Select payment method</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Credit Card">Credit Card</option>
+                            <option value="Debit Card">Debit Card</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+                            <option value="Digital Wallet">Digital Wallet</option>
+                            <option value="Check">Check</option>
+                            <option value="Mobile Payment">Mobile Payment</option>
+                            <option value="Online Banking">Online Banking</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div style="display: flex; gap: 12px; padding-top: 16px;">
+                        <button onclick="closeModal()" class="btn btn-secondary" style="flex: 1;">Cancel</button>
+                        <button id="submit-btn" onclick="addTransaction()" class="btn btn-primary" style="flex: 1;">Add Transaction</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  );
-}
+
+    <script>
+        // Global state
+        let transactions = [];
+        let currentType = 'expense';
+        let isPaymentMode = false;
+
+        // Load data from localStorage
+        function loadData() {
+            const saved = localStorage.getItem('financialData');
+            if (saved) {
+                transactions = JSON.parse(saved);
+                updateDisplays();
+            }
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('financialData', JSON.stringify(transactions));
+        }
+
+        // Show tab
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('[id$="-tab"]').forEach(tab => tab.classList.add('hidden'));
+            
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.remove('hidden');
+            
+            // Update nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active-tab'));
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active-tab');
+            
+            // Update displays when switching tabs
+            updateDisplays();
+        }
+
+        // Open add form
+        function openAddForm(type) {
+            currentType = type;
+            isPaymentMode = false;
+            document.getElementById('modal-title').textContent = `Add ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+            document.getElementById('type-toggle').style.display = 'flex';
+            setType(type);
+            document.getElementById('add-modal').classList.remove('hidden');
+        }
+
+        // Open payment form
+        function openPaymentForm() {
+            currentType = 'expense';
+            isPaymentMode = true;
+            document.getElementById('modal-title').textContent = 'Record Payment';
+            document.getElementById('type-toggle').style.display = 'none';
+            document.getElementById('category-input').value = 'Bills & Utilities';
+            document.getElementById('payment-input').value = 'Bank Transfer';
+            document.getElementById('add-modal').classList.remove('hidden');
+        }
+
+        // Set transaction type
+        function setType(type) {
+            currentType = type;
+            const expenseBtn = document.getElementById('expense-btn');
+            const incomeBtn = document.getElementById('income-btn');
+            const submitBtn = document.getElementById('submit-btn');
+            
+            if (type === 'expense') {
+                expenseBtn.style.background = 'white';
+                expenseBtn.style.color = '#1f2937';
+                expenseBtn.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.05)';
+                incomeBtn.style.background = 'none';
+                incomeBtn.style.color = '#6b7280';
+                incomeBtn.style.boxShadow = 'none';
+                submitBtn.className = 'btn btn-red';
+                submitBtn.textContent = 'Add Expense';
+            } else {
+                incomeBtn.style.background = 'white';
+                incomeBtn.style.color = '#1f2937';
+                incomeBtn.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.05)';
+                expenseBtn.style.background = 'none';
+                expenseBtn.style.color = '#6b7280';
+                expenseBtn.style.boxShadow = 'none';
+                submitBtn.className = 'btn btn-green';
+                submitBtn.textContent = 'Add Income';
+            }
+            
+            if (isPaymentMode) {
+                submitBtn.className = 'btn btn-blue';
+                submitBtn.textContent = 'Record Payment';
+            }
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('add-modal').classList.add('hidden');
+            // Clear form
+            document.getElementById('amount-input').value = '';
+            document.getElementById('description-input').value = '';
+            document.getElementById('category-input').value = '';
+            document.getElementById('payment-input').value = '';
+            isPaymentMode = false;
+        }
+
+        // Add transaction
+        function addTransaction() {
+            const amount = parseFloat(document.getElementById('amount-input').value);
+            const description = document.getElementById('description-input').value.trim();
+            const category = document.getElementById('category-input').value;
+            const payment = document.getElementById('payment-input').value;
+
+            // Validation
+            if (!description) {
+                alert('Please enter a description');
+                return;
+            }
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+            if (!category) {
+                alert('Please select a category');
+                return;
+            }
+            if (!payment) {
+                alert('Please select a payment method');
+                return;
+            }
+
+            // Create transaction
+            const transaction = {
+                id: Date.now(),
+                type: currentType,
+                amount: amount,
+                description: description,
+                category: category,
+                payment: payment,
+                isPayment: isPaymentMode,
+                date: new Date().toLocaleDateString(),
+                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+            };
+
+            // Add to transactions
+            transactions.unshift(transaction);
+            saveData();
+            updateDisplays();
+            closeModal();
+        }
+
+        // Delete transaction
+        function deleteTransaction(id) {
+            if (confirm('Delete this transaction?')) {
+                transactions = transactions.filter(t => t.id !== id);
+                saveData();
+                updateDisplays();
+            }
+        }
+
+        // Update all displays
+        function updateDisplays() {
+            updateBalanceCard();
+            updateRecentTransactions();
+            updateAllTransactions();
+            updateAnalytics();
+        }
+
+        // Update balance card
+        function updateBalanceCard() {
+            const income = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+            const expenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
+            const balance = income - expenses;
+
+            document.getElementById('balance-display').textContent = `$${balance.toFixed(2)}`;
+            document.getElementById('income-display').textContent = `$${income.toFixed(2)}`;
+            document.getElementById('expenses-display').textContent = `$${expenses.toFixed(2)}`;
+
+            const message = balance >= 0 ? "You're doing great!" : "Review your spending";
+            document.getElementById('balance-message').textContent = message;
+        }
+
+        // Update recent transactions
+        function updateRecentTransactions() {
+            const container = document.getElementById('recent-transactions');
+            const recent = transactions.slice(0, 5);
+
+            if (recent.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 32px 0; color: #9ca3af;">
+                        <div style="background-color: #f3e8ff; width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2" style="width: 32px; height: 32px;">
+                                <line x1="12" y1="1" x2="12" y2="23"/>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                        </div>
+                        <h3 style="font-weight: 500; color: #1f2937; margin: 0 0 4px 0;">Welcome to Financial Planning!</h3>
+                        <p style="font-size: 14px; margin: 0 0 16px 0;">Start your journey to financial freedom</p>
+                        <button onclick="openAddForm('expense')" class="btn btn-primary">Add First Transaction</button>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = recent.map(transaction => `
+                    <div class="transaction-item">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="padding: 8px; border-radius: 50%; background-color: ${transaction.type === 'income' ? '#dcfce7' : '#fecaca'};">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="${transaction.type === 'income' ? '#16a34a' : '#dc2626'}" stroke-width="2" style="width: 16px; height: 16px;">
+                                    ${transaction.type === 'income' ? 
+                                        '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>' : 
+                                        '<line x1="5" y1="12" x2="19" y2="12"/>'}
+                                </svg>
+                            </div>
+                            <div>
+                                <p style="font-weight: 500; color: #1f2937; margin: 0; font-size: 14px;">${transaction.description}</p>
+                                <p style="font-size: 12px; color: #6b7280; margin: 2px 0 0 0;">${transaction.category} • ${transaction.payment}</p>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <p style="font-weight: 600; color: ${transaction.type === 'income' ? '#16a34a' : '#dc2626'}; margin: 0;">
+                                ${transaction.type === 'income' ? '+' : '-'}$${transaction.amount.toFixed(2)}
+                            </p>
+                            <p style="font-size: 12px; color: #9ca3af; margin: 2px 0 0 0;">${transaction.time}</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Update all transactions
+        function updateAllTransactions() {
+            const container = document.getElementById('all-transactions');
+            document.getElementById('transaction-count').textContent = `${transactions.length} total entries`;
+
+            if (transactions.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 48px 0; color: #9ca3af;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 64px; height: 64px; margin: 0 auto 16px; opacity: 0.3;">
+                            <line x1="8" y1="6" x2="21" y2="6"/>
+                            <line x1="8" y1="12" x2="21" y2="12"/>
+                            <line x1="8" y1="18" x2="21" y2="18"/>
+                            <line x1="3" y1="6" x2="3.01" y2="6"/>
+                            <line x1="3" y1="12" x2="3.01" y2="12"/>
+                            <line x1="3" y1="18" x2="3.01" y2="18"/>
+                        </svg>
+                        <p style="font-size: 18px; margin: 0 0 8px 0;">No transactions yet</p>
+                        <p style="font-size: 14px; margin: 0;">Begin your financial tracking journey</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = transactions.map(transaction => `
+                    <div style="padding: 16px; border-bottom: 1px solid #f3f4f6;">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+                                <div style="padding: 8px; border-radius: 50%; background-color: ${transaction.type === 'income' ? '#dcfce7' : '#fecaca'};">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="${transaction.type === 'income' ? '#16a34a' : '#dc2626'}" stroke-width="2" style="width: 16px; height: 16px;">
+                                        ${transaction.type === 'income' ? 
+                                            '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>' : 
+                                            '<line x1="5" y1="12" x2="19" y2="12"/>'}
+                                    </svg>
+                                </div>
+                                <div style="flex: 1;">
+                                    <p style="font-weight: 500; color: #1f2937; margin: 0;">${transaction.description}</p>
+                                    <div style="display: flex; align-items: center; gap: 12px; font-size: 12px; color: #6b7280; margin-top: 4px;">
+                                        <span>${transaction.category}</span>
+                                        <span>${transaction.payment}</span>
+                                        <span>${transaction.date}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="text-align: right;">
+                                    <p style="font-weight: 600; color: ${transaction.type === 'income' ? '#16a34a' : '#dc2626'}; margin: 0;">
+                                        ${transaction.type === 'income' ? '+' : '-'}$${transaction.amount.toFixed(2)}
+                                    </p>
+                                </div>
+                                <button onclick="deleteTransaction(${transaction.id})" style="color: #ef4444; background: none; border: none; padding: 4px; border-radius: 4px;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                                        <polyline points="3,6 5,6 21,6"/>
+                                        <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"/>
+                                        <line x1="10" y1="11" x2="10" y2="17"/>
+                                        <line x1="14" y1="11" x2="14" y2="17"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Update analytics
+        function updateAnalytics() {
+            const income = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+            const expenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
+            const balance = income - expenses;
+
+            document.getElementById('analytics-income').textContent = `$${income.toFixed(2)}`;
+            document.getElementById('analytics-expenses').textContent = `$${expenses.toFixed(2)}`;
+            document.getElementById('analytics-balance').textContent = `$${balance.toFixed(2)}`;
+            document.getElementById('analytics-balance').style.color = balance >= 0 ? '#16a34a' : '#dc2626';
+
+            // Health score
+            const scoreElement = document.getElementById('health-score');
+            const messageElement = document.getElementById('health-message');
+            
+            if (income > 0) {
+                let score, message, color;
+                if (balance > income * 0.2) {
+                    score = 'A+';
+                    message = "Excellent! You're saving well.";
+                    color = '#16a34a';
+                } else if (balance > 0) {
+                    score = 'B';
+                    message = 'Good! Consider saving more.';
+                    color = '#eab308';
+                } else {
+                    score = 'C';
+                    message = 'Review your spending habits.';
+                    color = '#dc2626';
+                }
+                scoreElement.textContent = score;
+                scoreElement.style.color = color;
+                messageElement.textContent = message;
+            } else {
+                scoreElement.textContent = '-';
+                scoreElement.style.color = '#6b7280';
+                messageElement.textContent = 'Add income to see your score';
+            }
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            updateDisplays();
+        });
+    </script>
+</body>
+</html>
