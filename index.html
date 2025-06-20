@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#6366f1">
+    <meta name="theme-color" content="#4b5563">
     <title>My Financial Planning</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -16,7 +16,7 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #f9fafb;
+            background-color: #f3f4f6;
             overflow-x: hidden;
         }
         .container {
@@ -24,13 +24,13 @@
             margin: 0 auto;
             min-height: 100vh;
             position: relative;
-            background-color: #f9fafb;
+            background-color: #f3f4f6;
         }
         .hidden { display: none !important; }
-        .active-tab { color: #9333ea !important; background-color: #f3e8ff !important; }
+        .active-tab { color: #374151 !important; background-color: #e5e7eb !important; }
         .status-bar {
             background-color: #111827;
-            color: white;
+            color: #d1d5db;
             font-size: 12px;
             padding: 8px;
             display: flex;
@@ -42,12 +42,12 @@
             padding-bottom: 100px;
         }
         .balance-card {
-            background: linear-gradient(135deg, #9333ea 0%, #1d4ed8 100%);
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
             border-radius: 16px;
             padding: 24px;
             color: white;
             margin-bottom: 24px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
         }
         .quick-action {
             padding: 16px;
@@ -59,7 +59,7 @@
             color: white;
             font-weight: 600;
             font-size: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15);
             transition: transform 0.1s;
             border: none;
             cursor: pointer;
@@ -67,9 +67,16 @@
         .quick-action:active {
             transform: scale(0.95);
         }
-        .bg-green { background-color: #10b981; }
-        .bg-red { background-color: #ef4444; }
-        .bg-blue { background-color: #3b82f6; }
+        .bg-green { background-color: #6b7280; }
+        .bg-red { background-color: #9ca3af; }
+        .bg-blue { background-color: #4b5563; }
+        .card {
+            background-color: #ffffff;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+        }
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -77,8 +84,8 @@
             transform: translateX(-50%);
             width: 100%;
             max-width: 384px;
-            background-color: white;
-            border-top: 1px solid #e5e7eb;
+            background-color: #f9fafb;
+            border-top: 1px solid #d1d5db;
             padding: 8px 16px;
             display: flex;
             justify-content: space-around;
@@ -89,7 +96,7 @@
             align-items: center;
             padding: 8px 12px;
             border-radius: 8px;
-            color: #9ca3af;
+            color: #6b7280;
             font-size: 12px;
             font-weight: 500;
             border: none;
@@ -106,7 +113,7 @@
             align-items: flex-end;
         }
         .modal-content {
-            background-color: white;
+            background-color: #f9fafb;
             width: 100%;
             border-top-left-radius: 24px;
             border-top-right-radius: 24px;
@@ -121,11 +128,12 @@
             border-radius: 12px;
             font-size: 16px;
             margin-top: 8px;
+            background-color: #ffffff;
         }
         .form-input:focus {
             outline: none;
-            border-color: #9333ea;
-            box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
+            border-color: #6b7280;
+            box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.1);
         }
         .btn {
             padding: 12px 16px;
@@ -136,20 +144,21 @@
             transition: all 0.1s;
         }
         .btn:active { transform: scale(0.95); }
-        .btn-primary { background-color: #9333ea; color: white; }
-        .btn-green { background-color: #10b981; color: white; }
-        .btn-red { background-color: #ef4444; color: white; }
-        .btn-blue { background-color: #3b82f6; color: white; }
-        .btn-secondary { background-color: white; color: #374151; border: 1px solid #d1d5db; }
+        .btn-primary { background-color: #6b7280; color: white; }
+        .btn-green { background-color: #6b7280; color: white; }
+        .btn-red { background-color: #9ca3af; color: white; }
+        .btn-blue { background-color: #4b5563; color: white; }
+        .btn-secondary { background-color: #ffffff; color: #374151; border: 1px solid #d1d5db; }
         .transaction-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 12px;
-            background-color: white;
+            background-color: #ffffff;
             border-radius: 12px;
             margin-bottom: 8px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #f3f4f6;
         }
         .progress-bar {
             width: 100%;
@@ -162,6 +171,17 @@
             height: 100%;
             transition: width 0.3s;
         }
+        .health-indicator {
+            background-color: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+        .grey-accent { background-color: #f3f4f6; border: 1px solid #e5e7eb; }
+        .text-grey { color: #6b7280; }
+        .text-dark-grey { color: #374151; }
+        .text-light-grey { color: #9ca3af; }
         svg {
             width: 20px;
             height: 20px;
@@ -185,8 +205,8 @@
                     <h1 style="font-size: 24px; font-weight: bold; color: #1f2937; margin: 0;">My Financial Planning</h1>
                     <p style="color: #6b7280; font-size: 14px; margin: 4px 0 0 0;">Smart Money Management</p>
                 </div>
-                <div style="background: linear-gradient(135deg, #e0e7ff 0%, #dbeafe 100%); padding: 12px; border-radius: 50%;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2">
+                <div class="grey-accent" style="padding: 12px; border-radius: 50%;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2">
                         <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/>
                         <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/>
                         <line x1="18" y1="12" x2="18" y2="12"/>
@@ -198,35 +218,67 @@
             <div class="balance-card">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
                     <div>
-                        <p style="color: rgba(255,255,255,0.7); font-size: 14px; margin: 0;">Current Balance</p>
+                        <p style="color: rgba(255,255,255,0.8); font-size: 14px; margin: 0;">Current Balance</p>
                         <h1 id="balance-display" style="font-size: 32px; font-weight: bold; margin: 4px 0;">$0.00</h1>
-                        <p id="balance-message" style="color: rgba(255,255,255,0.8); font-size: 12px; margin: 4px 0 0 0;">Start tracking your finances!</p>
+                        <p id="balance-message" style="color: rgba(255,255,255,0.9); font-size: 12px; margin: 4px 0 0 0;">Start tracking your finances!</p>
                     </div>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" style="width: 32px; height: 32px;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" style="width: 32px; height: 32px;">
                         <line x1="12" y1="1" x2="12" y2="23"/>
                         <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
                     </svg>
                 </div>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px;">
-                    <div style="background: rgba(255,255,255,0.2); border-radius: 12px; padding: 12px;">
+                    <div style="background: rgba(255,255,255,0.15); border-radius: 12px; padding: 12px;">
                         <div style="display: flex; align-items: center; margin-bottom: 4px;">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(34,197,94,0.8)" stroke-width="2" style="width: 16px; height: 16px; margin-right: 4px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" style="width: 16px; height: 16px; margin-right: 4px;">
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
-                            <span style="font-size: 12px; color: rgba(255,255,255,0.7);">Income</span>
+                            <span style="font-size: 12px; color: rgba(255,255,255,0.8);">Income</span>
                         </div>
                         <p id="income-display" style="font-size: 18px; font-weight: 600; margin: 0;">$0.00</p>
                     </div>
-                    <div style="background: rgba(255,255,255,0.2); border-radius: 12px; padding: 12px;">
+                    <div style="background: rgba(255,255,255,0.15); border-radius: 12px; padding: 12px;">
                         <div style="display: flex; align-items: center; margin-bottom: 4px;">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(239,68,68,0.8)" stroke-width="2" style="width: 16px; height: 16px; margin-right: 4px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" style="width: 16px; height: 16px; margin-right: 4px;">
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
-                            <span style="font-size: 12px; color: rgba(255,255,255,0.7);">Expenses</span>
+                            <span style="font-size: 12px; color: rgba(255,255,255,0.8);">Expenses</span>
                         </div>
                         <p id="expenses-display" style="font-size: 18px; font-weight: 600; margin: 0;">$0.00</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Financial Health -->
+            <div class="health-indicator">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                    <h2 style="font-size: 18px; font-weight: 600; color: #374151; margin: 0;">Financial Health</h2>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 20px; height: 20px;">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12,6 12,12 16,14"/>
+                    </svg>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="font-size: 14px; color: #6b7280;">Expense Ratio</span>
+                    <span id="expense-ratio" style="font-size: 14px; font-weight: 500; color: #6b7280;">N/A</span>
+                </div>
+                <div class="progress-bar" style="margin-bottom: 8px;">
+                    <div id="expense-progress" class="progress-fill" style="width: 0%; background-color: #6b7280;"></div>
+                </div>
+                <p style="font-size: 12px; color: #9ca3af; margin: 0;">Recommended: Keep expenses below 80% of income</p>
+                
+                <div id="payment-method-info" class="hidden" style="padding-top: 12px; border-top: 1px solid #e5e7eb; margin-top: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 14px; color: #6b7280;">Most Used Payment</span>
+                        <div style="display: flex; align-items: center; font-size: 14px; font-weight: 500; color: #374151;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 12px; height: 12px; margin-right: 4px;">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                                <line x1="1" y1="10" x2="23" y2="10"/>
+                            </svg>
+                            <span id="most-used-payment">N/A</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -256,24 +308,41 @@
             </div>
 
             <!-- Recent Transactions -->
-            <div style="background-color: white; border-radius: 16px; padding: 16px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+            <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                     <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0;">Recent Activity</h2>
-                    <button onclick="showTab('transactions')" style="color: #9333ea; font-size: 14px; font-weight: 500; background: none; border: none;">View All</button>
+                    <button onclick="showTab('transactions')" style="color: #6b7280; font-size: 14px; font-weight: 500; background: none; border: none;">View All</button>
                 </div>
                 
                 <div id="recent-transactions">
                     <div style="text-align: center; padding: 32px 0; color: #9ca3af;">
-                        <div style="background-color: #f3e8ff; width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2" style="width: 32px; height: 32px;">
+                        <div class="grey-accent" style="width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 32px; height: 32px;">
                                 <line x1="12" y1="1" x2="12" y2="23"/>
                                 <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
                             </svg>
                         </div>
                         <h3 style="font-weight: 500; color: #1f2937; margin: 0 0 4px 0;">Welcome to Financial Planning!</h3>
-                        <p style="font-size: 14px; margin: 0 0 16px 0;">Start your journey to financial freedom</p>
+                        <p style="font-size: 14px; margin: 0 0 16px 0; color: #6b7280;">Start your journey to financial freedom</p>
                         <button onclick="openAddForm('expense')" class="btn btn-primary">Add First Transaction</button>
                     </div>
+                </div>
+            </div>
+
+            <!-- Recent Payments -->
+            <div id="recent-payments" class="hidden" style="margin-top: 24px;">
+                <div class="card">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0;">Recent Payments</h2>
+                        <div class="grey-accent" style="padding: 8px; border-radius: 50%;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 16px; height: 16px;">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                                <line x1="1" y1="10" x2="23" y2="10"/>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div id="payment-list"></div>
                 </div>
             </div>
         </div>
@@ -285,8 +354,8 @@
                     <h1 style="font-size: 20px; font-weight: bold; color: #1f2937; margin: 0;">Transaction History</h1>
                     <p style="color: #6b7280; font-size: 14px; margin: 4px 0 0 0;">My Financial Planning</p>
                 </div>
-                <div style="background-color: #dbeafe; padding: 12px; border-radius: 50%;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
+                <div class="grey-accent" style="padding: 12px; border-radius: 50%;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2">
                         <line x1="8" y1="6" x2="21" y2="6"/>
                         <line x1="8" y1="12" x2="21" y2="12"/>
                         <line x1="8" y1="18" x2="21" y2="18"/>
@@ -297,8 +366,8 @@
                 </div>
             </div>
 
-            <div style="background-color: white; border-radius: 16px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
-                <div style="padding: 16px; border-bottom: 1px solid #f3f4f6;">
+            <div class="card">
+                <div style="padding: 0 0 16px 0; border-bottom: 1px solid #f3f4f6; margin-bottom: 16px;">
                     <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0;">All Transactions</h2>
                     <p id="transaction-count" style="font-size: 14px; color: #6b7280; margin: 4px 0 0 0;">0 total entries</p>
                 </div>
@@ -327,8 +396,8 @@
                     <h1 style="font-size: 20px; font-weight: bold; color: #1f2937; margin: 0;">Financial Analytics</h1>
                     <p style="color: #6b7280; font-size: 14px; margin: 4px 0 0 0;">My Financial Planning</p>
                 </div>
-                <div style="background-color: #dcfce7; padding: 12px; border-radius: 50%;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2">
+                <div class="grey-accent" style="padding: 12px; border-radius: 50%;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2">
                         <path d="M21.21 15.89A10 10 0 1 1 8 2.83"/>
                         <path d="M22 12A10 10 0 0 0 12 2v10z"/>
                     </svg>
@@ -337,28 +406,55 @@
 
             <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
                 <!-- Summary Card -->
-                <div style="background-color: white; border-radius: 16px; padding: 24px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                <div class="card">
                     <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Financial Summary</h2>
                     <div style="display: flex; flex-direction: column; gap: 16px;">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: #6b7280;">Total Income</span>
-                            <span id="analytics-income" style="color: #16a34a; font-weight: 600; font-size: 18px;">$0.00</span>
+                            <span id="analytics-income" style="color: #374151; font-weight: 600; font-size: 18px;">$0.00</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: #6b7280;">Total Expenses</span>
-                            <span id="analytics-expenses" style="color: #dc2626; font-weight: 600; font-size: 18px;">$0.00</span>
+                            <span id="analytics-expenses" style="color: #6b7280; font-weight: 600; font-size: 18px;">$0.00</span>
                         </div>
                         <div style="border-top: 1px solid #f3f4f6; padding-top: 16px;">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
                                 <span style="color: #1f2937; font-weight: 500;">Net Savings</span>
-                                <span id="analytics-balance" style="font-weight: bold; font-size: 20px;">$0.00</span>
+                                <span id="analytics-balance" style="font-weight: bold; font-size: 20px; color: #374151;">$0.00</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Category Breakdown -->
+                <div id="category-analytics" class="card hidden">
+                    <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Spending by Category</h2>
+                    <div id="category-list"></div>
+                </div>
+
+                <!-- Payment Method Analytics -->
+                <div id="payment-analytics" class="card hidden">
+                    <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Payment Methods</h2>
+                    <div id="payment-method-list"></div>
+                </div>
+
+                <!-- Activity Summary -->
+                <div class="card">
+                    <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Activity Summary</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div style="text-align: center; padding: 16px; background-color: #f9fafb; border-radius: 12px;">
+                            <p id="income-count" style="font-size: 24px; font-weight: bold; color: #374151; margin: 0;">0</p>
+                            <p style="font-size: 14px; color: #6b7280; margin: 4px 0 0 0;">Income Entries</p>
+                        </div>
+                        <div style="text-align: center; padding: 16px; background-color: #f9fafb; border-radius: 12px;">
+                            <p id="expense-count" style="font-size: 24px; font-weight: bold; color: #6b7280; margin: 0;">0</p>
+                            <p style="font-size: 14px; color: #6b7280; margin: 4px 0 0 0;">Expense Entries</p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Health Score -->
-                <div style="background-color: white; border-radius: 16px; padding: 24px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                <div class="card">
                     <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Financial Health Score</h2>
                     <div style="text-align: center;">
                         <div id="health-score" style="font-size: 48px; font-weight: bold; margin-bottom: 8px; color: #6b7280;">-</div>
@@ -403,7 +499,7 @@
             <div class="modal-content">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                     <div>
-                        <h2 id="modal-title" style="font-size: 20px; font-weight: 600; margin: 0;">Add Transaction</h2>
+                        <h2 id="modal-title" style="font-size: 20px; font-weight: 600; margin: 0; color: #1f2937;">Add Transaction</h2>
                         <p style="font-size: 14px; color: #6b7280; margin: 4px 0 0 0;">My Financial Planning</p>
                     </div>
                     <button onclick="closeModal()" style="color: #9ca3af; font-size: 24px; background: none; border: none; padding: 8px;">✕</button>
@@ -411,9 +507,21 @@
 
                 <div style="display: flex; flex-direction: column; gap: 16px;">
                     <!-- Type Toggle -->
-                    <div id="type-toggle" style="display: flex; background-color: #f3f4f6; border-radius: 12px; padding: 4px;">
+                    <div id="type-toggle" class="grey-accent" style="display: flex; border-radius: 12px; padding: 4px;">
                         <button id="expense-btn" onclick="setType('expense')" style="flex: 1; padding: 8px 16px; border-radius: 8px; font-weight: 500; background: white; color: #1f2937; border: none; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);">Expense</button>
                         <button id="income-btn" onclick="setType('income')" style="flex: 1; padding: 8px 16px; border-radius: 8px; font-weight: 500; background: none; color: #6b7280; border: none;">Income</button>
+                    </div>
+
+                    <!-- Payment Mode Indicator -->
+                    <div id="payment-mode-indicator" class="hidden" style="background-color: #f3f4f6; border: 1px solid #d1d5db; border-radius: 12px; padding: 12px;">
+                        <div style="display: flex; align-items: center;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 20px; height: 20px; margin-right: 8px;">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                                <line x1="1" y1="10" x2="23" y2="10"/>
+                            </svg>
+                            <span style="color: #374151; font-weight: 500;">Payment Recording Mode</span>
+                        </div>
+                        <p style="color: #6b7280; font-size: 14px; margin: 4px 0 0 0;">Recording a bill payment or transaction</p>
                     </div>
 
                     <!-- Amount -->
@@ -522,6 +630,7 @@
             isPaymentMode = false;
             document.getElementById('modal-title').textContent = `Add ${type.charAt(0).toUpperCase() + type.slice(1)}`;
             document.getElementById('type-toggle').style.display = 'flex';
+            document.getElementById('payment-mode-indicator').classList.add('hidden');
             setType(type);
             document.getElementById('add-modal').classList.remove('hidden');
         }
@@ -532,8 +641,11 @@
             isPaymentMode = true;
             document.getElementById('modal-title').textContent = 'Record Payment';
             document.getElementById('type-toggle').style.display = 'none';
+            document.getElementById('payment-mode-indicator').classList.remove('hidden');
             document.getElementById('category-input').value = 'Bills & Utilities';
             document.getElementById('payment-input').value = 'Bank Transfer';
+            document.getElementById('submit-btn').className = 'btn btn-blue';
+            document.getElementById('submit-btn').textContent = 'Record Payment';
             document.getElementById('add-modal').classList.remove('hidden');
         }
 
@@ -562,11 +674,6 @@
                 expenseBtn.style.boxShadow = 'none';
                 submitBtn.className = 'btn btn-green';
                 submitBtn.textContent = 'Add Income';
-            }
-            
-            if (isPaymentMode) {
-                submitBtn.className = 'btn btn-blue';
-                submitBtn.textContent = 'Record Payment';
             }
         }
 
@@ -641,6 +748,7 @@
             updateRecentTransactions();
             updateAllTransactions();
             updateAnalytics();
+            updateHealthIndicator();
         }
 
         // Update balance card
@@ -657,6 +765,50 @@
             document.getElementById('balance-message').textContent = message;
         }
 
+        // Update health indicator
+        function updateHealthIndicator() {
+            const income = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+            const expenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
+            
+            const ratioElement = document.getElementById('expense-ratio');
+            const progressElement = document.getElementById('expense-progress');
+            
+            if (income > 0) {
+                const ratio = (expenses / income) * 100;
+                ratioElement.textContent = `${ratio.toFixed(1)}%`;
+                progressElement.style.width = `${Math.min(ratio, 100)}%`;
+                
+                if (ratio < 80) {
+                    progressElement.style.backgroundColor = '#6b7280';
+                } else {
+                    progressElement.style.backgroundColor = '#9ca3af';
+                }
+            } else {
+                ratioElement.textContent = 'N/A';
+                progressElement.style.width = '0%';
+            }
+
+            // Update most used payment method
+            const paymentInfo = document.getElementById('payment-method-info');
+            const mostUsedElement = document.getElementById('most-used-payment');
+            
+            if (transactions.length > 0) {
+                const paymentCounts = {};
+                transactions.forEach(t => {
+                    paymentCounts[t.payment] = (paymentCounts[t.payment] || 0) + 1;
+                });
+                
+                const mostUsed = Object.keys(paymentCounts).reduce((a, b) => 
+                    paymentCounts[a] > paymentCounts[b] ? a : b
+                );
+                
+                mostUsedElement.textContent = mostUsed;
+                paymentInfo.classList.remove('hidden');
+            } else {
+                paymentInfo.classList.add('hidden');
+            }
+        }
+
         // Update recent transactions
         function updateRecentTransactions() {
             const container = document.getElementById('recent-transactions');
@@ -665,14 +817,14 @@
             if (recent.length === 0) {
                 container.innerHTML = `
                     <div style="text-align: center; padding: 32px 0; color: #9ca3af;">
-                        <div style="background-color: #f3e8ff; width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2" style="width: 32px; height: 32px;">
+                        <div class="grey-accent" style="width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 32px; height: 32px;">
                                 <line x1="12" y1="1" x2="12" y2="23"/>
                                 <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
                             </svg>
                         </div>
                         <h3 style="font-weight: 500; color: #1f2937; margin: 0 0 4px 0;">Welcome to Financial Planning!</h3>
-                        <p style="font-size: 14px; margin: 0 0 16px 0;">Start your journey to financial freedom</p>
+                        <p style="font-size: 14px; margin: 0 0 16px 0; color: #6b7280;">Start your journey to financial freedom</p>
                         <button onclick="openAddForm('expense')" class="btn btn-primary">Add First Transaction</button>
                     </div>
                 `;
@@ -680,8 +832,8 @@
                 container.innerHTML = recent.map(transaction => `
                     <div class="transaction-item">
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="padding: 8px; border-radius: 50%; background-color: ${transaction.type === 'income' ? '#dcfce7' : '#fecaca'};">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="${transaction.type === 'income' ? '#16a34a' : '#dc2626'}" stroke-width="2" style="width: 16px; height: 16px;">
+                            <div style="padding: 8px; border-radius: 50%; background-color: ${transaction.type === 'income' ? '#f3f4f6' : '#f9fafb'}; border: 1px solid #e5e7eb;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 16px; height: 16px;">
                                     ${transaction.type === 'income' ? 
                                         '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>' : 
                                         '<line x1="5" y1="12" x2="19" y2="12"/>'}
@@ -693,13 +845,44 @@
                             </div>
                         </div>
                         <div style="text-align: right;">
-                            <p style="font-weight: 600; color: ${transaction.type === 'income' ? '#16a34a' : '#dc2626'}; margin: 0;">
+                            <p style="font-weight: 600; color: ${transaction.type === 'income' ? '#374151' : '#6b7280'}; margin: 0;">
                                 ${transaction.type === 'income' ? '+' : '-'}$${transaction.amount.toFixed(2)}
                             </p>
                             <p style="font-size: 12px; color: #9ca3af; margin: 2px 0 0 0;">${transaction.time}</p>
                         </div>
                     </div>
                 `).join('');
+            }
+
+            // Update recent payments
+            const payments = transactions.filter(t => t.isPayment).slice(0, 3);
+            const recentPayments = document.getElementById('recent-payments');
+            const paymentList = document.getElementById('payment-list');
+            
+            if (payments.length > 0) {
+                recentPayments.classList.remove('hidden');
+                paymentList.innerHTML = payments.map(payment => `
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; border-left: 4px solid #6b7280; padding-left: 12px; background-color: #f9fafb; border-radius: 0 8px 8px 0; margin-bottom: 8px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="padding: 8px; border-radius: 50%; background-color: #f3f4f6; border: 1px solid #e5e7eb;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 16px; height: 16px;">
+                                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                                    <line x1="1" y1="10" x2="23" y2="10"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p style="font-weight: 500; color: #1f2937; margin: 0; font-size: 14px;">${payment.description}</p>
+                                <p style="font-size: 12px; color: #6b7280; margin: 2px 0 0 0;">${payment.category} • ${payment.payment}</p>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <p style="font-weight: 600; color: #6b7280; margin: 0;">-$${payment.amount.toFixed(2)}</p>
+                            <p style="font-size: 12px; color: #9ca3af; margin: 2px 0 0 0;">${payment.time}</p>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                recentPayments.classList.add('hidden');
             }
         }
 
@@ -728,8 +911,8 @@
                     <div style="padding: 16px; border-bottom: 1px solid #f3f4f6;">
                         <div style="display: flex; align-items: center; justify-content: space-between;">
                             <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
-                                <div style="padding: 8px; border-radius: 50%; background-color: ${transaction.type === 'income' ? '#dcfce7' : '#fecaca'};">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="${transaction.type === 'income' ? '#16a34a' : '#dc2626'}" stroke-width="2" style="width: 16px; height: 16px;">
+                                <div style="padding: 8px; border-radius: 50%; background-color: ${transaction.type === 'income' ? '#f3f4f6' : '#f9fafb'}; border: 1px solid #e5e7eb;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 16px; height: 16px;">
                                         ${transaction.type === 'income' ? 
                                             '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>' : 
                                             '<line x1="5" y1="12" x2="19" y2="12"/>'}
@@ -746,11 +929,11 @@
                             </div>
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <div style="text-align: right;">
-                                    <p style="font-weight: 600; color: ${transaction.type === 'income' ? '#16a34a' : '#dc2626'}; margin: 0;">
+                                    <p style="font-weight: 600; color: ${transaction.type === 'income' ? '#374151' : '#6b7280'}; margin: 0;">
                                         ${transaction.type === 'income' ? '+' : '-'}$${transaction.amount.toFixed(2)}
                                     </p>
                                 </div>
-                                <button onclick="deleteTransaction(${transaction.id})" style="color: #ef4444; background: none; border: none; padding: 4px; border-radius: 4px;">
+                                <button onclick="deleteTransaction(${transaction.id})" style="color: #9ca3af; background: none; border: none; padding: 4px; border-radius: 4px;">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
                                         <polyline points="3,6 5,6 21,6"/>
                                         <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"/>
@@ -770,11 +953,14 @@
             const income = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
             const expenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
             const balance = income - expenses;
+            const incomeCount = transactions.filter(t => t.type === 'income').length;
+            const expenseCount = transactions.filter(t => t.type === 'expense').length;
 
             document.getElementById('analytics-income').textContent = `$${income.toFixed(2)}`;
             document.getElementById('analytics-expenses').textContent = `$${expenses.toFixed(2)}`;
             document.getElementById('analytics-balance').textContent = `$${balance.toFixed(2)}`;
-            document.getElementById('analytics-balance').style.color = balance >= 0 ? '#16a34a' : '#dc2626';
+            document.getElementById('income-count').textContent = incomeCount;
+            document.getElementById('expense-count').textContent = expenseCount;
 
             // Health score
             const scoreElement = document.getElementById('health-score');
@@ -785,15 +971,15 @@
                 if (balance > income * 0.2) {
                     score = 'A+';
                     message = "Excellent! You're saving well.";
-                    color = '#16a34a';
+                    color = '#374151';
                 } else if (balance > 0) {
                     score = 'B';
                     message = 'Good! Consider saving more.';
-                    color = '#eab308';
+                    color = '#6b7280';
                 } else {
                     score = 'C';
                     message = 'Review your spending habits.';
-                    color = '#dc2626';
+                    color = '#9ca3af';
                 }
                 scoreElement.textContent = score;
                 scoreElement.style.color = color;
@@ -802,6 +988,96 @@
                 scoreElement.textContent = '-';
                 scoreElement.style.color = '#6b7280';
                 messageElement.textContent = 'Add income to see your score';
+            }
+
+            // Category analytics
+            updateCategoryAnalytics();
+            updatePaymentAnalytics();
+        }
+
+        // Update category analytics
+        function updateCategoryAnalytics() {
+            const categories = {};
+            const totalExpenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
+            
+            transactions.filter(t => t.type === 'expense').forEach(t => {
+                categories[t.category] = (categories[t.category] || 0) + t.amount;
+            });
+
+            const categoryList = Object.entries(categories)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 5);
+
+            const categoryAnalytics = document.getElementById('category-analytics');
+            const categoryListElement = document.getElementById('category-list');
+
+            if (categoryList.length > 0) {
+                categoryAnalytics.classList.remove('hidden');
+                categoryListElement.innerHTML = categoryList.map(([category, amount], index) => {
+                    const percentage = totalExpenses > 0 ? (amount / totalExpenses) * 100 : 0;
+                    const colors = ['#6b7280', '#9ca3af', '#d1d5db', '#e5e7eb', '#f3f4f6'];
+                    return `
+                        <div style="margin-bottom: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <span style="font-size: 14px; font-weight: 500; color: #374151;">${category}</span>
+                                <span style="font-size: 14px; color: #6b7280;">$${amount.toFixed(2)}</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${percentage}%; background-color: ${colors[index]};"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                categoryAnalytics.classList.add('hidden');
+            }
+        }
+
+        // Update payment analytics
+        function updatePaymentAnalytics() {
+            const payments = {};
+            const totalAmount = transactions.reduce((sum, t) => sum + t.amount, 0);
+            
+            transactions.forEach(t => {
+                payments[t.payment] = (payments[t.payment] || 0) + t.amount;
+            });
+
+            const paymentList = Object.entries(payments)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 5);
+
+            const paymentAnalytics = document.getElementById('payment-analytics');
+            const paymentListElement = document.getElementById('payment-method-list');
+
+            if (paymentList.length > 0) {
+                paymentAnalytics.classList.remove('hidden');
+                paymentListElement.innerHTML = paymentList.map(([method, amount], index) => {
+                    const percentage = totalAmount > 0 ? (amount / totalAmount) * 100 : 0;
+                    const colors = ['#6b7280', '#9ca3af', '#d1d5db', '#e5e7eb', '#f3f4f6'];
+                    return `
+                        <div style="margin-bottom: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <div style="display: flex; align-items: center;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 16px; height: 16px; margin-right: 8px;">
+                                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                                        <line x1="1" y1="10" x2="23" y2="10"/>
+                                    </svg>
+                                    <span style="font-size: 14px; font-weight: 500; color: #374151;">${method}</span>
+                                </div>
+                                <span style="font-size: 14px; color: #6b7280;">$${amount.toFixed(2)}</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${percentage}%; background-color: ${colors[index]};"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-top: 4px;">
+                                <span style="font-size: 12px; color: #9ca3af;">${transactions.filter(t => t.payment === method).length} transactions</span>
+                                <span style="font-size: 12px; color: #9ca3af;">${percentage.toFixed(1)}%</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                paymentAnalytics.classList.add('hidden');
             }
         }
 
