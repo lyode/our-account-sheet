@@ -103,7 +103,12 @@
             font-weight: 500;
         }
 
-        .profile-btn {
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .header-btn {
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -114,10 +119,15 @@
             justify-content: center;
             backdrop-filter: blur(10px);
             transition: all 0.2s;
+            cursor: pointer;
         }
 
-        .profile-btn:active {
+        .header-btn:active {
             transform: scale(0.95);
+        }
+
+        .header-btn:hover {
+            background: rgba(255,255,255,0.3);
         }
 
         /* Balance Display */
@@ -153,6 +163,7 @@
             backdrop-filter: blur(10px);
             transition: all 0.2s;
             cursor: pointer;
+            position: relative;
         }
 
         .balance-toggle:active {
@@ -161,6 +172,22 @@
 
         .balance-toggle:hover {
             background: rgba(255,255,255,0.3);
+        }
+
+        .balance-toggle.auto-hide::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 12px;
+            height: 12px;
+            background: #f59e0b;
+            border: 2px solid white;
+            border-radius: 50%;
+            font-size: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .balance-amount {
@@ -230,6 +257,23 @@
         .stat-amount.hidden-amount {
             font-size: 16px;
             letter-spacing: 1px;
+        }
+
+        /* Auto-hide timer indicator */
+        .timer-indicator {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 8px;
+            height: 8px;
+            background: #f59e0b;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
         }
 
         /* Main Content */
@@ -630,6 +674,69 @@
             color: #6b7280;
         }
 
+        /* Settings specific styles */
+        .settings-section {
+            margin-bottom: 24px;
+        }
+
+        .settings-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0 0 12px 0;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+
+        .setting-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .setting-value {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .timer-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .timer-option {
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            background: white;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .timer-option.active {
+            border-color: #3b82f6;
+            background: #eff6ff;
+            color: #3b82f6;
+        }
+
+        .timer-option:active {
+            transform: scale(0.95);
+        }
+
         /* Buttons */
         .btn {
             padding: 16px 24px;
@@ -861,26 +968,35 @@
                     <h1 class="header-title">My Financial Planning</h1>
                     <p class="header-subtitle">Malaysia Money Management</p>
                 </div>
-                <button class="profile-btn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                        <circle cx="12" cy="7" r="4"/>
-                    </svg>
-                </button>
+                <div class="header-actions">
+                    <button class="header-btn" onclick="openSettings()" title="Settings">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1m11-7a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7 17a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+                        </svg>
+                    </button>
+                    <button class="header-btn" title="Profile">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
 
             <div class="balance-display">
                 <div class="balance-header">
                     <p class="balance-label">Current Balance</p>
-                    <button class="balance-toggle" onclick="toggleBalanceVisibility()" title="Show/Hide Balance">
+                    <button class="balance-toggle" onclick="toggleBalanceVisibility()" title="Show/Hide Balance" id="balance-toggle-btn">
                         <svg id="visibility-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                            <line x1="1" y1="1" x2="23" y2="23"/>
                         </svg>
+                        <div id="timer-indicator" class="timer-indicator hidden"></div>
                     </button>
                 </div>
-                <h2 class="balance-amount" id="balance-display">RM 0.00</h2>
-                <p class="balance-message" id="balance-message">Start tracking or load demo data!</p>
+                <h2 class="balance-amount hidden-amount" id="balance-display">••••••••</h2>
+                <p class="balance-message" id="balance-message">Tap the eye to view balance!</p>
             </div>
 
             <div class="balance-stats">
@@ -892,7 +1008,7 @@
                         </svg>
                         <span class="stat-label">Income</span>
                     </div>
-                    <p class="stat-amount" id="income-display">RM 0.00</p>
+                    <p class="stat-amount hidden-amount" id="income-display">••••••</p>
                 </div>
                 <div class="stat-card">
                     <div class="stat-header">
@@ -901,7 +1017,7 @@
                         </svg>
                         <span class="stat-label">Expenses</span>
                     </div>
-                    <p class="stat-amount" id="expenses-display">RM 0.00</p>
+                    <p class="stat-amount hidden-amount" id="expenses-display">••••••</p>
                 </div>
             </div>
         </div>
@@ -913,10 +1029,10 @@
                 <!-- Info Banner -->
                 <div class="info-banner">
                     <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                     <div class="info-text">
-                        <strong>Privacy Mode:</strong> Click the eye icon to show/hide your balance and amounts.
+                        <strong>Privacy First:</strong> Amounts hidden by default. Click eye icon to view with auto-hide timer.
                     </div>
                     <button class="info-btn" onclick="loadDemoData()">Demo</button>
                 </div>
@@ -1045,16 +1161,16 @@
                     <div style="display: flex; flex-direction: column; gap: 16px;">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: #6b7280; font-weight: 500;">Total Income</span>
-                            <span id="analytics-income" style="color: #10b981; font-weight: 700; font-size: 16px;">RM 0.00</span>
+                            <span id="analytics-income" style="color: #10b981; font-weight: 700; font-size: 16px;">••••••</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: #6b7280; font-weight: 500;">Total Expenses</span>
-                            <span id="analytics-expenses" style="color: #ef4444; font-weight: 700; font-size: 16px;">RM 0.00</span>
+                            <span id="analytics-expenses" style="color: #ef4444; font-weight: 700; font-size: 16px;">••••••</span>
                         </div>
                         <div style="border-top: 1px solid #f3f4f6; padding-top: 16px;">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
                                 <span style="color: #1f2937; font-weight: 600;">Net Balance</span>
-                                <span id="analytics-balance" style="font-weight: 700; font-size: 20px; color: #1f2937;">RM 0.00</span>
+                                <span id="analytics-balance" style="font-weight: 700; font-size: 20px; color: #1f2937;">••••••••</span>
                             </div>
                         </div>
                     </div>
@@ -1106,6 +1222,59 @@
                     </svg>
                     <span>Analytics</span>
                 </button>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div id="settings-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <h2 class="modal-title">Privacy Settings</h2>
+                        <p class="modal-subtitle">Configure auto-hide behavior</p>
+                    </div>
+                    <button class="close-btn" onclick="closeSettings()">✕</button>
+                </div>
+
+                <div class="settings-section">
+                    <h3 class="settings-title">Auto-Hide Timer</h3>
+                    <p style="color: #6b7280; font-size: 14px; margin-bottom: 16px;">
+                        Automatically hide amounts after showing them for the selected duration.
+                    </p>
+                    
+                    <div class="timer-options">
+                        <button class="timer-option" data-timer="5" onclick="selectTimer(5)">5 sec</button>
+                        <button class="timer-option" data-timer="10" onclick="selectTimer(10)">10 sec</button>
+                        <button class="timer-option" data-timer="15" onclick="selectTimer(15)">15 sec</button>
+                        <button class="timer-option" data-timer="30" onclick="selectTimer(30)">30 sec</button>
+                        <button class="timer-option" data-timer="60" onclick="selectTimer(60)">1 min</button>
+                        <button class="timer-option" data-timer="0" onclick="selectTimer(0)">Manual</button>
+                    </div>
+
+                    <div class="setting-item">
+                        <span class="setting-label">Current Setting</span>
+                        <span class="setting-value" id="current-timer-display">Manual</span>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3 class="settings-title">Privacy Behavior</h3>
+                    
+                    <div class="setting-item">
+                        <span class="setting-label">Default State</span>
+                        <span class="setting-value">Amounts Hidden</span>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <span class="setting-label">Show Method</span>
+                        <span class="setting-value">Tap Eye Icon</span>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="closeSettings()">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+                </div>
             </div>
         </div>
 
@@ -1198,11 +1367,14 @@
         let isPaymentMode = false;
         let isEditMode = false;
         let editingTransactionId = null;
-        let balanceVisible = true; // Privacy mode state
+        let balanceVisible = false; // Start hidden by default
+        let autoHideTimer = 10; // Default 10 seconds
+        let hideTimeout = null; // Timer reference
 
-        // LocalStorage key
+        // LocalStorage keys
         const STORAGE_KEY = 'malaysiaPlanningTransactions';
         const PRIVACY_KEY = 'malaysiaPlanningPrivacy';
+        const TIMER_KEY = 'malaysiaPlanningAutoHideTimer';
 
         // Currency formatting function with commas
         function formatCurrency(amount) {
@@ -1227,31 +1399,61 @@
             return parseFloat(value.toString().replace(/,/g, ''));
         }
 
-        // Toggle balance visibility
+        // Toggle balance visibility with auto-hide
         function toggleBalanceVisibility() {
-            balanceVisible = !balanceVisible;
-            
-            // Save privacy preference
-            localStorage.setItem(PRIVACY_KEY, JSON.stringify(balanceVisible));
-            
-            // Update visibility icon
-            updateVisibilityIcon();
-            
-            // Update all displays
-            updateDisplays();
-            
-            // Show notification
-            showNotification(
-                balanceVisible ? '👁️ Balance visible' : '🫣 Balance hidden', 
-                'success'
-            );
-            
-            // Add privacy mode class to body for styling
+            // Clear any existing timer
+            if (hideTimeout) {
+                clearTimeout(hideTimeout);
+                hideTimeout = null;
+            }
+
+            if (!balanceVisible) {
+                // Show amounts
+                balanceVisible = true;
+                updateVisibilityIcon();
+                updateDisplays();
+                showNotification('👁️ Amounts visible', 'success');
+
+                // Start auto-hide timer if enabled
+                if (autoHideTimer > 0) {
+                    showTimerIndicator();
+                    hideTimeout = setTimeout(() => {
+                        balanceVisible = false;
+                        updateVisibilityIcon();
+                        updateDisplays();
+                        hideTimerIndicator();
+                        showNotification('🫣 Amounts auto-hidden', 'warning');
+                        document.body.classList.add('privacy-mode');
+                    }, autoHideTimer * 1000);
+                }
+            } else {
+                // Hide amounts manually
+                balanceVisible = false;
+                updateVisibilityIcon();
+                updateDisplays();
+                hideTimerIndicator();
+                showNotification('🫣 Amounts hidden', 'warning');
+                document.body.classList.add('privacy-mode');
+            }
+
+            // Update body class
             if (balanceVisible) {
                 document.body.classList.remove('privacy-mode');
             } else {
                 document.body.classList.add('privacy-mode');
             }
+        }
+
+        // Show timer indicator
+        function showTimerIndicator() {
+            document.getElementById('timer-indicator').classList.remove('hidden');
+            document.getElementById('balance-toggle-btn').classList.add('auto-hide');
+        }
+
+        // Hide timer indicator
+        function hideTimerIndicator() {
+            document.getElementById('timer-indicator').classList.add('hidden');
+            document.getElementById('balance-toggle-btn').classList.remove('auto-hide');
         }
 
         // Update visibility icon
@@ -1272,22 +1474,79 @@
             }
         }
 
-        // Load privacy preference
+        // Open settings modal
+        function openSettings() {
+            document.getElementById('settings-modal').classList.remove('hidden');
+            updateSettingsDisplay();
+        }
+
+        // Close settings modal
+        function closeSettings() {
+            document.getElementById('settings-modal').classList.add('hidden');
+        }
+
+        // Select timer option
+        function selectTimer(seconds) {
+            // Update UI
+            document.querySelectorAll('.timer-option').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-timer="${seconds}"]`).classList.add('active');
+            
+            // Update display
+            const display = seconds === 0 ? 'Manual' : 
+                           seconds < 60 ? `${seconds} seconds` : 
+                           `${seconds / 60} minute`;
+            document.getElementById('current-timer-display').textContent = display;
+        }
+
+        // Save settings
+        function saveSettings() {
+            // Get selected timer
+            const selectedTimer = document.querySelector('.timer-option.active');
+            if (selectedTimer) {
+                autoHideTimer = parseInt(selectedTimer.dataset.timer);
+                localStorage.setItem(TIMER_KEY, JSON.stringify(autoHideTimer));
+                
+                const display = autoHideTimer === 0 ? 'Manual' : 
+                               autoHideTimer < 60 ? `${autoHideTimer} seconds` : 
+                               `${autoHideTimer / 60} minute`;
+                
+                showNotification(`⚙️ Auto-hide set to ${display}`, 'success');
+            }
+            
+            closeSettings();
+        }
+
+        // Update settings display
+        function updateSettingsDisplay() {
+            // Select current timer option
+            document.querySelectorAll('.timer-option').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-timer="${autoHideTimer}"]`).classList.add('active');
+            
+            // Update display text
+            const display = autoHideTimer === 0 ? 'Manual' : 
+                           autoHideTimer < 60 ? `${autoHideTimer} seconds` : 
+                           `${autoHideTimer / 60} minute`;
+            document.getElementById('current-timer-display').textContent = display;
+        }
+
+        // Load privacy and timer preferences
         function loadPrivacyPreference() {
             try {
-                const saved = localStorage.getItem(PRIVACY_KEY);
-                if (saved !== null) {
-                    balanceVisible = JSON.parse(saved);
+                // Load timer setting
+                const savedTimer = localStorage.getItem(TIMER_KEY);
+                if (savedTimer !== null) {
+                    autoHideTimer = JSON.parse(savedTimer);
                 }
+                
+                // Always start hidden
+                balanceVisible = false;
             } catch (e) {
-                balanceVisible = true;
+                balanceVisible = false;
+                autoHideTimer = 10;
             }
             
             updateVisibilityIcon();
-            
-            if (!balanceVisible) {
-                document.body.classList.add('privacy-mode');
-            }
+            document.body.classList.add('privacy-mode');
         }
 
         // Demo data for showcasing features (Malaysian Ringgit amounts)
@@ -1694,9 +1953,13 @@
 
             let message;
             if (transactions.length === 0) {
-                message = "Start tracking or load demo data!";
+                message = balanceVisible ? "Start tracking or load demo data!" : "Tap the eye to view balance!";
             } else {
-                message = balance >= 0 ? "Great financial progress!" : "Review your spending";
+                if (balanceVisible) {
+                    message = balance >= 0 ? "Great financial progress!" : "Review your spending";
+                } else {
+                    message = "Tap the eye to view balance!";
+                }
             }
             document.getElementById('balance-message').textContent = message;
         }
@@ -1950,24 +2213,23 @@
 
         // Initialize app with localStorage loading
         document.addEventListener('DOMContentLoaded', function() {
-            // Load privacy preference first
+            // Load privacy preference first (starts hidden by default)
             loadPrivacyPreference();
             
             // Load saved transactions
             loadTransactions();
             updateDisplays();
             
-            // Show welcome message
-            if (transactions.length === 0) {
-                setTimeout(() => {
-                    showNotification('Welcome! Your data will be saved locally.', 'success');
-                }, 1000);
-            }
+            // Show welcome message for privacy-first approach
+            setTimeout(() => {
+                showNotification('🔒 Privacy-first design: Tap the eye to view amounts', 'success');
+            }, 1000);
             
             console.log('🇲🇾 Malaysian Financial Planning Mobile App Loaded');
             console.log('💾 Data persistence enabled with localStorage');
             console.log('💰 All amounts displayed in Malaysian Ringgit (RM) with comma formatting');
-            console.log('👁️ Privacy mode: Click eye icon to show/hide balance');
+            console.log('🔒 Privacy-first: Amounts hidden by default with auto-hide timer');
+            console.log('⚙️ Settings available for auto-hide timer configuration');
             console.log('✏️ Full edit functionality available');
             console.log('📱 Native mobile app experience');
         });
