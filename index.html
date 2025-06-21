@@ -126,11 +126,41 @@
             padding: 16px 0;
         }
 
+        .balance-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
         .balance-label {
             font-size: 14px;
             opacity: 0.9;
-            margin: 0 0 8px 0;
+            margin: 0;
             font-weight: 500;
+        }
+
+        .balance-toggle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .balance-toggle:active {
+            transform: scale(0.9);
+        }
+
+        .balance-toggle:hover {
+            background: rgba(255,255,255,0.3);
         }
 
         .balance-amount {
@@ -138,6 +168,16 @@
             font-weight: 900;
             margin: 0;
             letter-spacing: -1px;
+            transition: all 0.3s ease;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .balance-amount.hidden-amount {
+            font-size: 32px;
+            letter-spacing: 2px;
         }
 
         .balance-message {
@@ -184,6 +224,12 @@
             font-size: 18px;
             font-weight: 700;
             margin: 0;
+            transition: all 0.3s ease;
+        }
+
+        .stat-amount.hidden-amount {
+            font-size: 16px;
+            letter-spacing: 1px;
         }
 
         /* Main Content */
@@ -340,10 +386,16 @@
             font-size: 16px;
             font-weight: 700;
             margin: 0 0 4px 0;
+            transition: all 0.3s ease;
         }
 
         .amount-value.income { color: #10b981; }
         .amount-value.expense { color: #ef4444; }
+
+        .amount-value.hidden-amount {
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
 
         .amount-time {
             font-size: 11px;
@@ -758,6 +810,13 @@
             margin: 0;
         }
 
+        /* Privacy mode styles */
+        .privacy-mode .amount-value,
+        .privacy-mode .stat-amount,
+        .privacy-mode .balance-amount {
+            color: #9ca3af !important;
+        }
+
         /* Responsive adjustments */
         @media (max-width: 375px) {
             .balance-amount { font-size: 32px; }
@@ -811,7 +870,15 @@
             </div>
 
             <div class="balance-display">
-                <p class="balance-label">Current Balance</p>
+                <div class="balance-header">
+                    <p class="balance-label">Current Balance</p>
+                    <button class="balance-toggle" onclick="toggleBalanceVisibility()" title="Show/Hide Balance">
+                        <svg id="visibility-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </button>
+                </div>
                 <h2 class="balance-amount" id="balance-display">RM 0.00</h2>
                 <p class="balance-message" id="balance-message">Start tracking or load demo data!</p>
             </div>
@@ -849,7 +916,7 @@
                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                     </svg>
                     <div class="info-text">
-                        <strong>Data Persistence:</strong> All transactions saved locally with comma formatting.
+                        <strong>Privacy Mode:</strong> Click the eye icon to show/hide your balance and amounts.
                     </div>
                     <button class="info-btn" onclick="loadDemoData()">Demo</button>
                 </div>
@@ -1131,9 +1198,11 @@
         let isPaymentMode = false;
         let isEditMode = false;
         let editingTransactionId = null;
+        let balanceVisible = true; // Privacy mode state
 
         // LocalStorage key
         const STORAGE_KEY = 'malaysiaPlanningTransactions';
+        const PRIVACY_KEY = 'malaysiaPlanningPrivacy';
 
         // Currency formatting function with commas
         function formatCurrency(amount) {
@@ -1143,9 +1212,82 @@
             })}`;
         }
 
+        // Format currency for privacy mode
+        function formatCurrencyWithPrivacy(amount) {
+            if (!balanceVisible) {
+                const amountStr = amount.toString();
+                const digitCount = amountStr.replace(/[^\d]/g, '').length;
+                return '••••••••'.substring(0, Math.max(4, Math.min(8, digitCount)));
+            }
+            return formatCurrency(amount);
+        }
+
         // Parse number input (remove commas and convert to float)
         function parseAmount(value) {
             return parseFloat(value.toString().replace(/,/g, ''));
+        }
+
+        // Toggle balance visibility
+        function toggleBalanceVisibility() {
+            balanceVisible = !balanceVisible;
+            
+            // Save privacy preference
+            localStorage.setItem(PRIVACY_KEY, JSON.stringify(balanceVisible));
+            
+            // Update visibility icon
+            updateVisibilityIcon();
+            
+            // Update all displays
+            updateDisplays();
+            
+            // Show notification
+            showNotification(
+                balanceVisible ? '👁️ Balance visible' : '🫣 Balance hidden', 
+                'success'
+            );
+            
+            // Add privacy mode class to body for styling
+            if (balanceVisible) {
+                document.body.classList.remove('privacy-mode');
+            } else {
+                document.body.classList.add('privacy-mode');
+            }
+        }
+
+        // Update visibility icon
+        function updateVisibilityIcon() {
+            const icon = document.getElementById('visibility-icon');
+            if (balanceVisible) {
+                // Eye open icon
+                icon.innerHTML = `
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                `;
+            } else {
+                // Eye closed icon
+                icon.innerHTML = `
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                    <line x1="1" y1="1" x2="23" y2="23"/>
+                `;
+            }
+        }
+
+        // Load privacy preference
+        function loadPrivacyPreference() {
+            try {
+                const saved = localStorage.getItem(PRIVACY_KEY);
+                if (saved !== null) {
+                    balanceVisible = JSON.parse(saved);
+                }
+            } catch (e) {
+                balanceVisible = true;
+            }
+            
+            updateVisibilityIcon();
+            
+            if (!balanceVisible) {
+                document.body.classList.add('privacy-mode');
+            }
         }
 
         // Demo data for showcasing features (Malaysian Ringgit amounts)
@@ -1277,7 +1419,6 @@
                 const saved = localStorage.getItem(STORAGE_KEY);
                 if (saved) {
                     transactions = JSON.parse(saved);
-                    showNotification('Data loaded successfully', 'success');
                 }
             } catch (e) {
                 showNotification('Error loading saved data', 'error');
@@ -1526,15 +1667,30 @@
             updateHealthIndicator();
         }
 
-        // Update balance card (with comma-formatted RM currency)
+        // Update balance card (with comma-formatted RM currency and privacy)
         function updateBalanceCard() {
             const income = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
             const expenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
             const balance = income - expenses;
 
-            document.getElementById('balance-display').textContent = formatCurrency(balance);
-            document.getElementById('income-display').textContent = formatCurrency(income);
-            document.getElementById('expenses-display').textContent = formatCurrency(expenses);
+            document.getElementById('balance-display').textContent = formatCurrencyWithPrivacy(balance);
+            document.getElementById('income-display').textContent = formatCurrencyWithPrivacy(income);
+            document.getElementById('expenses-display').textContent = formatCurrencyWithPrivacy(expenses);
+
+            // Add styling classes for privacy mode
+            const balanceEl = document.getElementById('balance-display');
+            const incomeEl = document.getElementById('income-display');
+            const expensesEl = document.getElementById('expenses-display');
+            
+            if (balanceVisible) {
+                balanceEl.classList.remove('hidden-amount');
+                incomeEl.classList.remove('hidden-amount');
+                expensesEl.classList.remove('hidden-amount');
+            } else {
+                balanceEl.classList.add('hidden-amount');
+                incomeEl.classList.add('hidden-amount');
+                expensesEl.classList.add('hidden-amount');
+            }
 
             let message;
             if (transactions.length === 0) {
@@ -1563,7 +1719,7 @@
             }
         }
 
-        // Update recent transactions (with comma-formatted RM currency and edit buttons)
+        // Update recent transactions (with comma-formatted RM currency, privacy, and edit buttons)
         function updateRecentTransactions() {
             const container = document.getElementById('recent-transactions');
             const recent = transactions.slice(0, 5);
@@ -1586,47 +1742,53 @@
                     </div>
                 `;
             } else {
-                container.innerHTML = recent.map(transaction => `
-                    <div class="transaction-item">
-                        <div class="transaction-icon ${transaction.type}">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                ${transaction.type === 'income' ? 
-                                    '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>' : 
-                                    '<line x1="5" y1="12" x2="19" y2="12"/>'}
-                            </svg>
-                        </div>
-                        <div class="transaction-details">
-                            <p class="transaction-title">${transaction.description}</p>
-                            <p class="transaction-meta">${transaction.category} • ${transaction.payment}</p>
-                        </div>
-                        <div class="transaction-amount">
-                            <p class="amount-value ${transaction.type}">
-                                ${transaction.type === 'income' ? '+' : '-'}${formatCurrency(transaction.amount).replace('RM ', '')}
-                            </p>
-                            <p class="amount-time">${transaction.time}</p>
-                        </div>
-                        <div class="transaction-actions">
-                            <button class="action-btn edit" onclick="openEditForm(${transaction.id})" title="Edit">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                container.innerHTML = recent.map(transaction => {
+                    const amountDisplay = balanceVisible 
+                        ? `${transaction.type === 'income' ? '+' : '-'}${formatCurrency(transaction.amount).replace('RM ', '')}`
+                        : `${transaction.type === 'income' ? '+' : '-'}••••••`;
+                    
+                    return `
+                        <div class="transaction-item">
+                            <div class="transaction-icon ${transaction.type}">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    ${transaction.type === 'income' ? 
+                                        '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>' : 
+                                        '<line x1="5" y1="12" x2="19" y2="12"/>'}
                                 </svg>
-                            </button>
-                            <button class="action-btn delete" onclick="deleteTransaction(${transaction.id})" title="Delete">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="3,6 5,6 21,6"/>
-                                    <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"/>
-                                    <line x1="10" y1="11" x2="10" y2="17"/>
-                                    <line x1="14" y1="11" x2="14" y2="17"/>
-                                </svg>
-                            </button>
+                            </div>
+                            <div class="transaction-details">
+                                <p class="transaction-title">${transaction.description}</p>
+                                <p class="transaction-meta">${transaction.category} • ${transaction.payment}</p>
+                            </div>
+                            <div class="transaction-amount">
+                                <p class="amount-value ${transaction.type} ${!balanceVisible ? 'hidden-amount' : ''}">
+                                    ${amountDisplay}
+                                </p>
+                                <p class="amount-time">${transaction.time}</p>
+                            </div>
+                            <div class="transaction-actions">
+                                <button class="action-btn edit" onclick="openEditForm(${transaction.id})" title="Edit">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                    </svg>
+                                </button>
+                                <button class="action-btn delete" onclick="deleteTransaction(${transaction.id})" title="Delete">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="3,6 5,6 21,6"/>
+                                        <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"/>
+                                        <line x1="10" y1="11" x2="10" y2="17"/>
+                                        <line x1="14" y1="11" x2="14" y2="17"/>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             }
         }
 
-        // Update all transactions (with comma-formatted RM currency and edit buttons)
+        // Update all transactions (with comma-formatted RM currency, privacy, and edit buttons)
         function updateAllTransactions() {
             const container = document.getElementById('all-transactions');
             const countElement = document.getElementById('transaction-count');
@@ -1652,46 +1814,52 @@
                     </div>
                 `;
             } else {
-                container.innerHTML = transactions.map(transaction => `
-                    <div class="transaction-item">
-                        <div class="transaction-icon ${transaction.type}">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                ${transaction.type === 'income' ? 
-                                    '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>' : 
-                                    '<line x1="5" y1="12" x2="19" y2="12"/>'}
-                            </svg>
-                        </div>
-                        <div class="transaction-details">
-                            <p class="transaction-title">${transaction.description}</p>
-                            <p class="transaction-meta">${transaction.category} • ${transaction.payment} • ${transaction.date}${transaction.lastModified ? ` • Modified ${transaction.lastModified}` : ''}${transaction.isPayment ? ' • Payment' : ''}</p>
-                        </div>
-                        <div class="transaction-amount">
-                            <p class="amount-value ${transaction.type}">
-                                ${transaction.type === 'income' ? '+' : '-'}${formatCurrency(transaction.amount).replace('RM ', '')}
-                            </p>
-                        </div>
-                        <div class="transaction-actions">
-                            <button class="action-btn edit" onclick="openEditForm(${transaction.id})" title="Edit">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                container.innerHTML = transactions.map(transaction => {
+                    const amountDisplay = balanceVisible 
+                        ? `${transaction.type === 'income' ? '+' : '-'}${formatCurrency(transaction.amount).replace('RM ', '')}`
+                        : `${transaction.type === 'income' ? '+' : '-'}••••••`;
+                    
+                    return `
+                        <div class="transaction-item">
+                            <div class="transaction-icon ${transaction.type}">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    ${transaction.type === 'income' ? 
+                                        '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>' : 
+                                        '<line x1="5" y1="12" x2="19" y2="12"/>'}
                                 </svg>
-                            </button>
-                            <button class="action-btn delete" onclick="deleteTransaction(${transaction.id})" title="Delete">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="3,6 5,6 21,6"/>
-                                    <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"/>
-                                    <line x1="10" y1="11" x2="10" y2="17"/>
-                                    <line x1="14" y1="11" x2="14" y2="17"/>
-                                </svg>
-                            </button>
+                            </div>
+                            <div class="transaction-details">
+                                <p class="transaction-title">${transaction.description}</p>
+                                <p class="transaction-meta">${transaction.category} • ${transaction.payment} • ${transaction.date}${transaction.lastModified ? ` • Modified ${transaction.lastModified}` : ''}${transaction.isPayment ? ' • Payment' : ''}</p>
+                            </div>
+                            <div class="transaction-amount">
+                                <p class="amount-value ${transaction.type} ${!balanceVisible ? 'hidden-amount' : ''}">
+                                    ${amountDisplay}
+                                </p>
+                            </div>
+                            <div class="transaction-actions">
+                                <button class="action-btn edit" onclick="openEditForm(${transaction.id})" title="Edit">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                    </svg>
+                                </button>
+                                <button class="action-btn delete" onclick="deleteTransaction(${transaction.id})" title="Delete">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="3,6 5,6 21,6"/>
+                                        <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"/>
+                                        <line x1="10" y1="11" x2="10" y2="17"/>
+                                        <line x1="14" y1="11" x2="14" y2="17"/>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             }
         }
 
-        // Update analytics (with comma-formatted RM currency)
+        // Update analytics (with comma-formatted RM currency and privacy)
         function updateAnalytics() {
             const income = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
             const expenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
@@ -1699,9 +1867,9 @@
             const incomeCount = transactions.filter(t => t.type === 'income').length;
             const expenseCount = transactions.filter(t => t.type === 'expense').length;
 
-            document.getElementById('analytics-income').textContent = formatCurrency(income);
-            document.getElementById('analytics-expenses').textContent = formatCurrency(expenses);
-            document.getElementById('analytics-balance').textContent = formatCurrency(balance);
+            document.getElementById('analytics-income').textContent = formatCurrencyWithPrivacy(income);
+            document.getElementById('analytics-expenses').textContent = formatCurrencyWithPrivacy(expenses);
+            document.getElementById('analytics-balance').textContent = formatCurrencyWithPrivacy(balance);
             document.getElementById('income-count').textContent = incomeCount;
             document.getElementById('expense-count').textContent = expenseCount;
 
@@ -1737,7 +1905,7 @@
             updateCategoryAnalytics();
         }
 
-        // Update category analytics (with comma-formatted RM currency)
+        // Update category analytics (with comma-formatted RM currency and privacy)
         function updateCategoryAnalytics() {
             const categories = {};
             const totalExpenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
@@ -1758,11 +1926,13 @@
                 categoryListElement.innerHTML = categoryList.map(([category, amount], index) => {
                     const percentage = totalExpenses > 0 ? (amount / totalExpenses) * 100 : 0;
                     const colors = ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6'];
+                    const displayAmount = balanceVisible ? formatCurrency(amount) : '••••••';
+                    
                     return `
                         <div style="margin-bottom: 16px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                 <span style="font-size: 14px; font-weight: 600; color: #1f2937;">${category}</span>
-                                <span style="font-size: 14px; color: ${colors[index]}; font-weight: 600;">${formatCurrency(amount)}</span>
+                                <span style="font-size: 14px; color: ${colors[index]}; font-weight: 600;">${displayAmount}</span>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill" style="width: ${percentage}%; background-color: ${colors[index]};"></div>
@@ -1780,6 +1950,9 @@
 
         // Initialize app with localStorage loading
         document.addEventListener('DOMContentLoaded', function() {
+            // Load privacy preference first
+            loadPrivacyPreference();
+            
             // Load saved transactions
             loadTransactions();
             updateDisplays();
@@ -1794,6 +1967,7 @@
             console.log('🇲🇾 Malaysian Financial Planning Mobile App Loaded');
             console.log('💾 Data persistence enabled with localStorage');
             console.log('💰 All amounts displayed in Malaysian Ringgit (RM) with comma formatting');
+            console.log('👁️ Privacy mode: Click eye icon to show/hide balance');
             console.log('✏️ Full edit functionality available');
             console.log('📱 Native mobile app experience');
         });
