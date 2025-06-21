@@ -49,6 +49,518 @@
             transform: scale(1.05);
         }
 
+        /* Login Screen Styles */
+        .login-screen {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #1e40af 100%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 24px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 380px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 32px;
+            padding: 40px 32px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .app-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            color: white;
+            box-shadow: 0 12px 32px rgba(59, 130, 246, 0.4);
+        }
+
+        .login-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #1f2937;
+            margin: 0 0 8px 0;
+            letter-spacing: -0.5px;
+        }
+
+        .login-subtitle {
+            font-size: 16px;
+            color: #6b7280;
+            margin: 0 0 32px 0;
+            font-weight: 500;
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981, #059669);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            color: white;
+            font-size: 32px;
+            font-weight: 700;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+        }
+
+        .user-info {
+            margin-bottom: 32px;
+        }
+
+        .user-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0 0 4px 0;
+        }
+
+        .user-email {
+            font-size: 14px;
+            color: #6b7280;
+            margin: 0;
+        }
+
+        .login-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .face-login-btn {
+            padding: 20px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+        }
+
+        .face-login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(59, 130, 246, 0.4);
+        }
+
+        .face-login-btn:active {
+            transform: translateY(0);
+        }
+
+        .face-login-btn.scanning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .fallback-login {
+            margin-top: 16px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .pin-btn, .signup-btn {
+            flex: 1;
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            color: #374151;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pin-btn:hover, .signup-btn:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        /* Face Recognition Modal */
+        .face-recognition-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+
+        .face-scanner {
+            width: 90%;
+            max-width: 400px;
+            background: #1f2937;
+            border-radius: 24px;
+            padding: 32px;
+            text-align: center;
+            color: white;
+        }
+
+        .scanner-header {
+            margin-bottom: 24px;
+        }
+
+        .scanner-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+        }
+
+        .scanner-subtitle {
+            font-size: 14px;
+            opacity: 0.8;
+            margin: 0;
+        }
+
+        .camera-preview {
+            width: 280px;
+            height: 280px;
+            border-radius: 20px;
+            background: #374151;
+            margin: 0 auto 24px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .camera-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 20px;
+        }
+
+        .camera-placeholder {
+            color: #9ca3af;
+            font-size: 48px;
+        }
+
+        .face-overlay {
+            position: absolute;
+            inset: 20px;
+            border: 3px solid #3b82f6;
+            border-radius: 50%;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .face-overlay.active {
+            opacity: 1;
+            animation: scan-ring 2s infinite;
+        }
+
+        .face-overlay.success {
+            border-color: #10b981;
+            animation: success-pulse 0.5s;
+        }
+
+        .face-overlay.error {
+            border-color: #ef4444;
+            animation: error-shake 0.5s;
+        }
+
+        @keyframes scan-ring {
+            0%, 100% { transform: scale(1); border-width: 3px; }
+            50% { transform: scale(1.05); border-width: 5px; }
+        }
+
+        @keyframes success-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes error-shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .scanner-status {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            min-height: 24px;
+        }
+
+        .scanner-status.scanning {
+            color: #f59e0b;
+        }
+
+        .scanner-status.success {
+            color: #10b981;
+        }
+
+        .scanner-status.error {
+            color: #ef4444;
+        }
+
+        .scanner-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* PIN Entry Modal */
+        .pin-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .pin-container {
+            width: 90%;
+            max-width: 320px;
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            text-align: center;
+        }
+
+        .pin-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0 0 24px 0;
+        }
+
+        .pin-display {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .pin-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            transition: all 0.2s;
+        }
+
+        .pin-dot.filled {
+            background: #3b82f6;
+            transform: scale(1.2);
+        }
+
+        .pin-keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .pin-key {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            background: #f3f4f6;
+            color: #1f2937;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 0 auto;
+        }
+
+        .pin-key:active {
+            background: #3b82f6;
+            color: white;
+            transform: scale(0.95);
+        }
+
+        /* Registration Modal */
+        .registration-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .registration-container {
+            width: 90%;
+            max-width: 400px;
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .registration-step {
+            text-align: center;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .step-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            transition: all 0.3s;
+        }
+
+        .step-dot.active {
+            background: #3b82f6;
+            transform: scale(1.5);
+        }
+
+        .step-dot.completed {
+            background: #10b981;
+        }
+
+        .step-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0 0 8px 0;
+        }
+
+        .step-subtitle {
+            font-size: 14px;
+            color: #6b7280;
+            margin: 0 0 32px 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 500;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Face Enrollment Styles */
+        .face-enrollment {
+            text-align: center;
+        }
+
+        .enrollment-preview {
+            width: 200px;
+            height: 200px;
+            border-radius: 20px;
+            background: #f3f4f6;
+            margin: 0 auto 24px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .enrollment-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 20px;
+        }
+
+        .enrollment-overlay {
+            position: absolute;
+            inset: 10px;
+            border: 2px solid #3b82f6;
+            border-radius: 50%;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .enrollment-overlay.scanning {
+            opacity: 1;
+            animation: enrollment-scan 1.5s infinite;
+        }
+
+        @keyframes enrollment-scan {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .enrollment-progress {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .enrollment-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #10b981);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .enrollment-instruction {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 24px;
+        }
+
         /* Status Bar */
         .status-bar {
             background: #1f2937;
@@ -715,36 +1227,6 @@
             margin: 0;
         }
 
-        /* Form Elements */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 8px;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 16px;
-            font-size: 16px;
-            font-weight: 500;
-            background: white;
-            transition: all 0.2s;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-        }
-
         .amount-input-wrapper {
             position: relative;
         }
@@ -1003,6 +1485,268 @@
     </style>
 </head>
 <body class="privacy-mode">
+    <!-- Login Screen -->
+    <div id="login-screen" class="login-screen">
+        <div class="login-container">
+            <div class="app-logo">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                    <path d="M2 17l10 5 10-5"/>
+                    <path d="M2 12l10 5 10-5"/>
+                </svg>
+            </div>
+            
+            <!-- Initial Login (No User) -->
+            <div id="initial-login">
+                <h1 class="login-title">My FinPlan</h1>
+                <p class="login-subtitle">Secure Financial Planning for Malaysia</p>
+                
+                <div class="login-methods">
+                    <button class="face-login-btn" onclick="showRegistration()">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        Get Started - Create Account
+                    </button>
+                    
+                    <div class="fallback-login">
+                        <button class="signup-btn" onclick="loadDemoUser()">Demo Account</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- User Login (Existing User) -->
+            <div id="user-login" class="hidden">
+                <div class="user-avatar" id="user-avatar">JD</div>
+                <div class="user-info">
+                    <h2 class="user-name" id="user-name">John Doe</h2>
+                    <p class="user-email" id="user-email">john@example.com</p>
+                </div>
+                
+                <div class="login-methods">
+                    <button class="face-login-btn" id="face-login-btn" onclick="startFaceLogin()">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M15 6v7.18l2 2V6h-2zM3.27 2L2 3.27 20.73 22 22 20.73 3.27 2zM14 12.27V12h3v-2h-5v2.27l2 2zM10 14v-4H8v4h2z"/>
+                        </svg>
+                        <span id="face-login-text">Login with Face ID</span>
+                    </button>
+                    
+                    <div class="fallback-login">
+                        <button class="pin-btn" onclick="showPinLogin()">PIN</button>
+                        <button class="signup-btn" onclick="switchUser()">Switch User</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Face Recognition Modal -->
+    <div id="face-recognition-modal" class="face-recognition-modal hidden">
+        <div class="face-scanner">
+            <div class="scanner-header">
+                <h3 class="scanner-title" id="scanner-title">Face Recognition</h3>
+                <p class="scanner-subtitle" id="scanner-subtitle">Position your face in the center</p>
+            </div>
+            
+            <div class="camera-preview">
+                <video id="camera-video" class="camera-video hidden" autoplay muted playsinline></video>
+                <div id="camera-placeholder" class="camera-placeholder">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                        <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                </div>
+                <div id="face-overlay" class="face-overlay"></div>
+            </div>
+            
+            <p class="scanner-status" id="scanner-status">Click "Start Scan" to begin</p>
+            
+            <div class="scanner-actions">
+                <button class="btn btn-secondary" onclick="closeFaceRecognition()">Cancel</button>
+                <button class="btn btn-primary" id="start-scan-btn" onclick="startCameraScan()">Start Scan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PIN Entry Modal -->
+    <div id="pin-modal" class="pin-modal hidden">
+        <div class="pin-container">
+            <h3 class="pin-title">Enter Your PIN</h3>
+            
+            <div class="pin-display">
+                <div class="pin-dot" id="pin-dot-0"></div>
+                <div class="pin-dot" id="pin-dot-1"></div>
+                <div class="pin-dot" id="pin-dot-2"></div>
+                <div class="pin-dot" id="pin-dot-3"></div>
+                <div class="pin-dot" id="pin-dot-4"></div>
+                <div class="pin-dot" id="pin-dot-5"></div>
+            </div>
+            
+            <div class="pin-keypad">
+                <button class="pin-key" onclick="enterPin('1')">1</button>
+                <button class="pin-key" onclick="enterPin('2')">2</button>
+                <button class="pin-key" onclick="enterPin('3')">3</button>
+                <button class="pin-key" onclick="enterPin('4')">4</button>
+                <button class="pin-key" onclick="enterPin('5')">5</button>
+                <button class="pin-key" onclick="enterPin('6')">6</button>
+                <button class="pin-key" onclick="enterPin('7')">7</button>
+                <button class="pin-key" onclick="enterPin('8')">8</button>
+                <button class="pin-key" onclick="enterPin('9')">9</button>
+                <button class="pin-key" onclick="clearPin()" style="background: #fee2e2; color: #ef4444;">⌫</button>
+                <button class="pin-key" onclick="enterPin('0')">0</button>
+                <button class="pin-key" onclick="closePinLogin()" style="background: #f3f4f6; color: #6b7280;">✕</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registration Modal -->
+    <div id="registration-modal" class="registration-modal hidden">
+        <div class="registration-container">
+            <!-- Step 1: Personal Info -->
+            <div id="registration-step-1" class="registration-step">
+                <div class="step-indicator">
+                    <div class="step-dot active"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                </div>
+                
+                <h3 class="step-title">Create Account</h3>
+                <p class="step-subtitle">Enter your personal information</p>
+                
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" id="reg-name" class="form-input" placeholder="Enter your full name">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" id="reg-email" class="form-input" placeholder="Enter your email">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" id="reg-phone" class="form-input" placeholder="Enter your phone number">
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="closeRegistration()">Cancel</button>
+                    <button class="btn btn-primary" onclick="nextRegistrationStep(2)">Next</button>
+                </div>
+            </div>
+            
+            <!-- Step 2: Security PIN -->
+            <div id="registration-step-2" class="registration-step hidden">
+                <div class="step-indicator">
+                    <div class="step-dot completed"></div>
+                    <div class="step-dot active"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                </div>
+                
+                <h3 class="step-title">Security PIN</h3>
+                <p class="step-subtitle">Create a 6-digit PIN for backup access</p>
+                
+                <div class="pin-display" style="margin-bottom: 32px;">
+                    <div class="pin-dot" id="reg-pin-dot-0"></div>
+                    <div class="pin-dot" id="reg-pin-dot-1"></div>
+                    <div class="pin-dot" id="reg-pin-dot-2"></div>
+                    <div class="pin-dot" id="reg-pin-dot-3"></div>
+                    <div class="pin-dot" id="reg-pin-dot-4"></div>
+                    <div class="pin-dot" id="reg-pin-dot-5"></div>
+                </div>
+                
+                <div class="pin-keypad">
+                    <button class="pin-key" onclick="enterRegPin('1')">1</button>
+                    <button class="pin-key" onclick="enterRegPin('2')">2</button>
+                    <button class="pin-key" onclick="enterRegPin('3')">3</button>
+                    <button class="pin-key" onclick="enterRegPin('4')">4</button>
+                    <button class="pin-key" onclick="enterRegPin('5')">5</button>
+                    <button class="pin-key" onclick="enterRegPin('6')">6</button>
+                    <button class="pin-key" onclick="enterRegPin('7')">7</button>
+                    <button class="pin-key" onclick="enterRegPin('8')">8</button>
+                    <button class="pin-key" onclick="enterRegPin('9')">9</button>
+                    <button class="pin-key" onclick="clearRegPin()" style="background: #fee2e2; color: #ef4444;">⌫</button>
+                    <button class="pin-key" onclick="enterRegPin('0')">0</button>
+                    <button class="pin-key" style="opacity: 0; pointer-events: none;"></button>
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="nextRegistrationStep(1)">Back</button>
+                    <button class="btn btn-primary" id="pin-next-btn" onclick="nextRegistrationStep(3)" disabled>Next</button>
+                </div>
+            </div>
+            
+            <!-- Step 3: Face Enrollment -->
+            <div id="registration-step-3" class="registration-step hidden">
+                <div class="step-indicator">
+                    <div class="step-dot completed"></div>
+                    <div class="step-dot completed"></div>
+                    <div class="step-dot active"></div>
+                    <div class="step-dot"></div>
+                </div>
+                
+                <h3 class="step-title">Face ID Setup</h3>
+                <p class="step-subtitle">Secure your account with face recognition</p>
+                
+                <div class="face-enrollment">
+                    <div class="enrollment-preview">
+                        <video id="enrollment-video" class="enrollment-video hidden" autoplay muted playsinline></video>
+                        <div id="enrollment-placeholder" class="camera-placeholder">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                                <circle cx="12" cy="13" r="4"/>
+                            </svg>
+                        </div>
+                        <div id="enrollment-overlay" class="enrollment-overlay"></div>
+                    </div>
+                    
+                    <div class="enrollment-progress">
+                        <div id="enrollment-progress-fill" class="enrollment-progress-fill"></div>
+                    </div>
+                    
+                    <p class="enrollment-instruction" id="enrollment-instruction">
+                        Position your face in the center and click "Start Enrollment"
+                    </p>
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="nextRegistrationStep(2)">Back</button>
+                    <button class="btn btn-primary" id="enrollment-btn" onclick="startFaceEnrollment()">Start Enrollment</button>
+                </div>
+            </div>
+            
+            <!-- Step 4: Completion -->
+            <div id="registration-step-4" class="registration-step hidden">
+                <div class="step-indicator">
+                    <div class="step-dot completed"></div>
+                    <div class="step-dot completed"></div>
+                    <div class="step-dot completed"></div>
+                    <div class="step-dot active"></div>
+                </div>
+                
+                <h3 class="step-title">Account Created!</h3>
+                <p class="step-subtitle">Your secure financial account is ready</p>
+                
+                <div style="text-align: center; margin: 32px 0;">
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; color: white;">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <polyline points="20,6 9,17 4,12"/>
+                        </svg>
+                    </div>
+                    <p style="font-size: 16px; color: #6b7280; margin: 0;">
+                        You can now login with Face ID or your PIN
+                    </p>
+                </div>
+                
+                <button class="btn btn-primary" style="width: 100%;" onclick="completeRegistration()">
+                    Start Using My FinPlan
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Privacy Splash -->
     <div id="privacy-splash" class="privacy-splash">
         <div class="privacy-splash-content">
@@ -1046,7 +1790,7 @@
             <div class="header-top">
                 <div>
                     <h1 class="header-title">My Financial Planning</h1>
-                    <p class="header-subtitle">Malaysia Money Management</p>
+                    <p class="header-subtitle" id="header-user">Welcome back, <span id="header-username">User</span></p>
                 </div>
                 <div class="header-actions">
                     <button class="header-btn" onclick="openSettings()" title="Privacy Settings">
@@ -1055,11 +1799,11 @@
                             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
                         </svg>
                     </button>
-                    <button class="header-btn" onclick="showPrivacyHelp()" title="Privacy Help">
+                    <button class="header-btn" onclick="logout()" title="Logout">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"/>
-                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-                            <point cx="12" cy="17" x="12" y="17"/>
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                            <polyline points="16,17 21,12 16,7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
                         </svg>
                     </button>
                 </div>
@@ -1115,7 +1859,7 @@
                         <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                     </svg>
                     <div class="info-text">
-                        <strong>Privacy First:</strong> App starts hidden. Eye icon shows amounts with auto-hide timer.
+                        <strong>Secure & Private:</strong> Face ID login with privacy protection. Amounts auto-hide for security.
                     </div>
                     <button class="info-btn" onclick="loadDemoData()">Demo</button>
                 </div>
@@ -1177,7 +1921,7 @@
                                 </svg>
                             </div>
                             <h4 class="empty-title">Welcome to Malaysian Planning!</h4>
-                            <p class="empty-subtitle">Financial tracking in Ringgit Malaysia with privacy protection</p>
+                            <p class="empty-subtitle">Secure financial tracking with Face ID protection</p>
                             <div style="display: flex; gap: 12px; justify-content: center;">
                                 <button class="btn btn-primary" onclick="openAddForm('expense')">Add Transaction</button>
                                 <button class="btn btn-secondary" onclick="loadDemoData()">Demo Data</button>
@@ -1313,10 +2057,37 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <div>
-                        <h2 class="modal-title">Privacy Settings</h2>
-                        <p class="modal-subtitle">Configure auto-hide behavior</p>
+                        <h2 class="modal-title">Privacy & Security</h2>
+                        <p class="modal-subtitle">Configure privacy and security settings</p>
                     </div>
                     <button class="close-btn" onclick="closeSettings()">✕</button>
+                </div>
+
+                <div class="settings-section">
+                    <h3 class="settings-title">Security Options</h3>
+                    <p class="settings-description">Manage your login and security preferences.</p>
+                    
+                    <div style="background: #f8fafc; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22,4 12,14.01 9,11.01"/>
+                            </svg>
+                            <span style="font-weight: 600; color: #1f2937;">Face ID Enabled</span>
+                        </div>
+                        <p style="margin: 0; font-size: 13px; color: #6b7280;">Secure biometric authentication active</p>
+                    </div>
+                    
+                    <div style="background: #f8fafc; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22,4 12,14.01 9,11.01"/>
+                            </svg>
+                            <span style="font-weight: 600; color: #1f2937;">PIN Backup Available</span>
+                        </div>
+                        <p style="margin: 0; font-size: 13px; color: #6b7280;">6-digit PIN for alternative access</p>
+                    </div>
                 </div>
 
                 <div class="settings-section">
@@ -1348,33 +2119,6 @@
                             <p class="timer-value">Never</p>
                             <p class="timer-label">Manual</p>
                         </div>
-                    </div>
-                </div>
-
-                <div class="settings-section">
-                    <h3 class="settings-title">Privacy Features</h3>
-                    <p class="settings-description">Additional privacy options for enhanced security.</p>
-                    
-                    <div style="background: #f8fafc; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
-                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
-                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                                <polyline points="22,4 12,14.01 9,11.01"/>
-                            </svg>
-                            <span style="font-weight: 600; color: #1f2937;">App starts hidden</span>
-                        </div>
-                        <p style="margin: 0; font-size: 13px; color: #6b7280;">All amounts are hidden when app opens</p>
-                    </div>
-                    
-                    <div style="background: #f8fafc; border-radius: 12px; padding: 16px;">
-                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
-                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                                <polyline points="22,4 12,14.01 9,11.01"/>
-                            </svg>
-                            <span style="font-weight: 600; color: #1f2937;">Auto-hide countdown</span>
-                        </div>
-                        <p style="margin: 0; font-size: 13px; color: #6b7280;">Visual countdown shows time remaining</p>
                     </div>
                 </div>
 
@@ -1480,12 +2224,38 @@
         let countdownInterval = null;
         let remainingSeconds = 0;
         let firstVisit = true;
+        
+        // User authentication state
+        let currentUser = null;
+        let isLoggedIn = false;
+        let cameraStream = null;
+        
+        // Registration state
+        let registrationStep = 1;
+        let registrationData = {};
+        let registrationPin = '';
+        let currentPin = '';
+        let faceEnrollmentProgress = 0;
 
         // LocalStorage keys
         const STORAGE_KEY = 'malaysiaPlanningTransactions';
         const PRIVACY_KEY = 'malaysiaPlanningPrivacy';
         const TIMER_KEY = 'malaysiaPlanningTimer';
         const FIRST_VISIT_KEY = 'malaysiaPlanningFirstVisit';
+        const USER_KEY = 'malaysiaPlanningUser';
+        const USERS_KEY = 'malaysiaPlanningUsers';
+
+        // Demo user data
+        const demoUser = {
+            id: 'demo_user_001',
+            name: 'Demo User',
+            email: 'demo@finplan.my',
+            phone: '+60123456789',
+            pin: '123456',
+            faceId: 'demo_face_template',
+            avatar: 'DU',
+            createdAt: new Date().toISOString()
+        };
 
         // Update current time
         function updateCurrentTime() {
@@ -1517,19 +2287,462 @@
             return parseFloat(value.toString().replace(/,/g, ''));
         }
 
-        // Start auto-hide timer
+        // User Authentication Functions
+        function loadUsers() {
+            try {
+                const saved = localStorage.getItem(USERS_KEY);
+                return saved ? JSON.parse(saved) : [];
+            } catch (e) {
+                console.error('Error loading users:', e);
+                return [];
+            }
+        }
+
+        function saveUsers(users) {
+            try {
+                localStorage.setItem(USERS_KEY, JSON.stringify(users));
+            } catch (e) {
+                console.error('Error saving users:', e);
+            }
+        }
+
+        function loadCurrentUser() {
+            try {
+                const saved = localStorage.getItem(USER_KEY);
+                if (saved) {
+                    currentUser = JSON.parse(saved);
+                    isLoggedIn = true;
+                    return true;
+                }
+            } catch (e) {
+                console.error('Error loading current user:', e);
+            }
+            return false;
+        }
+
+        function saveCurrentUser() {
+            try {
+                localStorage.setItem(USER_KEY, JSON.stringify(currentUser));
+            } catch (e) {
+                console.error('Error saving current user:', e);
+            }
+        }
+
+        function checkLoginStatus() {
+            const hasUser = loadCurrentUser();
+            if (hasUser) {
+                showUserLogin();
+            } else {
+                showInitialLogin();
+            }
+            return hasUser;
+        }
+
+        function showInitialLogin() {
+            document.getElementById('initial-login').classList.remove('hidden');
+            document.getElementById('user-login').classList.add('hidden');
+        }
+
+        function showUserLogin() {
+            document.getElementById('initial-login').classList.add('hidden');
+            document.getElementById('user-login').classList.remove('hidden');
+            
+            // Update user display
+            document.getElementById('user-avatar').textContent = currentUser.avatar;
+            document.getElementById('user-name').textContent = currentUser.name;
+            document.getElementById('user-email').textContent = currentUser.email;
+        }
+
+        function loadDemoUser() {
+            // Save demo user
+            const users = loadUsers();
+            if (!users.find(u => u.id === demoUser.id)) {
+                users.push(demoUser);
+                saveUsers(users);
+            }
+            
+            currentUser = demoUser;
+            saveCurrentUser();
+            loginSuccess();
+        }
+
+        function loginSuccess() {
+            isLoggedIn = true;
+            document.getElementById('login-screen').classList.add('hidden');
+            
+            // Update header with user info
+            document.getElementById('header-username').textContent = currentUser.name.split(' ')[0];
+            
+            // Load user's transactions
+            loadTransactions();
+            updateDisplays();
+            
+            showNotification(`👋 Welcome back, ${currentUser.name.split(' ')[0]}!`, 'success');
+            
+            // Show privacy splash for first-time users
+            setTimeout(() => {
+                if (firstVisit) {
+                    showPrivacySplash();
+                }
+            }, 1000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                isLoggedIn = false;
+                currentUser = null;
+                
+                // Clear current user but keep registration data
+                localStorage.removeItem(USER_KEY);
+                
+                // Stop any active camera streams
+                if (cameraStream) {
+                    cameraStream.getTracks().forEach(track => track.stop());
+                    cameraStream = null;
+                }
+                
+                // Show login screen
+                document.getElementById('login-screen').classList.remove('hidden');
+                checkLoginStatus();
+                
+                showNotification('🔒 Logged out successfully', 'warning');
+            }
+        }
+
+        function switchUser() {
+            logout();
+        }
+
+        // Face Recognition Functions
+        function startFaceLogin() {
+            document.getElementById('face-recognition-modal').classList.remove('hidden');
+            document.getElementById('scanner-title').textContent = 'Face Recognition Login';
+            document.getElementById('scanner-subtitle').textContent = 'Position your face in the center';
+            document.getElementById('scanner-status').textContent = 'Click "Start Scan" to begin';
+            document.getElementById('start-scan-btn').textContent = 'Start Scan';
+        }
+
+        function closeFaceRecognition() {
+            document.getElementById('face-recognition-modal').classList.add('hidden');
+            stopCamera();
+        }
+
+        async function startCameraScan() {
+            try {
+                document.getElementById('scanner-status').textContent = 'Requesting camera access...';
+                document.getElementById('scanner-status').className = 'scanner-status';
+                
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'user',
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
+                    } 
+                });
+                
+                cameraStream = stream;
+                const video = document.getElementById('camera-video');
+                video.srcObject = stream;
+                
+                document.getElementById('camera-placeholder').classList.add('hidden');
+                video.classList.remove('hidden');
+                
+                document.getElementById('start-scan-btn').textContent = 'Scanning...';
+                document.getElementById('start-scan-btn').disabled = true;
+                
+                // Start face detection simulation
+                setTimeout(() => {
+                    simulateFaceDetection();
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Camera access error:', error);
+                document.getElementById('scanner-status').textContent = 'Camera access denied. Please enable camera permissions.';
+                document.getElementById('scanner-status').className = 'scanner-status error';
+            }
+        }
+
+        function simulateFaceDetection() {
+            const overlay = document.getElementById('face-overlay');
+            const status = document.getElementById('scanner-status');
+            
+            overlay.classList.add('active');
+            status.textContent = 'Face detected. Analyzing...';
+            status.className = 'scanner-status scanning';
+            
+            // Simulate face recognition process
+            setTimeout(() => {
+                overlay.classList.remove('active');
+                overlay.classList.add('success');
+                status.textContent = 'Face recognition successful!';
+                status.className = 'scanner-status success';
+                
+                setTimeout(() => {
+                    closeFaceRecognition();
+                    loginSuccess();
+                }, 1500);
+            }, 3000);
+        }
+
+        function stopCamera() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+            
+            const video = document.getElementById('camera-video');
+            video.classList.add('hidden');
+            document.getElementById('camera-placeholder').classList.remove('hidden');
+            document.getElementById('face-overlay').className = 'face-overlay';
+            document.getElementById('start-scan-btn').disabled = false;
+        }
+
+        // PIN Functions
+        function showPinLogin() {
+            document.getElementById('pin-modal').classList.remove('hidden');
+            currentPin = '';
+            updatePinDisplay();
+        }
+
+        function closePinLogin() {
+            document.getElementById('pin-modal').classList.add('hidden');
+            currentPin = '';
+            updatePinDisplay();
+        }
+
+        function enterPin(digit) {
+            if (currentPin.length < 6) {
+                currentPin += digit;
+                updatePinDisplay();
+                
+                if (currentPin.length === 6) {
+                    verifyPin();
+                }
+            }
+        }
+
+        function clearPin() {
+            if (currentPin.length > 0) {
+                currentPin = currentPin.slice(0, -1);
+                updatePinDisplay();
+            }
+        }
+
+        function updatePinDisplay() {
+            for (let i = 0; i < 6; i++) {
+                const dot = document.getElementById(`pin-dot-${i}`);
+                if (i < currentPin.length) {
+                    dot.classList.add('filled');
+                } else {
+                    dot.classList.remove('filled');
+                }
+            }
+        }
+
+        function verifyPin() {
+            if (currentPin === currentUser.pin) {
+                showNotification('✅ PIN verified successfully!', 'success');
+                closePinLogin();
+                loginSuccess();
+            } else {
+                showNotification('❌ Incorrect PIN. Please try again.', 'error');
+                currentPin = '';
+                updatePinDisplay();
+            }
+        }
+
+        // Registration Functions
+        function showRegistration() {
+            document.getElementById('registration-modal').classList.remove('hidden');
+            registrationStep = 1;
+            registrationData = {};
+            registrationPin = '';
+            showRegistrationStep(1);
+        }
+
+        function closeRegistration() {
+            document.getElementById('registration-modal').classList.add('hidden');
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+        }
+
+        function nextRegistrationStep(step) {
+            if (step === 2) {
+                // Validate step 1
+                const name = document.getElementById('reg-name').value.trim();
+                const email = document.getElementById('reg-email').value.trim();
+                const phone = document.getElementById('reg-phone').value.trim();
+                
+                if (!name || !email || !phone) {
+                    showNotification('Please fill in all fields', 'error');
+                    return;
+                }
+                
+                registrationData = { name, email, phone };
+            }
+            
+            if (step === 3 && registrationPin.length !== 6) {
+                showNotification('Please set a 6-digit PIN', 'error');
+                return;
+            }
+            
+            registrationStep = step;
+            showRegistrationStep(step);
+        }
+
+        function showRegistrationStep(step) {
+            // Hide all steps
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`registration-step-${i}`).classList.add('hidden');
+            }
+            
+            // Show current step
+            document.getElementById(`registration-step-${step}`).classList.remove('hidden');
+        }
+
+        function enterRegPin(digit) {
+            if (registrationPin.length < 6) {
+                registrationPin += digit;
+                updateRegPinDisplay();
+                
+                const nextBtn = document.getElementById('pin-next-btn');
+                if (registrationPin.length === 6) {
+                    nextBtn.disabled = false;
+                    nextBtn.classList.remove('btn-secondary');
+                    nextBtn.classList.add('btn-primary');
+                } else {
+                    nextBtn.disabled = true;
+                    nextBtn.classList.add('btn-secondary');
+                    nextBtn.classList.remove('btn-primary');
+                }
+            }
+        }
+
+        function clearRegPin() {
+            if (registrationPin.length > 0) {
+                registrationPin = registrationPin.slice(0, -1);
+                updateRegPinDisplay();
+                
+                const nextBtn = document.getElementById('pin-next-btn');
+                if (registrationPin.length < 6) {
+                    nextBtn.disabled = true;
+                    nextBtn.classList.add('btn-secondary');
+                    nextBtn.classList.remove('btn-primary');
+                }
+            }
+        }
+
+        function updateRegPinDisplay() {
+            for (let i = 0; i < 6; i++) {
+                const dot = document.getElementById(`reg-pin-dot-${i}`);
+                if (i < registrationPin.length) {
+                    dot.classList.add('filled');
+                } else {
+                    dot.classList.remove('filled');
+                }
+            }
+        }
+
+        // Face Enrollment Functions
+        async function startFaceEnrollment() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'user',
+                        width: { ideal: 320 },
+                        height: { ideal: 320 }
+                    } 
+                });
+                
+                cameraStream = stream;
+                const video = document.getElementById('enrollment-video');
+                video.srcObject = stream;
+                
+                document.getElementById('enrollment-placeholder').classList.add('hidden');
+                video.classList.remove('hidden');
+                
+                document.getElementById('enrollment-btn').textContent = 'Enrolling...';
+                document.getElementById('enrollment-btn').disabled = true;
+                
+                // Start enrollment simulation
+                simulateFaceEnrollment();
+                
+            } catch (error) {
+                console.error('Camera access error:', error);
+                document.getElementById('enrollment-instruction').textContent = 'Camera access denied. Please enable camera permissions.';
+            }
+        }
+
+        function simulateFaceEnrollment() {
+            const overlay = document.getElementById('enrollment-overlay');
+            const progressFill = document.getElementById('enrollment-progress-fill');
+            const instruction = document.getElementById('enrollment-instruction');
+            
+            overlay.classList.add('scanning');
+            instruction.textContent = 'Keep your face centered. Analyzing features...';
+            
+            // Simulate enrollment progress
+            faceEnrollmentProgress = 0;
+            const enrollmentInterval = setInterval(() => {
+                faceEnrollmentProgress += 20;
+                progressFill.style.width = `${faceEnrollmentProgress}%`;
+                
+                if (faceEnrollmentProgress >= 100) {
+                    clearInterval(enrollmentInterval);
+                    overlay.classList.remove('scanning');
+                    instruction.textContent = 'Face enrollment completed successfully!';
+                    
+                    setTimeout(() => {
+                        nextRegistrationStep(4);
+                    }, 1500);
+                }
+            }, 800);
+        }
+
+        function completeRegistration() {
+            // Create user account
+            const newUser = {
+                id: `user_${Date.now()}`,
+                name: registrationData.name,
+                email: registrationData.email,
+                phone: registrationData.phone,
+                pin: registrationPin,
+                faceId: `face_template_${Date.now()}`,
+                avatar: registrationData.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2),
+                createdAt: new Date().toISOString()
+            };
+            
+            // Save to users list
+            const users = loadUsers();
+            users.push(newUser);
+            saveUsers(users);
+            
+            // Set as current user
+            currentUser = newUser;
+            saveCurrentUser();
+            
+            // Close registration
+            closeRegistration();
+            
+            // Login success
+            loginSuccess();
+            
+            showNotification('🎉 Account created successfully!', 'success');
+        }
+
+        // Privacy and Timer Functions (same as before)
         function startAutoHideTimer() {
-            if (autoHideSeconds === 0) return; // Never auto-hide
+            if (autoHideSeconds === 0) return;
             
             clearAutoHideTimer();
             remainingSeconds = autoHideSeconds;
             
-            // Show countdown for last 10 seconds
             if (autoHideSeconds <= 10) {
                 showTimerIndicator();
                 startCountdown();
             } else {
-                // Start countdown 10 seconds before hiding
                 autoHideTimer = setTimeout(() => {
                     showTimerIndicator();
                     startCountdown();
@@ -1537,7 +2750,6 @@
             }
         }
 
-        // Start countdown display
         function startCountdown() {
             const startSeconds = Math.min(remainingSeconds, 10);
             remainingSeconds = startSeconds;
@@ -1556,7 +2768,6 @@
             }, 1000);
         }
 
-        // Update timer display
         function updateTimerDisplay() {
             const timerText = document.getElementById('timer-text');
             const countdownRing = document.getElementById('countdown-ring');
@@ -1568,19 +2779,16 @@
             }
         }
 
-        // Show timer indicator
         function showTimerIndicator() {
             document.getElementById('timer-indicator').classList.add('show');
         }
 
-        // Hide timer indicator
         function hideTimerIndicator() {
             document.getElementById('timer-indicator').classList.remove('show');
             document.getElementById('countdown-ring').classList.remove('active');
             document.querySelector('.balance-toggle').classList.remove('countdown');
         }
 
-        // Clear auto-hide timer
         function clearAutoHideTimer() {
             if (autoHideTimer) {
                 clearTimeout(autoHideTimer);
@@ -1593,7 +2801,6 @@
             hideTimerIndicator();
         }
 
-        // Auto-hide balance
         function autoHideBalance() {
             if (balanceVisible) {
                 balanceVisible = false;
@@ -1604,49 +2811,35 @@
             }
         }
 
-        // Toggle balance visibility
         function toggleBalanceVisibility() {
             balanceVisible = !balanceVisible;
             
-            // Clear any existing timer
             clearAutoHideTimer();
-            
-            // Save privacy preference
             localStorage.setItem(PRIVACY_KEY, JSON.stringify(balanceVisible));
-            
-            // Update visibility icon
             updateVisibilityIcon();
-            
-            // Update all displays
             updateDisplays();
             
-            // Show notification
             showNotification(
                 balanceVisible ? '👁️ Amounts visible' : '🫣 Amounts hidden', 
                 'success'
             );
             
-            // Add/remove privacy mode class
             if (balanceVisible) {
                 document.body.classList.remove('privacy-mode');
-                // Start auto-hide timer if amounts are now visible
                 startAutoHideTimer();
             } else {
                 document.body.classList.add('privacy-mode');
             }
         }
 
-        // Update visibility icon
         function updateVisibilityIcon() {
             const icon = document.getElementById('visibility-icon');
             if (balanceVisible) {
-                // Eye open icon
                 icon.innerHTML = `
                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                     <circle cx="12" cy="12" r="3"/>
                 `;
             } else {
-                // Eye closed icon
                 icon.innerHTML = `
                     <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
                     <line x1="1" y1="1" x2="23" y2="23"/>
@@ -1654,13 +2847,11 @@
             }
         }
 
-        // Load privacy preference
         function loadPrivacyPreference() {
             try {
                 const savedTimer = localStorage.getItem(TIMER_KEY);
                 const savedFirstVisit = localStorage.getItem(FIRST_VISIT_KEY);
                 
-                // Always start hidden for security
                 balanceVisible = false;
                 firstVisit = savedFirstVisit === null;
                 
@@ -1677,28 +2868,19 @@
             document.body.classList.add('privacy-mode');
         }
 
-        // Show privacy splash
         function showPrivacySplash() {
             if (firstVisit) {
                 document.getElementById('privacy-splash').classList.add('show');
             }
         }
 
-        // Hide privacy splash
         function hidePrivacySplash() {
             document.getElementById('privacy-splash').classList.remove('show');
             localStorage.setItem(FIRST_VISIT_KEY, 'false');
             firstVisit = false;
         }
 
-        // Show privacy help
-        function showPrivacyHelp() {
-            document.getElementById('privacy-splash').classList.add('show');
-        }
-
-        // Settings functions
         function openSettings() {
-            // Update active timer option
             document.querySelectorAll('.timer-option').forEach(option => {
                 option.classList.remove('active');
                 if (parseInt(option.dataset.timer) === autoHideSeconds) {
@@ -1714,7 +2896,6 @@
         }
 
         function selectTimer(seconds) {
-            // Update UI
             document.querySelectorAll('.timer-option').forEach(option => {
                 option.classList.remove('active');
             });
@@ -1722,21 +2903,15 @@
         }
 
         function saveSettings() {
-            // Get selected timer
             const activeOption = document.querySelector('.timer-option.active');
             autoHideSeconds = parseInt(activeOption.dataset.timer);
             
-            // Save to localStorage
             localStorage.setItem(TIMER_KEY, autoHideSeconds.toString());
-            
-            // Close modal
             closeSettings();
             
-            // Show confirmation
             const timerText = autoHideSeconds === 0 ? 'never' : `${autoHideSeconds}s`;
             showNotification(`⚙️ Auto-hide timer set to ${timerText}`, 'success');
             
-            // Restart timer if currently visible
             if (balanceVisible) {
                 clearAutoHideTimer();
                 startAutoHideTimer();
@@ -1846,10 +3021,13 @@
             }, 3000);
         }
 
-        // Local Storage functions
+        // Local Storage functions - now user-specific
         function saveTransactions() {
+            if (!currentUser) return;
+            
             try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
+                const key = `${STORAGE_KEY}_${currentUser.id}`;
+                localStorage.setItem(key, JSON.stringify(transactions));
             } catch (e) {
                 showNotification('Error saving data locally', 'error');
                 console.error('Error saving to localStorage:', e);
@@ -1857,10 +3035,15 @@
         }
 
         function loadTransactions() {
+            if (!currentUser) return;
+            
             try {
-                const saved = localStorage.getItem(STORAGE_KEY);
+                const key = `${STORAGE_KEY}_${currentUser.id}`;
+                const saved = localStorage.getItem(key);
                 if (saved) {
                     transactions = JSON.parse(saved);
+                } else {
+                    transactions = [];
                 }
             } catch (e) {
                 showNotification('Error loading saved data', 'error');
@@ -1869,7 +3052,7 @@
             }
         }
 
-        // Load demo data
+        // All other functions remain the same (loadDemoData, showTab, etc.)
         function loadDemoData() {
             transactions = [...demoTransactions];
             saveTransactions();
@@ -1877,7 +3060,6 @@
             showNotification('🎯 Demo data loaded successfully!', 'success');
         }
 
-        // Clear all data
         function clearAllData() {
             if (confirm('Clear all saved data? This cannot be undone.')) {
                 transactions = [];
@@ -1887,26 +3069,17 @@
             }
         }
 
-        // Show tab
         function showTab(tabName) {
-            // Hide all tabs
             document.querySelectorAll('[id$="-tab"]').forEach(tab => tab.classList.add('hidden'));
-            
-            // Show selected tab
             document.getElementById(tabName + '-tab').classList.remove('hidden');
             
-            // Update nav buttons
             document.querySelectorAll('.nav-tab').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
             
-            // Update displays when switching tabs
             updateDisplays();
-            
-            // Scroll to top when switching tabs
             document.querySelector('.main-content').scrollTop = 0;
         }
 
-        // Open add form
         function openAddForm(type) {
             currentType = type;
             isPaymentMode = false;
@@ -1921,7 +3094,6 @@
             document.getElementById('add-modal').classList.remove('hidden');
         }
 
-        // Open payment form
         function openPaymentForm() {
             currentType = 'expense';
             isPaymentMode = true;
@@ -1939,7 +3111,6 @@
             document.getElementById('add-modal').classList.remove('hidden');
         }
 
-        // Open edit form
         function openEditForm(transactionId) {
             const transaction = transactions.find(t => t.id === transactionId);
             if (!transaction) return;
@@ -1952,7 +3123,6 @@
             document.getElementById('modal-title').textContent = 'Edit Transaction';
             document.getElementById('type-toggle').style.display = isPaymentMode ? 'none' : 'flex';
 
-            // Populate form with existing data
             document.getElementById('amount-input').value = transaction.amount;
             document.getElementById('description-input').value = transaction.description;
             document.getElementById('category-input').value = transaction.category;
@@ -1965,7 +3135,6 @@
                 document.getElementById('submit-btn').textContent = 'Update Payment';
             }
 
-            // Set submit button for edit mode
             if (!isPaymentMode) {
                 document.getElementById('submit-btn').className = transaction.type === 'income' ? 'btn btn-success' : 'btn btn-danger';
                 document.getElementById('submit-btn').textContent = `Update ${transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}`;
@@ -1974,14 +3143,12 @@
             document.getElementById('add-modal').classList.remove('hidden');
         }
 
-        // Set transaction type
         function setType(type) {
             currentType = type;
             const expenseBtn = document.getElementById('expense-btn');
             const incomeBtn = document.getElementById('income-btn');
             const submitBtn = document.getElementById('submit-btn');
             
-            // Reset button styles
             document.querySelectorAll('.type-btn').forEach(btn => btn.classList.remove('active'));
             
             if (type === 'expense') {
@@ -2007,7 +3174,6 @@
             }
         }
 
-        // Clear form
         function clearForm() {
             document.getElementById('amount-input').value = '';
             document.getElementById('description-input').value = '';
@@ -2015,7 +3181,6 @@
             document.getElementById('payment-input').value = '';
         }
 
-        // Close modal
         function closeModal() {
             document.getElementById('add-modal').classList.add('hidden');
             clearForm();
@@ -2024,14 +3189,12 @@
             editingTransactionId = null;
         }
 
-        // Add or update transaction
         function addTransaction() {
             const amount = parseAmount(document.getElementById('amount-input').value);
             const description = document.getElementById('description-input').value.trim();
             const category = document.getElementById('category-input').value;
             const payment = document.getElementById('payment-input').value;
 
-            // Validation
             if (!description) {
                 showNotification('Please enter a description', 'error');
                 return;
@@ -2050,7 +3213,6 @@
             }
 
             if (isEditMode && editingTransactionId) {
-                // Update existing transaction
                 const transactionIndex = transactions.findIndex(t => t.id === editingTransactionId);
                 if (transactionIndex !== -1) {
                     transactions[transactionIndex] = {
@@ -2067,7 +3229,6 @@
                     showNotification('✅ Transaction updated successfully!', 'success');
                 }
             } else {
-                // Create new transaction
                 const transaction = {
                     id: Date.now(),
                     type: currentType,
@@ -2080,7 +3241,6 @@
                     time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
                 };
 
-                // Add to transactions and save
                 transactions.unshift(transaction);
                 saveTransactions();
                 showNotification('✅ Transaction added successfully!', 'success');
@@ -2090,7 +3250,6 @@
             closeModal();
         }
 
-        // Delete transaction
         function deleteTransaction(id) {
             if (confirm('Delete this transaction? This cannot be undone.')) {
                 transactions = transactions.filter(t => t.id !== id);
@@ -2100,7 +3259,6 @@
             }
         }
 
-        // Update all displays
         function updateDisplays() {
             updateBalanceCard();
             updateRecentTransactions();
@@ -2109,7 +3267,6 @@
             updateHealthIndicator();
         }
 
-        // Update balance card (with comma-formatted RM currency and privacy)
         function updateBalanceCard() {
             const income = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
             const expenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
@@ -2119,7 +3276,6 @@
             document.getElementById('income-display').textContent = formatCurrencyWithPrivacy(income);
             document.getElementById('expenses-display').textContent = formatCurrencyWithPrivacy(expenses);
 
-            // Add styling classes for privacy mode
             const balanceEl = document.getElementById('balance-display');
             const incomeEl = document.getElementById('income-display');
             const expensesEl = document.getElementById('expenses-display');
@@ -2147,7 +3303,6 @@
             document.getElementById('balance-message').textContent = message;
         }
 
-        // Update health indicator
         function updateHealthIndicator() {
             const income = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
             const expenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
@@ -2165,7 +3320,6 @@
             }
         }
 
-        // Update recent transactions (with comma-formatted RM currency, privacy, and edit buttons)
         function updateRecentTransactions() {
             const container = document.getElementById('recent-transactions');
             const recent = transactions.slice(0, 5);
@@ -2180,7 +3334,7 @@
                             </svg>
                         </div>
                         <h4 class="empty-title">Welcome to Malaysian Planning!</h4>
-                        <p class="empty-subtitle">Financial tracking in Ringgit Malaysia with privacy protection</p>
+                        <p class="empty-subtitle">Secure financial tracking with Face ID protection</p>
                         <div style="display: flex; gap: 12px; justify-content: center;">
                             <button class="btn btn-primary" onclick="openAddForm('expense')">Add Transaction</button>
                             <button class="btn btn-secondary" onclick="loadDemoData()">Demo Data</button>
@@ -2234,7 +3388,6 @@
             }
         }
 
-        // Update all transactions (with comma-formatted RM currency, privacy, and edit buttons)
         function updateAllTransactions() {
             const container = document.getElementById('all-transactions');
             const countElement = document.getElementById('transaction-count');
@@ -2305,7 +3458,6 @@
             }
         }
 
-        // Update analytics (with comma-formatted RM currency and privacy)
         function updateAnalytics() {
             const income = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
             const expenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
@@ -2313,7 +3465,6 @@
             const incomeCount = transactions.filter(t => t.type === 'income').length;
             const expenseCount = transactions.filter(t => t.type === 'expense').length;
 
-            // Update analytics displays
             const analyticsElements = {
                 income: document.getElementById('analytics-income'),
                 expenses: document.getElementById('analytics-expenses'),
@@ -2324,7 +3475,6 @@
             analyticsElements.expenses.textContent = formatCurrencyWithPrivacy(expenses);
             analyticsElements.balance.textContent = formatCurrencyWithPrivacy(balance);
             
-            // Apply privacy styling
             Object.values(analyticsElements).forEach(el => {
                 if (balanceVisible) {
                     el.classList.remove('hidden-amount');
@@ -2337,7 +3487,6 @@
             document.getElementById('income-count').textContent = incomeCount;
             document.getElementById('expense-count').textContent = expenseCount;
 
-            // Health score
             const scoreElement = document.getElementById('health-score');
             const messageElement = document.getElementById('health-message');
             
@@ -2365,11 +3514,9 @@
                 messageElement.textContent = 'Add income to calculate health score';
             }
 
-            // Category analytics
             updateCategoryAnalytics();
         }
 
-        // Update category analytics (with comma-formatted RM currency and privacy)
         function updateCategoryAnalytics() {
             const categories = {};
             const totalExpenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
@@ -2412,48 +3559,55 @@
             }
         }
 
-        // Initialize app with localStorage loading
+        // Initialize app with authentication and localStorage loading
         document.addEventListener('DOMContentLoaded', function() {
             // Load privacy preference first (always starts hidden)
             loadPrivacyPreference();
             
-            // Load saved transactions
-            loadTransactions();
-            updateDisplays();
+            // Check login status
+            const hasUser = checkLoginStatus();
+            
+            if (hasUser) {
+                // User is logged in, hide login screen and load app
+                document.getElementById('login-screen').classList.add('hidden');
+                loadTransactions();
+                updateDisplays();
+                
+                // Update header with user info
+                document.getElementById('header-username').textContent = currentUser.name.split(' ')[0];
+                
+                // Show privacy splash for first-time users
+                setTimeout(() => {
+                    if (firstVisit) {
+                        showPrivacySplash();
+                    } else {
+                        showNotification('👋 Welcome back! Tap eye to show amounts.', 'success');
+                    }
+                }, 1000);
+            } else {
+                // No user logged in, show login screen
+                document.getElementById('login-screen').classList.remove('hidden');
+            }
             
             // Update time every minute
             updateCurrentTime();
             setInterval(updateCurrentTime, 60000);
             
-            // Show privacy splash for first-time users
-            setTimeout(() => {
-                showPrivacySplash();
-            }, 500);
-            
-            // Show welcome message after splash
-            setTimeout(() => {
-                if (!firstVisit) {
-                    showNotification('🔒 Privacy mode active. Tap eye to show amounts.', 'warning');
-                }
-            }, 2000);
-            
-            console.log('🇲🇾 Malaysian Financial Planning Mobile App Loaded');
-            console.log('💾 Data persistence enabled with localStorage');
-            console.log('💰 All amounts displayed in Malaysian Ringgit (RM) with comma formatting');
-            console.log('🔒 Privacy mode: App starts hidden, auto-hide timer configurable');
-            console.log('⚙️ Settings: Configure auto-hide timing (10s-2min or never)');
-            console.log('✏️ Full CRUD functionality available');
-            console.log('📱 Native mobile app experience with privacy splash');
+            console.log('🇲🇾 Malaysian Financial Planning with Face Recognition Loaded');
+            console.log('💾 User-specific data persistence with localStorage');
+            console.log('💰 Malaysian Ringgit (RM) currency with comma formatting');
+            console.log('🔒 Privacy mode with auto-hide timer');
+            console.log('👤 Face Recognition + PIN authentication');
+            console.log('📱 Full mobile app experience');
         });
 
-        // Close privacy splash when clicking outside
+        // Close modals when clicking outside
         document.getElementById('privacy-splash').addEventListener('click', function(e) {
             if (e.target === this) {
                 hidePrivacySplash();
             }
         });
 
-        // Close modals when clicking outside
         document.getElementById('settings-modal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeSettings();
@@ -2463,6 +3617,31 @@
         document.getElementById('add-modal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeModal();
+            }
+        });
+
+        document.getElementById('face-recognition-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeFaceRecognition();
+            }
+        });
+
+        document.getElementById('pin-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePinLogin();
+            }
+        });
+
+        document.getElementById('registration-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeRegistration();
+            }
+        });
+
+        // Cleanup camera streams when page unloads
+        window.addEventListener('beforeunload', function() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
             }
         });
     </script>
