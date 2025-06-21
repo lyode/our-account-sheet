@@ -174,20 +174,28 @@
             background: rgba(255,255,255,0.3);
         }
 
-        .balance-toggle.auto-hide::after {
-            content: '';
+        .balance-toggle.countdown {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .countdown-ring {
             position: absolute;
-            bottom: -2px;
-            right: -2px;
-            width: 12px;
-            height: 12px;
-            background: #f59e0b;
-            border: 2px solid white;
+            width: 36px;
+            height: 36px;
+            border: 2px solid rgba(239, 68, 68, 0.3);
             border-radius: 50%;
-            font-size: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border-top: 2px solid #ef4444;
+            animation: countdown-spin 1s linear infinite;
+            display: none;
+        }
+
+        .countdown-ring.active {
+            display: block;
+        }
+
+        @keyframes countdown-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .balance-amount {
@@ -259,21 +267,26 @@
             letter-spacing: 1px;
         }
 
-        /* Auto-hide timer indicator */
+        /* Auto-hide Timer Indicator */
         .timer-indicator {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            width: 8px;
-            height: 8px;
-            background: #f59e0b;
-            border-radius: 50%;
-            animation: pulse 1s infinite;
+            position: fixed;
+            top: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 60;
+            opacity: 0;
+            transition: opacity 0.3s;
+            backdrop-filter: blur(10px);
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.8); }
+        .timer-indicator.show {
+            opacity: 1;
         }
 
         /* Main Content */
@@ -593,6 +606,58 @@
             cursor: pointer;
         }
 
+        /* Settings Modal */
+        .settings-section {
+            margin-bottom: 24px;
+        }
+
+        .settings-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0 0 12px 0;
+        }
+
+        .settings-description {
+            font-size: 14px;
+            color: #6b7280;
+            margin: 0 0 16px 0;
+        }
+
+        .timer-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .timer-option {
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            background: white;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .timer-option.active {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .timer-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0 0 4px 0;
+        }
+
+        .timer-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin: 0;
+        }
+
         /* Form Elements */
         .form-group {
             margin-bottom: 20px;
@@ -672,69 +737,6 @@
         .type-btn:not(.active) {
             background: none;
             color: #6b7280;
-        }
-
-        /* Settings specific styles */
-        .settings-section {
-            margin-bottom: 24px;
-        }
-
-        .settings-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #1f2937;
-            margin: 0 0 12px 0;
-        }
-
-        .setting-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px;
-            background: #f8fafc;
-            border-radius: 12px;
-            margin-bottom: 8px;
-        }
-
-        .setting-label {
-            font-size: 14px;
-            font-weight: 500;
-            color: #374151;
-        }
-
-        .setting-value {
-            font-size: 14px;
-            color: #6b7280;
-        }
-
-        .timer-options {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        .timer-option {
-            padding: 12px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            background: white;
-            text-align: center;
-            font-size: 14px;
-            font-weight: 600;
-            color: #374151;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .timer-option.active {
-            border-color: #3b82f6;
-            background: #eff6ff;
-            color: #3b82f6;
-        }
-
-        .timer-option:active {
-            transform: scale(0.95);
         }
 
         /* Buttons */
@@ -943,9 +945,14 @@
         }
     </style>
 </head>
-<body>
+<body class="privacy-mode">
     <!-- Notification Toast -->
     <div id="notification" class="notification"></div>
+
+    <!-- Auto-hide Timer Indicator -->
+    <div id="timer-indicator" class="timer-indicator">
+        <span id="timer-text">Auto-hide in 10s</span>
+    </div>
 
     <div class="mobile-app">
         <!-- Status Bar -->
@@ -972,7 +979,7 @@
                     <button class="header-btn" onclick="openSettings()" title="Settings">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="3"/>
-                            <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1m11-7a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7 17a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
                         </svg>
                     </button>
                     <button class="header-btn" title="Profile">
@@ -987,16 +994,16 @@
             <div class="balance-display">
                 <div class="balance-header">
                     <p class="balance-label">Current Balance</p>
-                    <button class="balance-toggle" onclick="toggleBalanceVisibility()" title="Show/Hide Balance" id="balance-toggle-btn">
+                    <button class="balance-toggle" onclick="toggleBalanceVisibility()" title="Show/Hide Balance">
+                        <div id="countdown-ring" class="countdown-ring"></div>
                         <svg id="visibility-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
                             <line x1="1" y1="1" x2="23" y2="23"/>
                         </svg>
-                        <div id="timer-indicator" class="timer-indicator hidden"></div>
                     </button>
                 </div>
                 <h2 class="balance-amount hidden-amount" id="balance-display">••••••••</h2>
-                <p class="balance-message" id="balance-message">Tap the eye to view balance!</p>
+                <p class="balance-message" id="balance-message">Tap the eye to view your balance</p>
             </div>
 
             <div class="balance-stats">
@@ -1029,10 +1036,11 @@
                 <!-- Info Banner -->
                 <div class="info-banner">
                     <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        <path d="M12 15l2-5h-4l2 5z"/>
+                        <path d="M12 2l7 12H5l7-12z"/>
                     </svg>
                     <div class="info-text">
-                        <strong>Privacy First:</strong> Amounts hidden by default. Click eye icon to view with auto-hide timer.
+                        <strong>Smart Privacy:</strong> App starts hidden. Tap eye to show amounts with auto-hide timer.
                     </div>
                     <button class="info-btn" onclick="loadDemoData()">Demo</button>
                 </div>
@@ -1238,36 +1246,29 @@
 
                 <div class="settings-section">
                     <h3 class="settings-title">Auto-Hide Timer</h3>
-                    <p style="color: #6b7280; font-size: 14px; margin-bottom: 16px;">
-                        Automatically hide amounts after showing them for the selected duration.
-                    </p>
+                    <p class="settings-description">Choose how long amounts stay visible before automatically hiding for privacy.</p>
                     
                     <div class="timer-options">
-                        <button class="timer-option" data-timer="5" onclick="selectTimer(5)">5 sec</button>
-                        <button class="timer-option" data-timer="10" onclick="selectTimer(10)">10 sec</button>
-                        <button class="timer-option" data-timer="15" onclick="selectTimer(15)">15 sec</button>
-                        <button class="timer-option" data-timer="30" onclick="selectTimer(30)">30 sec</button>
-                        <button class="timer-option" data-timer="60" onclick="selectTimer(60)">1 min</button>
-                        <button class="timer-option" data-timer="0" onclick="selectTimer(0)">Manual</button>
-                    </div>
-
-                    <div class="setting-item">
-                        <span class="setting-label">Current Setting</span>
-                        <span class="setting-value" id="current-timer-display">Manual</span>
-                    </div>
-                </div>
-
-                <div class="settings-section">
-                    <h3 class="settings-title">Privacy Behavior</h3>
-                    
-                    <div class="setting-item">
-                        <span class="setting-label">Default State</span>
-                        <span class="setting-value">Amounts Hidden</span>
-                    </div>
-                    
-                    <div class="setting-item">
-                        <span class="setting-label">Show Method</span>
-                        <span class="setting-value">Tap Eye Icon</span>
+                        <div class="timer-option" onclick="selectTimer(15)" data-timer="15">
+                            <p class="timer-value">15s</p>
+                            <p class="timer-label">Quick</p>
+                        </div>
+                        <div class="timer-option active" onclick="selectTimer(30)" data-timer="30">
+                            <p class="timer-value">30s</p>
+                            <p class="timer-label">Default</p>
+                        </div>
+                        <div class="timer-option" onclick="selectTimer(60)" data-timer="60">
+                            <p class="timer-value">1min</p>
+                            <p class="timer-label">Medium</p>
+                        </div>
+                        <div class="timer-option" onclick="selectTimer(120)" data-timer="120">
+                            <p class="timer-value">2min</p>
+                            <p class="timer-label">Long</p>
+                        </div>
+                        <div class="timer-option" onclick="selectTimer(0)" data-timer="0">
+                            <p class="timer-value">Never</p>
+                            <p class="timer-label">Manual</p>
+                        </div>
                     </div>
                 </div>
 
@@ -1367,14 +1368,16 @@
         let isPaymentMode = false;
         let isEditMode = false;
         let editingTransactionId = null;
-        let balanceVisible = false; // Start hidden by default
-        let autoHideTimer = 10; // Default 10 seconds
-        let hideTimeout = null; // Timer reference
+        let balanceVisible = false; // Default to hidden
+        let autoHideTimer = null;
+        let autoHideSeconds = 30; // Default 30 seconds
+        let countdownInterval = null;
+        let remainingSeconds = 0;
 
         // LocalStorage keys
         const STORAGE_KEY = 'malaysiaPlanningTransactions';
         const PRIVACY_KEY = 'malaysiaPlanningPrivacy';
-        const TIMER_KEY = 'malaysiaPlanningAutoHideTimer';
+        const TIMER_KEY = 'malaysiaPlanningTimer';
 
         // Currency formatting function with commas
         function formatCurrency(amount) {
@@ -1399,61 +1402,123 @@
             return parseFloat(value.toString().replace(/,/g, ''));
         }
 
-        // Toggle balance visibility with auto-hide
-        function toggleBalanceVisibility() {
-            // Clear any existing timer
-            if (hideTimeout) {
-                clearTimeout(hideTimeout);
-                hideTimeout = null;
-            }
-
-            if (!balanceVisible) {
-                // Show amounts
-                balanceVisible = true;
-                updateVisibilityIcon();
-                updateDisplays();
-                showNotification('👁️ Amounts visible', 'success');
-
-                // Start auto-hide timer if enabled
-                if (autoHideTimer > 0) {
+        // Start auto-hide timer
+        function startAutoHideTimer() {
+            if (autoHideSeconds === 0) return; // Never auto-hide
+            
+            clearAutoHideTimer();
+            remainingSeconds = autoHideSeconds;
+            
+            // Show countdown for last 10 seconds
+            if (autoHideSeconds <= 10) {
+                showTimerIndicator();
+                startCountdown();
+            } else {
+                // Start countdown 10 seconds before hiding
+                autoHideTimer = setTimeout(() => {
                     showTimerIndicator();
-                    hideTimeout = setTimeout(() => {
-                        balanceVisible = false;
-                        updateVisibilityIcon();
-                        updateDisplays();
-                        hideTimerIndicator();
-                        showNotification('🫣 Amounts auto-hidden', 'warning');
-                        document.body.classList.add('privacy-mode');
-                    }, autoHideTimer * 1000);
-                }
-            } else {
-                // Hide amounts manually
-                balanceVisible = false;
-                updateVisibilityIcon();
-                updateDisplays();
-                hideTimerIndicator();
-                showNotification('🫣 Amounts hidden', 'warning');
-                document.body.classList.add('privacy-mode');
+                    startCountdown();
+                }, (autoHideSeconds - 10) * 1000);
             }
+        }
 
-            // Update body class
-            if (balanceVisible) {
-                document.body.classList.remove('privacy-mode');
-            } else {
-                document.body.classList.add('privacy-mode');
+        // Start countdown display
+        function startCountdown() {
+            const startSeconds = Math.min(remainingSeconds, 10);
+            remainingSeconds = startSeconds;
+            
+            updateTimerDisplay();
+            
+            countdownInterval = setInterval(() => {
+                remainingSeconds--;
+                updateTimerDisplay();
+                
+                if (remainingSeconds <= 0) {
+                    clearInterval(countdownInterval);
+                    hideTimerIndicator();
+                    autoHideBalance();
+                }
+            }, 1000);
+        }
+
+        // Update timer display
+        function updateTimerDisplay() {
+            const timerText = document.getElementById('timer-text');
+            const countdownRing = document.getElementById('countdown-ring');
+            
+            if (remainingSeconds > 0) {
+                timerText.textContent = `Auto-hide in ${remainingSeconds}s`;
+                countdownRing.classList.add('active');
+                document.querySelector('.balance-toggle').classList.add('countdown');
             }
         }
 
         // Show timer indicator
         function showTimerIndicator() {
-            document.getElementById('timer-indicator').classList.remove('hidden');
-            document.getElementById('balance-toggle-btn').classList.add('auto-hide');
+            document.getElementById('timer-indicator').classList.add('show');
         }
 
         // Hide timer indicator
         function hideTimerIndicator() {
-            document.getElementById('timer-indicator').classList.add('hidden');
-            document.getElementById('balance-toggle-btn').classList.remove('auto-hide');
+            document.getElementById('timer-indicator').classList.remove('show');
+            document.getElementById('countdown-ring').classList.remove('active');
+            document.querySelector('.balance-toggle').classList.remove('countdown');
+        }
+
+        // Clear auto-hide timer
+        function clearAutoHideTimer() {
+            if (autoHideTimer) {
+                clearTimeout(autoHideTimer);
+                autoHideTimer = null;
+            }
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
+            hideTimerIndicator();
+        }
+
+        // Auto-hide balance
+        function autoHideBalance() {
+            if (balanceVisible) {
+                balanceVisible = false;
+                updateVisibilityIcon();
+                updateDisplays();
+                document.body.classList.add('privacy-mode');
+                showNotification('🔒 Amounts auto-hidden for privacy', 'warning');
+            }
+        }
+
+        // Toggle balance visibility
+        function toggleBalanceVisibility() {
+            balanceVisible = !balanceVisible;
+            
+            // Clear any existing timer
+            clearAutoHideTimer();
+            
+            // Save privacy preference
+            localStorage.setItem(PRIVACY_KEY, JSON.stringify(balanceVisible));
+            
+            // Update visibility icon
+            updateVisibilityIcon();
+            
+            // Update all displays
+            updateDisplays();
+            
+            // Show notification
+            showNotification(
+                balanceVisible ? '👁️ Amounts visible' : '🫣 Amounts hidden', 
+                'success'
+            );
+            
+            // Add/remove privacy mode class
+            if (balanceVisible) {
+                document.body.classList.remove('privacy-mode');
+                // Start auto-hide timer if amounts are now visible
+                startAutoHideTimer();
+            } else {
+                document.body.classList.add('privacy-mode');
+            }
         }
 
         // Update visibility icon
@@ -1474,79 +1539,72 @@
             }
         }
 
-        // Open settings modal
-        function openSettings() {
-            document.getElementById('settings-modal').classList.remove('hidden');
-            updateSettingsDisplay();
-        }
-
-        // Close settings modal
-        function closeSettings() {
-            document.getElementById('settings-modal').classList.add('hidden');
-        }
-
-        // Select timer option
-        function selectTimer(seconds) {
-            // Update UI
-            document.querySelectorAll('.timer-option').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`[data-timer="${seconds}"]`).classList.add('active');
-            
-            // Update display
-            const display = seconds === 0 ? 'Manual' : 
-                           seconds < 60 ? `${seconds} seconds` : 
-                           `${seconds / 60} minute`;
-            document.getElementById('current-timer-display').textContent = display;
-        }
-
-        // Save settings
-        function saveSettings() {
-            // Get selected timer
-            const selectedTimer = document.querySelector('.timer-option.active');
-            if (selectedTimer) {
-                autoHideTimer = parseInt(selectedTimer.dataset.timer);
-                localStorage.setItem(TIMER_KEY, JSON.stringify(autoHideTimer));
-                
-                const display = autoHideTimer === 0 ? 'Manual' : 
-                               autoHideTimer < 60 ? `${autoHideTimer} seconds` : 
-                               `${autoHideTimer / 60} minute`;
-                
-                showNotification(`⚙️ Auto-hide set to ${display}`, 'success');
-            }
-            
-            closeSettings();
-        }
-
-        // Update settings display
-        function updateSettingsDisplay() {
-            // Select current timer option
-            document.querySelectorAll('.timer-option').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`[data-timer="${autoHideTimer}"]`).classList.add('active');
-            
-            // Update display text
-            const display = autoHideTimer === 0 ? 'Manual' : 
-                           autoHideTimer < 60 ? `${autoHideTimer} seconds` : 
-                           `${autoHideTimer / 60} minute`;
-            document.getElementById('current-timer-display').textContent = display;
-        }
-
-        // Load privacy and timer preferences
+        // Load privacy preference
         function loadPrivacyPreference() {
             try {
-                // Load timer setting
+                const savedVisibility = localStorage.getItem(PRIVACY_KEY);
                 const savedTimer = localStorage.getItem(TIMER_KEY);
-                if (savedTimer !== null) {
-                    autoHideTimer = JSON.parse(savedTimer);
-                }
                 
-                // Always start hidden
+                // Always start hidden for security
                 balanceVisible = false;
+                
+                if (savedTimer !== null) {
+                    autoHideSeconds = parseInt(savedTimer);
+                }
             } catch (e) {
                 balanceVisible = false;
-                autoHideTimer = 10;
+                autoHideSeconds = 30;
             }
             
             updateVisibilityIcon();
             document.body.classList.add('privacy-mode');
+        }
+
+        // Settings functions
+        function openSettings() {
+            // Update active timer option
+            document.querySelectorAll('.timer-option').forEach(option => {
+                option.classList.remove('active');
+                if (parseInt(option.dataset.timer) === autoHideSeconds) {
+                    option.classList.add('active');
+                }
+            });
+            
+            document.getElementById('settings-modal').classList.remove('hidden');
+        }
+
+        function closeSettings() {
+            document.getElementById('settings-modal').classList.add('hidden');
+        }
+
+        function selectTimer(seconds) {
+            // Update UI
+            document.querySelectorAll('.timer-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            document.querySelector(`[data-timer="${seconds}"]`).classList.add('active');
+        }
+
+        function saveSettings() {
+            // Get selected timer
+            const activeOption = document.querySelector('.timer-option.active');
+            autoHideSeconds = parseInt(activeOption.dataset.timer);
+            
+            // Save to localStorage
+            localStorage.setItem(TIMER_KEY, autoHideSeconds.toString());
+            
+            // Close modal
+            closeSettings();
+            
+            // Show confirmation
+            const timerText = autoHideSeconds === 0 ? 'never' : `${autoHideSeconds}s`;
+            showNotification(`⚙️ Auto-hide timer set to ${timerText}`, 'success');
+            
+            // Restart timer if currently visible
+            if (balanceVisible) {
+                clearAutoHideTimer();
+                startAutoHideTimer();
+            }
         }
 
         // Demo data for showcasing features (Malaysian Ringgit amounts)
@@ -1953,12 +2011,12 @@
 
             let message;
             if (transactions.length === 0) {
-                message = balanceVisible ? "Start tracking or load demo data!" : "Tap the eye to view balance!";
+                message = balanceVisible ? "Start tracking or load demo data!" : "Tap the eye to view your balance";
             } else {
                 if (balanceVisible) {
                     message = balance >= 0 ? "Great financial progress!" : "Review your spending";
                 } else {
-                    message = "Tap the eye to view balance!";
+                    message = "Tap the eye to view your balance";
                 }
             }
             document.getElementById('balance-message').textContent = message;
@@ -2213,23 +2271,23 @@
 
         // Initialize app with localStorage loading
         document.addEventListener('DOMContentLoaded', function() {
-            // Load privacy preference first (starts hidden by default)
+            // Load privacy preference first (always starts hidden)
             loadPrivacyPreference();
             
             // Load saved transactions
             loadTransactions();
             updateDisplays();
             
-            // Show welcome message for privacy-first approach
+            // Show welcome message
             setTimeout(() => {
-                showNotification('🔒 Privacy-first design: Tap the eye to view amounts', 'success');
+                showNotification('🔒 Privacy mode active. Tap eye to show amounts.', 'warning');
             }, 1000);
             
             console.log('🇲🇾 Malaysian Financial Planning Mobile App Loaded');
             console.log('💾 Data persistence enabled with localStorage');
             console.log('💰 All amounts displayed in Malaysian Ringgit (RM) with comma formatting');
-            console.log('🔒 Privacy-first: Amounts hidden by default with auto-hide timer');
-            console.log('⚙️ Settings available for auto-hide timer configuration');
+            console.log('🔒 Privacy mode: App starts hidden, auto-hide timer configurable');
+            console.log('⚙️ Settings: Configure auto-hide timing');
             console.log('✏️ Full edit functionality available');
             console.log('📱 Native mobile app experience');
         });
