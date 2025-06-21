@@ -102,257 +102,28 @@
             font-weight: 500;
         }
 
-        .user-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #10b981, #059669);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 16px;
-            color: white;
-            font-size: 32px;
-            font-weight: 700;
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+        /* Setup Screen */
+        .setup-screen {
+            padding: 20px 0;
         }
 
-        .user-info {
-            margin-bottom: 32px;
-        }
-
-        .user-name {
+        .setup-title {
             font-size: 20px;
             font-weight: 700;
             color: #1f2937;
-            margin: 0 0 4px 0;
-        }
-
-        .user-email {
-            font-size: 14px;
-            color: #6b7280;
-            margin: 0;
-        }
-
-        .login-methods {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .face-login-btn {
-            padding: 20px;
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            color: white;
-            border: none;
-            border-radius: 20px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
-        }
-
-        .face-login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(59, 130, 246, 0.4);
-        }
-
-        .face-login-btn:active {
-            transform: translateY(0);
-        }
-
-        .face-login-btn.scanning {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-        }
-
-        .fallback-login {
-            margin-top: 16px;
-            display: flex;
-            gap: 12px;
-        }
-
-        .pin-btn, .signup-btn {
-            flex: 1;
-            padding: 16px;
-            border: 2px solid #e5e7eb;
-            background: white;
-            color: #374151;
-            border-radius: 16px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .pin-btn:hover, .signup-btn:hover {
-            border-color: #3b82f6;
-            color: #3b82f6;
-        }
-
-        /* Face Recognition Modal */
-        .face-recognition-modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 1100;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(8px);
-        }
-
-        .face-scanner {
-            width: 90%;
-            max-width: 400px;
-            background: #1f2937;
-            border-radius: 24px;
-            padding: 32px;
-            text-align: center;
-            color: white;
-        }
-
-        .scanner-header {
-            margin-bottom: 24px;
-        }
-
-        .scanner-title {
-            font-size: 20px;
-            font-weight: 700;
             margin: 0 0 8px 0;
         }
 
-        .scanner-subtitle {
+        .setup-subtitle {
             font-size: 14px;
-            opacity: 0.8;
-            margin: 0;
+            color: #6b7280;
+            margin: 0 0 32px 0;
         }
 
-        .camera-preview {
-            width: 280px;
-            height: 280px;
-            border-radius: 20px;
-            background: #374151;
-            margin: 0 auto 24px;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .camera-video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 20px;
-        }
-
-        .camera-placeholder {
-            color: #9ca3af;
-            font-size: 48px;
-        }
-
-        .face-overlay {
-            position: absolute;
-            inset: 20px;
-            border: 3px solid #3b82f6;
-            border-radius: 50%;
-            opacity: 0;
-            transition: all 0.3s;
-        }
-
-        .face-overlay.active {
-            opacity: 1;
-            animation: scan-ring 2s infinite;
-        }
-
-        .face-overlay.success {
-            border-color: #10b981;
-            animation: success-pulse 0.5s;
-        }
-
-        .face-overlay.error {
-            border-color: #ef4444;
-            animation: error-shake 0.5s;
-        }
-
-        @keyframes scan-ring {
-            0%, 100% { transform: scale(1); border-width: 3px; }
-            50% { transform: scale(1.05); border-width: 5px; }
-        }
-
-        @keyframes success-pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        @keyframes error-shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-
-        .scanner-status {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 24px;
-            min-height: 24px;
-        }
-
-        .scanner-status.scanning {
-            color: #f59e0b;
-        }
-
-        .scanner-status.success {
-            color: #10b981;
-        }
-
-        .scanner-status.error {
-            color: #ef4444;
-        }
-
-        .scanner-actions {
-            display: flex;
-            gap: 12px;
-        }
-
-        /* PIN Entry Modal */
-        .pin-modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1100;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(4px);
-        }
-
+        /* PIN Entry */
         .pin-container {
-            width: 90%;
-            max-width: 320px;
-            background: white;
-            border-radius: 24px;
-            padding: 32px;
+            width: 100%;
             text-align: center;
-        }
-
-        .pin-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: #1f2937;
-            margin: 0 0 24px 0;
         }
 
         .pin-display {
@@ -402,163 +173,10 @@
             transform: scale(0.95);
         }
 
-        /* Registration Modal */
-        .registration-modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1100;
+        .pin-actions {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(4px);
-        }
-
-        .registration-container {
-            width: 90%;
-            max-width: 400px;
-            background: white;
-            border-radius: 24px;
-            padding: 32px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .registration-step {
-            text-align: center;
-        }
-
-        .step-indicator {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 24px;
-        }
-
-        .step-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #e5e7eb;
-            transition: all 0.3s;
-        }
-
-        .step-dot.active {
-            background: #3b82f6;
-            transform: scale(1.5);
-        }
-
-        .step-dot.completed {
-            background: #10b981;
-        }
-
-        .step-title {
-            font-size: 22px;
-            font-weight: 700;
-            color: #1f2937;
-            margin: 0 0 8px 0;
-        }
-
-        .step-subtitle {
-            font-size: 14px;
-            color: #6b7280;
-            margin: 0 0 32px 0;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 8px;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 16px;
-            font-size: 16px;
-            font-weight: 500;
-            background: white;
-            transition: all 0.2s;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-        }
-
-        /* Face Enrollment Styles */
-        .face-enrollment {
-            text-align: center;
-        }
-
-        .enrollment-preview {
-            width: 200px;
-            height: 200px;
-            border-radius: 20px;
-            background: #f3f4f6;
-            margin: 0 auto 24px;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .enrollment-video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 20px;
-        }
-
-        .enrollment-overlay {
-            position: absolute;
-            inset: 10px;
-            border: 2px solid #3b82f6;
-            border-radius: 50%;
-            opacity: 0;
-            transition: all 0.3s;
-        }
-
-        .enrollment-overlay.scanning {
-            opacity: 1;
-            animation: enrollment-scan 1.5s infinite;
-        }
-
-        @keyframes enrollment-scan {
-            0%, 100% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.1); opacity: 1; }
-        }
-
-        .enrollment-progress {
-            width: 100%;
-            height: 8px;
-            background: #e5e7eb;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 16px;
-        }
-
-        .enrollment-progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #3b82f6, #10b981);
-            width: 0%;
-            transition: width 0.3s;
-        }
-
-        .enrollment-instruction {
-            font-size: 14px;
-            color: #6b7280;
-            margin-bottom: 24px;
+            gap: 12px;
+            margin-top: 20px;
         }
 
         /* Status Bar */
@@ -1227,6 +845,35 @@
             margin: 0;
         }
 
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 500;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
         .amount-input-wrapper {
             position: relative;
         }
@@ -1485,249 +1132,74 @@
                 </svg>
             </div>
             
-            <!-- Initial Login (No User) -->
-            <div id="initial-login">
+            <!-- First Time Setup -->
+            <div id="setup-screen" class="setup-screen">
+                <h3 class="setup-title">Setup Security PIN</h3>
+                <p class="setup-subtitle">Create a 6-digit PIN to secure your financial data</p>
+                
+                <div class="pin-container">
+                    <div class="pin-display">
+                        <div class="pin-dot" id="setup-pin-dot-0"></div>
+                        <div class="pin-dot" id="setup-pin-dot-1"></div>
+                        <div class="pin-dot" id="setup-pin-dot-2"></div>
+                        <div class="pin-dot" id="setup-pin-dot-3"></div>
+                        <div class="pin-dot" id="setup-pin-dot-4"></div>
+                        <div class="pin-dot" id="setup-pin-dot-5"></div>
+                    </div>
+                    
+                    <div class="pin-keypad">
+                        <button class="pin-key" onclick="enterSetupPin('1')">1</button>
+                        <button class="pin-key" onclick="enterSetupPin('2')">2</button>
+                        <button class="pin-key" onclick="enterSetupPin('3')">3</button>
+                        <button class="pin-key" onclick="enterSetupPin('4')">4</button>
+                        <button class="pin-key" onclick="enterSetupPin('5')">5</button>
+                        <button class="pin-key" onclick="enterSetupPin('6')">6</button>
+                        <button class="pin-key" onclick="enterSetupPin('7')">7</button>
+                        <button class="pin-key" onclick="enterSetupPin('8')">8</button>
+                        <button class="pin-key" onclick="enterSetupPin('9')">9</button>
+                        <button class="pin-key" onclick="clearSetupPin()" style="background: #fee2e2; color: #ef4444;">⌫</button>
+                        <button class="pin-key" onclick="enterSetupPin('0')">0</button>
+                        <button class="pin-key" style="opacity: 0; pointer-events: none;"></button>
+                    </div>
+                    
+                    <div class="pin-actions">
+                        <button class="btn btn-primary" id="setup-confirm-btn" onclick="confirmSetupPin()" disabled style="width: 100%;">
+                            Set PIN
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Login Screen -->
+            <div id="login-form" class="hidden">
                 <h1 class="login-title">My FinPlan</h1>
-                <p class="login-subtitle">Secure Financial Planning for Malaysia</p>
+                <p class="login-subtitle">Enter your PIN to access your financial data</p>
                 
-                <div class="login-methods">
-                    <button class="face-login-btn" onclick="showRegistration()">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                            <circle cx="12" cy="7" r="4"/>
-                        </svg>
-                        Get Started - Create Account
-                    </button>
-                </div>
-            </div>
-            
-            <!-- User Login (Existing User) -->
-            <div id="user-login" class="hidden">
-                <div class="user-avatar" id="user-avatar">JD</div>
-                <div class="user-info">
-                    <h2 class="user-name" id="user-name">John Doe</h2>
-                    <p class="user-email" id="user-email">john@example.com</p>
-                </div>
-                
-                <div class="login-methods">
-                    <button class="face-login-btn" id="face-login-btn" onclick="startFaceLogin()">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M15 6v7.18l2 2V6h-2zM3.27 2L2 3.27 20.73 22 22 20.73 3.27 2zM14 12.27V12h3v-2h-5v2.27l2 2zM10 14v-4H8v4h2z"/>
-                        </svg>
-                        <span id="face-login-text">Login with Face ID</span>
-                    </button>
-                    
-                    <div class="fallback-login">
-                        <button class="pin-btn" onclick="showPinLogin()">PIN</button>
-                        <button class="signup-btn" onclick="switchUser()">Switch User</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Face Recognition Modal -->
-    <div id="face-recognition-modal" class="face-recognition-modal hidden">
-        <div class="face-scanner">
-            <div class="scanner-header">
-                <h3 class="scanner-title" id="scanner-title">Face Recognition</h3>
-                <p class="scanner-subtitle" id="scanner-subtitle">Position your face in the center</p>
-            </div>
-            
-            <div class="camera-preview">
-                <video id="camera-video" class="camera-video hidden" autoplay muted playsinline></video>
-                <div id="camera-placeholder" class="camera-placeholder">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                        <circle cx="12" cy="13" r="4"/>
-                    </svg>
-                </div>
-                <div id="face-overlay" class="face-overlay"></div>
-            </div>
-            
-            <p class="scanner-status" id="scanner-status">Click "Start Scan" to begin</p>
-            
-            <div class="scanner-actions">
-                <button class="btn btn-secondary" onclick="closeFaceRecognition()">Cancel</button>
-                <button class="btn btn-primary" id="start-scan-btn" onclick="startCameraScan()">Start Scan</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- PIN Entry Modal -->
-    <div id="pin-modal" class="pin-modal hidden">
-        <div class="pin-container">
-            <h3 class="pin-title">Enter Your PIN</h3>
-            
-            <div class="pin-display">
-                <div class="pin-dot" id="pin-dot-0"></div>
-                <div class="pin-dot" id="pin-dot-1"></div>
-                <div class="pin-dot" id="pin-dot-2"></div>
-                <div class="pin-dot" id="pin-dot-3"></div>
-                <div class="pin-dot" id="pin-dot-4"></div>
-                <div class="pin-dot" id="pin-dot-5"></div>
-            </div>
-            
-            <div class="pin-keypad">
-                <button class="pin-key" onclick="enterPin('1')">1</button>
-                <button class="pin-key" onclick="enterPin('2')">2</button>
-                <button class="pin-key" onclick="enterPin('3')">3</button>
-                <button class="pin-key" onclick="enterPin('4')">4</button>
-                <button class="pin-key" onclick="enterPin('5')">5</button>
-                <button class="pin-key" onclick="enterPin('6')">6</button>
-                <button class="pin-key" onclick="enterPin('7')">7</button>
-                <button class="pin-key" onclick="enterPin('8')">8</button>
-                <button class="pin-key" onclick="enterPin('9')">9</button>
-                <button class="pin-key" onclick="clearPin()" style="background: #fee2e2; color: #ef4444;">⌫</button>
-                <button class="pin-key" onclick="enterPin('0')">0</button>
-                <button class="pin-key" onclick="closePinLogin()" style="background: #f3f4f6; color: #6b7280;">✕</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Registration Modal -->
-    <div id="registration-modal" class="registration-modal hidden">
-        <div class="registration-container">
-            <!-- Step 1: Personal Info -->
-            <div id="registration-step-1" class="registration-step">
-                <div class="step-indicator">
-                    <div class="step-dot active"></div>
-                    <div class="step-dot"></div>
-                    <div class="step-dot"></div>
-                    <div class="step-dot"></div>
-                </div>
-                
-                <h3 class="step-title">Create Account</h3>
-                <p class="step-subtitle">Enter your personal information</p>
-                
-                <div class="form-group">
-                    <label class="form-label">Full Name</label>
-                    <input type="text" id="reg-name" class="form-input" placeholder="Enter your full name">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Email Address</label>
-                    <input type="email" id="reg-email" class="form-input" placeholder="Enter your email">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Phone Number</label>
-                    <input type="tel" id="reg-phone" class="form-input" placeholder="Enter your phone number">
-                </div>
-                
-                <div class="btn-group">
-                    <button class="btn btn-secondary" onclick="closeRegistration()">Cancel</button>
-                    <button class="btn btn-primary" onclick="nextRegistrationStep(2)">Next</button>
-                </div>
-            </div>
-            
-            <!-- Step 2: Security PIN -->
-            <div id="registration-step-2" class="registration-step hidden">
-                <div class="step-indicator">
-                    <div class="step-dot completed"></div>
-                    <div class="step-dot active"></div>
-                    <div class="step-dot"></div>
-                    <div class="step-dot"></div>
-                </div>
-                
-                <h3 class="step-title">Security PIN</h3>
-                <p class="step-subtitle">Create a 6-digit PIN for backup access</p>
-                
-                <div class="pin-display" style="margin-bottom: 32px;">
-                    <div class="pin-dot" id="reg-pin-dot-0"></div>
-                    <div class="pin-dot" id="reg-pin-dot-1"></div>
-                    <div class="pin-dot" id="reg-pin-dot-2"></div>
-                    <div class="pin-dot" id="reg-pin-dot-3"></div>
-                    <div class="pin-dot" id="reg-pin-dot-4"></div>
-                    <div class="pin-dot" id="reg-pin-dot-5"></div>
-                </div>
-                
-                <div class="pin-keypad">
-                    <button class="pin-key" onclick="enterRegPin('1')">1</button>
-                    <button class="pin-key" onclick="enterRegPin('2')">2</button>
-                    <button class="pin-key" onclick="enterRegPin('3')">3</button>
-                    <button class="pin-key" onclick="enterRegPin('4')">4</button>
-                    <button class="pin-key" onclick="enterRegPin('5')">5</button>
-                    <button class="pin-key" onclick="enterRegPin('6')">6</button>
-                    <button class="pin-key" onclick="enterRegPin('7')">7</button>
-                    <button class="pin-key" onclick="enterRegPin('8')">8</button>
-                    <button class="pin-key" onclick="enterRegPin('9')">9</button>
-                    <button class="pin-key" onclick="clearRegPin()" style="background: #fee2e2; color: #ef4444;">⌫</button>
-                    <button class="pin-key" onclick="enterRegPin('0')">0</button>
-                    <button class="pin-key" style="opacity: 0; pointer-events: none;"></button>
-                </div>
-                
-                <div class="btn-group">
-                    <button class="btn btn-secondary" onclick="nextRegistrationStep(1)">Back</button>
-                    <button class="btn btn-primary" id="pin-next-btn" onclick="nextRegistrationStep(3)" disabled>Next</button>
-                </div>
-            </div>
-            
-            <!-- Step 3: Face Enrollment -->
-            <div id="registration-step-3" class="registration-step hidden">
-                <div class="step-indicator">
-                    <div class="step-dot completed"></div>
-                    <div class="step-dot completed"></div>
-                    <div class="step-dot active"></div>
-                    <div class="step-dot"></div>
-                </div>
-                
-                <h3 class="step-title">Face ID Setup</h3>
-                <p class="step-subtitle">Secure your account with face recognition</p>
-                
-                <div class="face-enrollment">
-                    <div class="enrollment-preview">
-                        <video id="enrollment-video" class="enrollment-video hidden" autoplay muted playsinline></video>
-                        <div id="enrollment-placeholder" class="camera-placeholder">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                                <circle cx="12" cy="13" r="4"/>
-                            </svg>
-                        </div>
-                        <div id="enrollment-overlay" class="enrollment-overlay"></div>
+                <div class="pin-container">
+                    <div class="pin-display">
+                        <div class="pin-dot" id="login-pin-dot-0"></div>
+                        <div class="pin-dot" id="login-pin-dot-1"></div>
+                        <div class="pin-dot" id="login-pin-dot-2"></div>
+                        <div class="pin-dot" id="login-pin-dot-3"></div>
+                        <div class="pin-dot" id="login-pin-dot-4"></div>
+                        <div class="pin-dot" id="login-pin-dot-5"></div>
                     </div>
                     
-                    <div class="enrollment-progress">
-                        <div id="enrollment-progress-fill" class="enrollment-progress-fill"></div>
+                    <div class="pin-keypad">
+                        <button class="pin-key" onclick="enterLoginPin('1')">1</button>
+                        <button class="pin-key" onclick="enterLoginPin('2')">2</button>
+                        <button class="pin-key" onclick="enterLoginPin('3')">3</button>
+                        <button class="pin-key" onclick="enterLoginPin('4')">4</button>
+                        <button class="pin-key" onclick="enterLoginPin('5')">5</button>
+                        <button class="pin-key" onclick="enterLoginPin('6')">6</button>
+                        <button class="pin-key" onclick="enterLoginPin('7')">7</button>
+                        <button class="pin-key" onclick="enterLoginPin('8')">8</button>
+                        <button class="pin-key" onclick="enterLoginPin('9')">9</button>
+                        <button class="pin-key" onclick="clearLoginPin()" style="background: #fee2e2; color: #ef4444;">⌫</button>
+                        <button class="pin-key" onclick="enterLoginPin('0')">0</button>
+                        <button class="pin-key" onclick="resetApp()" style="background: #f59e0b; color: white; font-size: 14px;">Reset</button>
                     </div>
-                    
-                    <p class="enrollment-instruction" id="enrollment-instruction">
-                        Position your face in the center and click "Start Enrollment"
-                    </p>
                 </div>
-                
-                <div class="btn-group">
-                    <button class="btn btn-secondary" onclick="nextRegistrationStep(2)">Back</button>
-                    <button class="btn btn-primary" id="enrollment-btn" onclick="startFaceEnrollment()">Start Enrollment</button>
-                </div>
-            </div>
-            
-            <!-- Step 4: Completion -->
-            <div id="registration-step-4" class="registration-step hidden">
-                <div class="step-indicator">
-                    <div class="step-dot completed"></div>
-                    <div class="step-dot completed"></div>
-                    <div class="step-dot completed"></div>
-                    <div class="step-dot active"></div>
-                </div>
-                
-                <h3 class="step-title">Account Created!</h3>
-                <p class="step-subtitle">Your secure financial account is ready</p>
-                
-                <div style="text-align: center; margin: 32px 0;">
-                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; color: white;">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                            <polyline points="20,6 9,17 4,12"/>
-                        </svg>
-                    </div>
-                    <p style="font-size: 16px; color: #6b7280; margin: 0;">
-                        You can now login with Face ID or your PIN
-                    </p>
-                </div>
-                
-                <button class="btn btn-primary" style="width: 100%;" onclick="completeRegistration()">
-                    Start Using My FinPlan
-                </button>
             </div>
         </div>
     </div>
@@ -1775,7 +1247,7 @@
             <div class="header-top">
                 <div>
                     <h1 class="header-title">My Financial Planning</h1>
-                    <p class="header-subtitle" id="header-user">Welcome, <span id="header-username">User</span></p>
+                    <p class="header-subtitle">Secure Financial Tracking for Malaysia</p>
                 </div>
                 <div class="header-actions">
                     <button class="header-btn" onclick="openSettings()" title="Privacy Settings">
@@ -1844,7 +1316,7 @@
                         <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                     </svg>
                     <div class="info-text">
-                        <strong>Secure & Private:</strong> Face ID login with privacy protection. Amounts auto-hide for security.
+                        <strong>Secure & Private:</strong> PIN-protected with privacy auto-hide. Your financial data stays safe.
                     </div>
                 </div>
 
@@ -1905,7 +1377,7 @@
                                 </svg>
                             </div>
                             <h4 class="empty-title">Welcome to Malaysian Planning!</h4>
-                            <p class="empty-subtitle">Secure financial tracking with Face ID protection</p>
+                            <p class="empty-subtitle">Start tracking your financial journey securely</p>
                             <div style="display: flex; gap: 12px; justify-content: center;">
                                 <button class="btn btn-primary" onclick="openAddForm('expense')">Add Transaction</button>
                             </div>
@@ -2047,8 +1519,8 @@
                 </div>
 
                 <div class="settings-section">
-                    <h3 class="settings-title">Security Options</h3>
-                    <p class="settings-description">Manage your login and security preferences.</p>
+                    <h3 class="settings-title">Security</h3>
+                    <p class="settings-description">Your app is protected with a 6-digit PIN.</p>
                     
                     <div style="background: #f8fafc; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
                         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
@@ -2056,20 +1528,14 @@
                                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                                 <polyline points="22,4 12,14.01 9,11.01"/>
                             </svg>
-                            <span style="font-weight: 600; color: #1f2937;">Face ID Enabled</span>
+                            <span style="font-weight: 600; color: #1f2937;">PIN Protection Active</span>
                         </div>
-                        <p style="margin: 0; font-size: 13px; color: #6b7280;">Secure biometric authentication active</p>
+                        <p style="margin: 0; font-size: 13px; color: #6b7280;">Your data is secured with PIN authentication</p>
                     </div>
                     
-                    <div style="background: #f8fafc; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
-                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
-                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                                <polyline points="22,4 12,14.01 9,11.01"/>
-                            </svg>
-                            <span style="font-weight: 600; color: #1f2937;">PIN Backup Available</span>
-                        </div>
-                        <p style="margin: 0; font-size: 13px; color: #6b7280;">6-digit PIN for alternative access</p>
+                    <div class="btn-group">
+                        <button class="btn btn-secondary" onclick="changePIN()">Change PIN</button>
+                        <button class="btn btn-danger" onclick="resetApp()">Reset App</button>
                     </div>
                 </div>
 
@@ -2207,26 +1673,20 @@
         let countdownInterval = null;
         let remainingSeconds = 0;
         let firstVisit = true;
-        
-        // User authentication state
-        let currentUser = null;
         let isLoggedIn = false;
-        let cameraStream = null;
         
-        // Registration state
-        let registrationStep = 1;
-        let registrationData = {};
-        let registrationPin = '';
-        let currentPin = '';
-        let faceEnrollmentProgress = 0;
+        // PIN state
+        let setupPin = '';
+        let loginPin = '';
+        let userPin = '';
+        let isChangingPin = false;
 
         // LocalStorage keys
         const STORAGE_KEY = 'malaysiaPlanningTransactions';
         const PRIVACY_KEY = 'malaysiaPlanningPrivacy';
         const TIMER_KEY = 'malaysiaPlanningTimer';
         const FIRST_VISIT_KEY = 'malaysiaPlanningFirstVisit';
-        const USER_KEY = 'malaysiaPlanningUser';
-        const USERS_KEY = 'malaysiaPlanningUsers';
+        const PIN_KEY = 'malaysiaPlanningPIN';
 
         // Update current time
         function updateCurrentTime() {
@@ -2258,84 +1718,142 @@
             return parseFloat(value.toString().replace(/,/g, ''));
         }
 
-        // User Authentication Functions
-        function loadUsers() {
-            try {
-                const saved = localStorage.getItem(USERS_KEY);
-                return saved ? JSON.parse(saved) : [];
-            } catch (e) {
-                console.error('Error loading users:', e);
-                return [];
+        // Simple hash function for PIN security
+        function hashPin(pin) {
+            let hash = 0;
+            for (let i = 0; i < pin.length; i++) {
+                const char = pin.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convert to 32-bit integer
             }
+            return hash.toString();
         }
 
-        function saveUsers(users) {
-            try {
-                localStorage.setItem(USERS_KEY, JSON.stringify(users));
-            } catch (e) {
-                console.error('Error saving users:', e);
-            }
+        // Check if PIN is set
+        function isPinSet() {
+            return localStorage.getItem(PIN_KEY) !== null;
         }
 
-        function loadCurrentUser() {
-            try {
-                const saved = localStorage.getItem(USER_KEY);
-                if (saved) {
-                    currentUser = JSON.parse(saved);
-                    isLoggedIn = true;
-                    return true;
+        // Setup PIN Functions
+        function enterSetupPin(digit) {
+            if (setupPin.length < 6) {
+                setupPin += digit;
+                updateSetupPinDisplay();
+                
+                const confirmBtn = document.getElementById('setup-confirm-btn');
+                if (setupPin.length === 6) {
+                    confirmBtn.disabled = false;
+                    confirmBtn.classList.remove('btn-secondary');
+                    confirmBtn.classList.add('btn-primary');
+                } else {
+                    confirmBtn.disabled = true;
+                    confirmBtn.classList.add('btn-secondary');
+                    confirmBtn.classList.remove('btn-primary');
                 }
-            } catch (e) {
-                console.error('Error loading current user:', e);
-            }
-            return false;
-        }
-
-        function saveCurrentUser() {
-            try {
-                localStorage.setItem(USER_KEY, JSON.stringify(currentUser));
-            } catch (e) {
-                console.error('Error saving current user:', e);
             }
         }
 
-        function checkLoginStatus() {
-            const hasUser = loadCurrentUser();
-            if (hasUser) {
-                showUserLogin();
-            } else {
-                showInitialLogin();
+        function clearSetupPin() {
+            if (setupPin.length > 0) {
+                setupPin = setupPin.slice(0, -1);
+                updateSetupPinDisplay();
+                
+                const confirmBtn = document.getElementById('setup-confirm-btn');
+                if (setupPin.length < 6) {
+                    confirmBtn.disabled = true;
+                    confirmBtn.classList.add('btn-secondary');
+                    confirmBtn.classList.remove('btn-primary');
+                }
             }
-            return hasUser;
         }
 
-        function showInitialLogin() {
-            document.getElementById('initial-login').classList.remove('hidden');
-            document.getElementById('user-login').classList.add('hidden');
+        function updateSetupPinDisplay() {
+            for (let i = 0; i < 6; i++) {
+                const dot = document.getElementById(`setup-pin-dot-${i}`);
+                if (i < setupPin.length) {
+                    dot.classList.add('filled');
+                } else {
+                    dot.classList.remove('filled');
+                }
+            }
         }
 
-        function showUserLogin() {
-            document.getElementById('initial-login').classList.add('hidden');
-            document.getElementById('user-login').classList.remove('hidden');
+        function confirmSetupPin() {
+            if (setupPin.length === 6) {
+                userPin = hashPin(setupPin);
+                localStorage.setItem(PIN_KEY, userPin);
+                
+                showNotification('🔐 PIN set successfully!', 'success');
+                loginSuccess();
+            }
+        }
+
+        // Login PIN Functions
+        function enterLoginPin(digit) {
+            if (loginPin.length < 6) {
+                loginPin += digit;
+                updateLoginPinDisplay();
+                
+                if (loginPin.length === 6) {
+                    verifyPin();
+                }
+            }
+        }
+
+        function clearLoginPin() {
+            if (loginPin.length > 0) {
+                loginPin = loginPin.slice(0, -1);
+                updateLoginPinDisplay();
+            }
+        }
+
+        function updateLoginPinDisplay() {
+            for (let i = 0; i < 6; i++) {
+                const dot = document.getElementById(`login-pin-dot-${i}`);
+                if (i < loginPin.length) {
+                    dot.classList.add('filled');
+                } else {
+                    dot.classList.remove('filled');
+                }
+            }
+        }
+
+        function verifyPin() {
+            const storedPin = localStorage.getItem(PIN_KEY);
+            const hashedLoginPin = hashPin(loginPin);
             
-            // Update user display
-            document.getElementById('user-avatar').textContent = currentUser.avatar;
-            document.getElementById('user-name').textContent = currentUser.name;
-            document.getElementById('user-email').textContent = currentUser.email;
+            if (hashedLoginPin === storedPin) {
+                showNotification('✅ PIN verified successfully!', 'success');
+                loginSuccess();
+            } else {
+                showNotification('❌ Incorrect PIN. Please try again.', 'error');
+                loginPin = '';
+                updateLoginPinDisplay();
+            }
+        }
+
+        // Authentication Functions
+        function checkLoginStatus() {
+            if (isPinSet()) {
+                document.getElementById('setup-screen').classList.add('hidden');
+                document.getElementById('login-form').classList.remove('hidden');
+                return false; // Show login form
+            } else {
+                document.getElementById('setup-screen').classList.remove('hidden');
+                document.getElementById('login-form').classList.add('hidden');
+                return false; // Show setup form
+            }
         }
 
         function loginSuccess() {
             isLoggedIn = true;
             document.getElementById('login-screen').classList.add('hidden');
             
-            // Update header with user info
-            document.getElementById('header-username').textContent = currentUser.name.split(' ')[0];
-            
             // Load user's transactions
             loadTransactions();
             updateDisplays();
             
-            showNotification(`👋 Welcome back, ${currentUser.name.split(' ')[0]}!`, 'success');
+            showNotification('👋 Welcome back!', 'success');
             
             // Show privacy splash for first-time users
             setTimeout(() => {
@@ -2348,346 +1866,53 @@
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
                 isLoggedIn = false;
-                currentUser = null;
                 
-                // Clear current user but keep registration data
-                localStorage.removeItem(USER_KEY);
-                
-                // Stop any active camera streams
-                if (cameraStream) {
-                    cameraStream.getTracks().forEach(track => track.stop());
-                    cameraStream = null;
-                }
+                // Clear PIN input
+                loginPin = '';
+                updateLoginPinDisplay();
                 
                 // Show login screen
                 document.getElementById('login-screen').classList.remove('hidden');
-                checkLoginStatus();
                 
                 showNotification('🔒 Logged out successfully', 'warning');
             }
         }
 
-        function switchUser() {
-            logout();
-        }
-
-        // Face Recognition Functions
-        function startFaceLogin() {
-            document.getElementById('face-recognition-modal').classList.remove('hidden');
-            document.getElementById('scanner-title').textContent = 'Face Recognition Login';
-            document.getElementById('scanner-subtitle').textContent = 'Position your face in the center';
-            document.getElementById('scanner-status').textContent = 'Click "Start Scan" to begin';
-            document.getElementById('start-scan-btn').textContent = 'Start Scan';
-        }
-
-        function closeFaceRecognition() {
-            document.getElementById('face-recognition-modal').classList.add('hidden');
-            stopCamera();
-        }
-
-        async function startCameraScan() {
-            try {
-                document.getElementById('scanner-status').textContent = 'Requesting camera access...';
-                document.getElementById('scanner-status').className = 'scanner-status';
-                
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { 
-                        facingMode: 'user',
-                        width: { ideal: 640 },
-                        height: { ideal: 480 }
-                    } 
-                });
-                
-                cameraStream = stream;
-                const video = document.getElementById('camera-video');
-                video.srcObject = stream;
-                
-                document.getElementById('camera-placeholder').classList.add('hidden');
-                video.classList.remove('hidden');
-                
-                document.getElementById('start-scan-btn').textContent = 'Scanning...';
-                document.getElementById('start-scan-btn').disabled = true;
-                
-                // Start face detection simulation
-                setTimeout(() => {
-                    simulateFaceDetection();
-                }, 1000);
-                
-            } catch (error) {
-                console.error('Camera access error:', error);
-                document.getElementById('scanner-status').textContent = 'Camera access denied. Please enable camera permissions.';
-                document.getElementById('scanner-status').className = 'scanner-status error';
+        function changePIN() {
+            if (confirm('Are you sure you want to change your PIN? You will need to log in again.')) {
+                isChangingPin = true;
+                logout();
+                // Clear stored PIN to force setup
+                localStorage.removeItem(PIN_KEY);
+                setupPin = '';
+                updateSetupPinDisplay();
+                checkLoginStatus();
+                showNotification('🔄 Enter your new PIN', 'warning');
             }
         }
 
-        function simulateFaceDetection() {
-            const overlay = document.getElementById('face-overlay');
-            const status = document.getElementById('scanner-status');
-            
-            overlay.classList.add('active');
-            status.textContent = 'Face detected. Analyzing...';
-            status.className = 'scanner-status scanning';
-            
-            // Simulate face recognition process
-            setTimeout(() => {
-                overlay.classList.remove('active');
-                overlay.classList.add('success');
-                status.textContent = 'Face recognition successful!';
-                status.className = 'scanner-status success';
+        function resetApp() {
+            if (confirm('⚠️ This will delete ALL your data and reset the app. This cannot be undone!')) {
+                // Clear all stored data
+                localStorage.clear();
                 
-                setTimeout(() => {
-                    closeFaceRecognition();
-                    loginSuccess();
-                }, 1500);
-            }, 3000);
-        }
-
-        function stopCamera() {
-            if (cameraStream) {
-                cameraStream.getTracks().forEach(track => track.stop());
-                cameraStream = null;
-            }
-            
-            const video = document.getElementById('camera-video');
-            video.classList.add('hidden');
-            document.getElementById('camera-placeholder').classList.remove('hidden');
-            document.getElementById('face-overlay').className = 'face-overlay';
-            document.getElementById('start-scan-btn').disabled = false;
-        }
-
-        // PIN Functions
-        function showPinLogin() {
-            document.getElementById('pin-modal').classList.remove('hidden');
-            currentPin = '';
-            updatePinDisplay();
-        }
-
-        function closePinLogin() {
-            document.getElementById('pin-modal').classList.add('hidden');
-            currentPin = '';
-            updatePinDisplay();
-        }
-
-        function enterPin(digit) {
-            if (currentPin.length < 6) {
-                currentPin += digit;
-                updatePinDisplay();
+                // Reset all variables
+                transactions = [];
+                setupPin = '';
+                loginPin = '';
+                userPin = '';
+                isLoggedIn = false;
+                isChangingPin = false;
                 
-                if (currentPin.length === 6) {
-                    verifyPin();
-                }
-            }
-        }
-
-        function clearPin() {
-            if (currentPin.length > 0) {
-                currentPin = currentPin.slice(0, -1);
-                updatePinDisplay();
-            }
-        }
-
-        function updatePinDisplay() {
-            for (let i = 0; i < 6; i++) {
-                const dot = document.getElementById(`pin-dot-${i}`);
-                if (i < currentPin.length) {
-                    dot.classList.add('filled');
-                } else {
-                    dot.classList.remove('filled');
-                }
-            }
-        }
-
-        function verifyPin() {
-            if (currentPin === currentUser.pin) {
-                showNotification('✅ PIN verified successfully!', 'success');
-                closePinLogin();
-                loginSuccess();
-            } else {
-                showNotification('❌ Incorrect PIN. Please try again.', 'error');
-                currentPin = '';
-                updatePinDisplay();
-            }
-        }
-
-        // Registration Functions
-        function showRegistration() {
-            document.getElementById('registration-modal').classList.remove('hidden');
-            registrationStep = 1;
-            registrationData = {};
-            registrationPin = '';
-            showRegistrationStep(1);
-        }
-
-        function closeRegistration() {
-            document.getElementById('registration-modal').classList.add('hidden');
-            if (cameraStream) {
-                cameraStream.getTracks().forEach(track => track.stop());
-                cameraStream = null;
-            }
-        }
-
-        function nextRegistrationStep(step) {
-            if (step === 2) {
-                // Validate step 1
-                const name = document.getElementById('reg-name').value.trim();
-                const email = document.getElementById('reg-email').value.trim();
-                const phone = document.getElementById('reg-phone').value.trim();
+                // Reset displays
+                updateSetupPinDisplay();
+                updateLoginPinDisplay();
                 
-                if (!name || !email || !phone) {
-                    showNotification('Please fill in all fields', 'error');
-                    return;
-                }
+                // Show setup screen
+                checkLoginStatus();
                 
-                registrationData = { name, email, phone };
+                showNotification('🗑️ App reset successfully', 'warning');
             }
-            
-            if (step === 3 && registrationPin.length !== 6) {
-                showNotification('Please set a 6-digit PIN', 'error');
-                return;
-            }
-            
-            registrationStep = step;
-            showRegistrationStep(step);
-        }
-
-        function showRegistrationStep(step) {
-            // Hide all steps
-            for (let i = 1; i <= 4; i++) {
-                document.getElementById(`registration-step-${i}`).classList.add('hidden');
-            }
-            
-            // Show current step
-            document.getElementById(`registration-step-${step}`).classList.remove('hidden');
-        }
-
-        function enterRegPin(digit) {
-            if (registrationPin.length < 6) {
-                registrationPin += digit;
-                updateRegPinDisplay();
-                
-                const nextBtn = document.getElementById('pin-next-btn');
-                if (registrationPin.length === 6) {
-                    nextBtn.disabled = false;
-                    nextBtn.classList.remove('btn-secondary');
-                    nextBtn.classList.add('btn-primary');
-                } else {
-                    nextBtn.disabled = true;
-                    nextBtn.classList.add('btn-secondary');
-                    nextBtn.classList.remove('btn-primary');
-                }
-            }
-        }
-
-        function clearRegPin() {
-            if (registrationPin.length > 0) {
-                registrationPin = registrationPin.slice(0, -1);
-                updateRegPinDisplay();
-                
-                const nextBtn = document.getElementById('pin-next-btn');
-                if (registrationPin.length < 6) {
-                    nextBtn.disabled = true;
-                    nextBtn.classList.add('btn-secondary');
-                    nextBtn.classList.remove('btn-primary');
-                }
-            }
-        }
-
-        function updateRegPinDisplay() {
-            for (let i = 0; i < 6; i++) {
-                const dot = document.getElementById(`reg-pin-dot-${i}`);
-                if (i < registrationPin.length) {
-                    dot.classList.add('filled');
-                } else {
-                    dot.classList.remove('filled');
-                }
-            }
-        }
-
-        // Face Enrollment Functions
-        async function startFaceEnrollment() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { 
-                        facingMode: 'user',
-                        width: { ideal: 320 },
-                        height: { ideal: 320 }
-                    } 
-                });
-                
-                cameraStream = stream;
-                const video = document.getElementById('enrollment-video');
-                video.srcObject = stream;
-                
-                document.getElementById('enrollment-placeholder').classList.add('hidden');
-                video.classList.remove('hidden');
-                
-                document.getElementById('enrollment-btn').textContent = 'Enrolling...';
-                document.getElementById('enrollment-btn').disabled = true;
-                
-                // Start enrollment simulation
-                simulateFaceEnrollment();
-                
-            } catch (error) {
-                console.error('Camera access error:', error);
-                document.getElementById('enrollment-instruction').textContent = 'Camera access denied. Please enable camera permissions.';
-            }
-        }
-
-        function simulateFaceEnrollment() {
-            const overlay = document.getElementById('enrollment-overlay');
-            const progressFill = document.getElementById('enrollment-progress-fill');
-            const instruction = document.getElementById('enrollment-instruction');
-            
-            overlay.classList.add('scanning');
-            instruction.textContent = 'Keep your face centered. Analyzing features...';
-            
-            // Simulate enrollment progress
-            faceEnrollmentProgress = 0;
-            const enrollmentInterval = setInterval(() => {
-                faceEnrollmentProgress += 20;
-                progressFill.style.width = `${faceEnrollmentProgress}%`;
-                
-                if (faceEnrollmentProgress >= 100) {
-                    clearInterval(enrollmentInterval);
-                    overlay.classList.remove('scanning');
-                    instruction.textContent = 'Face enrollment completed successfully!';
-                    
-                    setTimeout(() => {
-                        nextRegistrationStep(4);
-                    }, 1500);
-                }
-            }, 800);
-        }
-
-        function completeRegistration() {
-            // Create user account
-            const newUser = {
-                id: `user_${Date.now()}`,
-                name: registrationData.name,
-                email: registrationData.email,
-                phone: registrationData.phone,
-                pin: registrationPin,
-                faceId: `face_template_${Date.now()}`,
-                avatar: registrationData.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2),
-                createdAt: new Date().toISOString()
-            };
-            
-            // Save to users list
-            const users = loadUsers();
-            users.push(newUser);
-            saveUsers(users);
-            
-            // Set as current user
-            currentUser = newUser;
-            saveCurrentUser();
-            
-            // Close registration
-            closeRegistration();
-            
-            // Login success
-            loginSuccess();
-            
-            showNotification('🎉 Account created successfully!', 'success');
         }
 
         // Privacy and Timer Functions
@@ -2887,13 +2112,10 @@
             }, 3000);
         }
 
-        // Local Storage functions - now user-specific
+        // Local Storage functions
         function saveTransactions() {
-            if (!currentUser) return;
-            
             try {
-                const key = `${STORAGE_KEY}_${currentUser.id}`;
-                localStorage.setItem(key, JSON.stringify(transactions));
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
             } catch (e) {
                 showNotification('Error saving data locally', 'error');
                 console.error('Error saving to localStorage:', e);
@@ -2901,11 +2123,8 @@
         }
 
         function loadTransactions() {
-            if (!currentUser) return;
-            
             try {
-                const key = `${STORAGE_KEY}_${currentUser.id}`;
-                const saved = localStorage.getItem(key);
+                const saved = localStorage.getItem(STORAGE_KEY);
                 if (saved) {
                     transactions = JSON.parse(saved);
                 } else {
@@ -3150,7 +2369,7 @@
 
             let message;
             if (transactions.length === 0) {
-                message = balanceVisible ? "Start tracking or add transactions!" : "Tap the eye to view your balance";
+                message = balanceVisible ? "Start tracking your finances!" : "Tap the eye to view your balance";
             } else {
                 if (balanceVisible) {
                     message = balance >= 0 ? "Great financial progress!" : "Review your spending";
@@ -3192,7 +2411,7 @@
                             </svg>
                         </div>
                         <h4 class="empty-title">Welcome to Malaysian Planning!</h4>
-                        <p class="empty-subtitle">Secure financial tracking with Face ID protection</p>
+                        <p class="empty-subtitle">Start tracking your financial journey securely</p>
                         <div style="display: flex; gap: 12px; justify-content: center;">
                             <button class="btn btn-primary" onclick="openAddForm('expense')">Add Transaction</button>
                         </div>
@@ -3421,28 +2640,11 @@
             // Load privacy preference first (always starts hidden)
             loadPrivacyPreference();
             
-            // Check login status
-            const hasUser = checkLoginStatus();
+            // Check login status and show appropriate screen
+            const hasLogin = checkLoginStatus();
             
-            if (hasUser) {
-                // User is logged in, hide login screen and load app
-                document.getElementById('login-screen').classList.add('hidden');
-                loadTransactions();
-                updateDisplays();
-                
-                // Update header with user info
-                document.getElementById('header-username').textContent = currentUser.name.split(' ')[0];
-                
-                // Show privacy splash for first-time users
-                setTimeout(() => {
-                    if (firstVisit) {
-                        showPrivacySplash();
-                    } else {
-                        showNotification('👋 Welcome back! Tap eye to show amounts.', 'success');
-                    }
-                }, 1000);
-            } else {
-                // No user logged in, show login screen
+            if (!hasLogin) {
+                // User needs to login or setup, show login screen
                 document.getElementById('login-screen').classList.remove('hidden');
             }
             
@@ -3450,13 +2652,11 @@
             updateCurrentTime();
             setInterval(updateCurrentTime, 60000);
             
-            console.log('🇲🇾 Malaysian Financial Planning with Face Recognition - Production Ready');
-            console.log('💾 User-specific data persistence with localStorage');
-            console.log('💰 Malaysian Ringgit (RM) currency with comma formatting');
-            console.log('🔒 Privacy mode with auto-hide timer');
-            console.log('👤 Face Recognition + PIN authentication');
-            console.log('📱 Complete mobile app experience');
-            console.log('🚫 Demo functionality removed - Production ready');
+            console.log('🇲🇾 Malaysian Financial Planning with Simple PIN Login');
+            console.log('💾 Local data persistence with localStorage');
+            console.log('💰 Malaysian Ringgit (RM) currency formatting');
+            console.log('🔒 Simple PIN security with privacy protection');
+            console.log('📱 Mobile-optimized for personal use');
         });
 
         // Close modals when clicking outside
@@ -3478,173 +2678,42 @@
             }
         });
 
-        document.getElementById('face-recognition-modal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeFaceRecognition();
-            }
-        });
-
-        document.getElementById('pin-modal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closePinLogin();
-            }
-        });
-
-        document.getElementById('registration-modal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeRegistration();
-            }
-        });
-
-        // Cleanup camera streams when page unloads
-        window.addEventListener('beforeunload', function() {
-            if (cameraStream) {
-                cameraStream.getTracks().forEach(track => track.stop());
-            }
-        });
-
-        // Prevent back button when logged in
-        window.addEventListener('popstate', function(event) {
-            if (isLoggedIn) {
-                event.preventDefault();
-                // Optionally show logout confirmation
-                return false;
-            }
-        });
-
         // Handle visibility change for privacy
         document.addEventListener('visibilitychange', function() {
             if (document.hidden && balanceVisible) {
-                // Auto-hide when app goes to background
                 setTimeout(() => {
                     if (document.hidden && balanceVisible) {
                         autoHideBalance();
                     }
-                }, 5000); // Hide after 5 seconds in background
+                }, 3000);
             }
         });
 
-        // Add keyboard shortcuts for power users
+        // Add keyboard shortcuts
         document.addEventListener('keydown', function(e) {
             if (!isLoggedIn) return;
             
-            // Ctrl/Cmd + I for Income
             if ((e.ctrlKey || e.metaKey) && e.key === 'i') {
                 e.preventDefault();
                 openAddForm('income');
             }
             
-            // Ctrl/Cmd + E for Expense  
             if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
                 e.preventDefault();
                 openAddForm('expense');
             }
             
-            // Ctrl/Cmd + H for Hide/Show amounts
             if ((e.ctrlKey || e.metaKey) && e.key === 'h') {
                 e.preventDefault();
                 toggleBalanceVisibility();
             }
             
-            // Escape to close modals
             if (e.key === 'Escape') {
-                // Close any open modals
                 closeModal();
                 closeSettings();
-                closeFaceRecognition();
-                closePinLogin();
-                closeRegistration();
                 hidePrivacySplash();
             }
         });
-
-        // Add touch gesture support for mobile
-        let touchStartX = 0;
-        let touchStartY = 0;
-
-        document.addEventListener('touchstart', function(e) {
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-        });
-
-        document.addEventListener('touchend', function(e) {
-            if (!isLoggedIn) return;
-            
-            const touchEndX = e.changedTouches[0].clientX;
-            const touchEndY = e.changedTouches[0].clientY;
-            const deltaX = touchEndX - touchStartX;
-            const deltaY = touchEndY - touchStartY;
-            
-            // Detect swipe gestures (minimum 100px movement)
-            if (Math.abs(deltaX) > 100 && Math.abs(deltaY) < 50) {
-                if (deltaX > 0) {
-                    // Swipe right - go to previous tab
-                    const currentTab = document.querySelector('.nav-tab.active').dataset.tab;
-                    if (currentTab === 'transactions') showTab('home');
-                    if (currentTab === 'analytics') showTab('transactions');
-                } else {
-                    // Swipe left - go to next tab
-                    const currentTab = document.querySelector('.nav-tab.active').dataset.tab;
-                    if (currentTab === 'home') showTab('transactions');
-                    if (currentTab === 'transactions') showTab('analytics');
-                }
-            }
-        });
-
-        // Performance monitoring
-        window.addEventListener('load', function() {
-            // Log performance metrics
-            if (window.performance) {
-                const loadTime = window.performance.timing.loadEventEnd - window.performance.timing.navigationStart;
-                console.log(`🚀 App loaded in ${loadTime}ms`);
-            }
-        });
-
-        // Add service worker for offline functionality (basic)
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                // Register service worker for offline support
-                const swCode = `
-                    const CACHE_NAME = 'finplan-v1';
-                    const urlsToCache = [
-                        '/',
-                        '/index.html'
-                    ];
-                    
-                    self.addEventListener('install', function(event) {
-                        event.waitUntil(
-                            caches.open(CACHE_NAME)
-                                .then(function(cache) {
-                                    return cache.addAll(urlsToCache);
-                                })
-                        );
-                    });
-                    
-                    self.addEventListener('fetch', function(event) {
-                        event.respondWith(
-                            caches.match(event.request)
-                                .then(function(response) {
-                                    if (response) {
-                                        return response;
-                                    }
-                                    return fetch(event.request);
-                                })
-                        );
-                    });
-                `;
-                
-                const blob = new Blob([swCode], { type: 'application/javascript' });
-                const swUrl = URL.createObjectURL(blob);
-                
-                navigator.serviceWorker.register(swUrl)
-                    .then(function(registration) {
-                        console.log('📱 Service Worker registered successfully');
-                    })
-                    .catch(function(error) {
-                        console.log('Service Worker registration failed:', error);
-                    });
-            });
-        }
     </script>
 </body>
 </html>
