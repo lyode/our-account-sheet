@@ -54,19 +54,42 @@
             align-items: center;
         }
         
-        .demo-banner {
-            background: linear-gradient(90deg, #6b7280, #4b5563);
-            color: white;
-            font-size: 11px;
-            padding: 4px 8px;
-            text-align: center;
-            font-weight: 500;
-        }
-        
         .app-header {
             background-color: #f3f4f6;
             padding: 16px;
             border-bottom: 1px solid #e5e7eb;
+        }
+        
+        /* Notification Toast */
+        .notification-toast {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #374151;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 60;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            max-width: 320px;
+            text-align: center;
+        }
+        .notification-toast.show {
+            opacity: 1;
+        }
+        .notification-toast.success {
+            background-color: #059669;
+        }
+        .notification-toast.error {
+            background-color: #dc2626;
+        }
+        .notification-toast.warning {
+            background-color: #d97706;
         }
         
         /* Scrollable Content Area */
@@ -74,14 +97,14 @@
             flex: 1;
             overflow-y: auto;
             overflow-x: hidden;
-            margin-top: 120px; /* Height of fixed header */
+            margin-top: 80px; /* Reduced since no banner */
             margin-bottom: 80px; /* Height of bottom nav */
             -webkit-overflow-scrolling: touch;
         }
         
         .main-content {
             padding: 16px;
-            min-height: calc(100vh - 200px);
+            min-height: calc(100vh - 160px);
         }
         
         .balance-card {
@@ -197,6 +220,7 @@
         .btn-green { background-color: #6b7280; color: white; }
         .btn-red { background-color: #9ca3af; color: white; }
         .btn-blue { background-color: #4b5563; color: white; }
+        .btn-orange { background-color: #f59e0b; color: white; }
         .btn-secondary { background-color: #ffffff; color: #374151; border: 1px solid #d1d5db; }
         .btn-demo { background-color: #f59e0b; color: white; font-size: 11px; padding: 6px 12px; }
         .transaction-item {
@@ -209,6 +233,28 @@
             margin-bottom: 8px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             border: 1px solid #f3f4f6;
+        }
+        .transaction-actions {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+        .action-btn {
+            padding: 6px;
+            border-radius: 6px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            transition: background-color 0.1s;
+        }
+        .action-btn:hover {
+            background-color: #f3f4f6;
+        }
+        .edit-btn {
+            color: #f59e0b;
+        }
+        .delete-btn {
+            color: #ef4444;
         }
         .progress-bar {
             width: 100%;
@@ -241,12 +287,6 @@
             font-size: 12px;
             color: #92400e;
         }
-        .malaysia-flag {
-            background: linear-gradient(0deg, #c41e3a 0%, #c41e3a 7.14%, #ffffff 7.14%, #ffffff 14.28%, #c41e3a 14.28%, #c41e3a 21.42%, #ffffff 21.42%, #ffffff 28.56%, #c41e3a 28.56%, #c41e3a 35.7%, #ffffff 35.7%, #ffffff 42.84%, #c41e3a 42.84%, #c41e3a 50%, #ffffff 50%, #ffffff 57.14%, #c41e3a 57.14%, #c41e3a 64.28%, #ffffff 64.28%, #ffffff 71.42%, #c41e3a 71.42%, #c41e3a 78.56%, #ffffff 78.56%, #ffffff 85.7%, #c41e3a 85.7%, #c41e3a 92.84%, #ffffff 92.84%, #ffffff 100%);
-            color: white;
-            font-weight: 600;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
-        }
         svg {
             width: 20px;
             height: 20px;
@@ -276,6 +316,9 @@
     </style>
 </head>
 <body>
+    <!-- Notification Toast -->
+    <div id="notification-toast" class="notification-toast"></div>
+
     <div class="container">
         <!-- Fixed Header -->
         <div class="fixed-header">
@@ -284,11 +327,6 @@
                 <span>9:41</span>
                 <span>My Financial Planning - Malaysia</span>
                 <span>100%</span>
-            </div>
-
-            <!-- Demo Banner -->
-            <div class="demo-banner malaysia-flag">
-                🇲🇾 MALAYSIAN RINGGIT (RM) DEMO • Data resets on page refresh
             </div>
 
             <!-- App Header -->
@@ -313,9 +351,9 @@
         <div class="scrollable-content">
             <!-- Home Tab -->
             <div id="home-tab" class="main-content">
-                <!-- Stateless Info -->
+                <!-- Persistent Data Info -->
                 <div class="stateless-info">
-                    <strong>🇲🇾 Malaysian Format:</strong> All amounts in Ringgit Malaysia (RM) • Temporary session data only.
+                    <strong>💾 Data Persistence:</strong> All transactions are saved locally and will persist between sessions.
                     <button onclick="loadDemoData()" class="btn btn-demo" style="margin-left: 8px;">Load Demo Data</button>
                 </div>
 
@@ -323,7 +361,7 @@
                 <div class="balance-card">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
                         <div>
-                            <p style="color: rgba(255,255,255,0.8); font-size: 14px; margin: 0;">Current Balance (Session)</p>
+                            <p style="color: rgba(255,255,255,0.8); font-size: 14px; margin: 0;">Current Balance</p>
                             <h1 id="balance-display" style="font-size: 32px; font-weight: bold; margin: 4px 0;">RM 0.00</h1>
                             <p id="balance-message" style="color: rgba(255,255,255,0.9); font-size: 12px; margin: 4px 0 0 0;">Start tracking or load demo data!</p>
                         </div>
@@ -356,14 +394,14 @@
                     </div>
                 </div>
 
-                <!-- Session Status -->
+                <!-- Data Status -->
                 <div style="background-color: #e0f2fe; border: 1px solid #0284c7; border-radius: 12px; padding: 12px; margin-bottom: 24px;">
                     <div style="display: flex; align-items: center; justify-content: space-between;">
                         <div style="display: flex; align-items: center;">
                             <div class="pulse" style="width: 8px; height: 8px; background-color: #0284c7; border-radius: 50%; margin-right: 8px;"></div>
-                            <span style="color: #0c4a6e; font-size: 14px; font-weight: 500;">Session Active</span>
+                            <span style="color: #0c4a6e; font-size: 14px; font-weight: 500;">Data Saved Locally</span>
                         </div>
-                        <span id="session-transactions" style="color: #0c4a6e; font-size: 12px;">0 transactions this session</span>
+                        <span id="total-transactions" style="color: #0c4a6e; font-size: 12px;">0 total transactions</span>
                     </div>
                 </div>
 
@@ -448,7 +486,7 @@
                                     <path d="M12 6v6l4 2"/>
                                 </svg>
                             </div>
-                            <h3 style="font-weight: 500; color: #1f2937; margin: 0 0 4px 0;">Welcome to Malaysian Demo!</h3>
+                            <h3 style="font-weight: 500; color: #1f2937; margin: 0 0 4px 0;">Welcome to Malaysian Planning!</h3>
                             <p style="font-size: 14px; margin: 0 0 16px 0; color: #6b7280;">Financial tracking in Ringgit Malaysia</p>
                             <div style="display: flex; gap: 8px; justify-content: center;">
                                 <button onclick="openAddForm('expense')" class="btn btn-primary">Add Transaction</button>
@@ -477,35 +515,36 @@
 
                 <!-- Extra Content for Scroll Testing -->
                 <div class="card">
-                    <h3 style="font-size: 16px; font-weight: 600; color: #1f2937; margin: 0 0 12px 0;">Scroll Test Section</h3>
-                    <p style="color: #6b7280; margin: 0 0 12px 0;">This section demonstrates that the body content scrolls while the header remains fixed at the top.</p>
-                    <p style="color: #6b7280; margin: 0 0 12px 0;">You can scroll up and down through all the content, and the header with the Malaysian flag and app title will always stay visible.</p>
-                    <p style="color: #6b7280; margin: 0;">The bottom navigation also remains fixed, creating a native app-like experience.</p>
+                    <h3 style="font-size: 16px; font-weight: 600; color: #1f2937; margin: 0 0 12px 0;">App Features</h3>
+                    <p style="color: #6b7280; margin: 0 0 12px 0;">This financial planning app includes persistent data storage, so your transactions will be saved between sessions.</p>
+                    <p style="color: #6b7280; margin: 0 0 12px 0;">You can add, edit, and delete transactions with full data persistence.</p>
+                    <p style="color: #6b7280; margin: 0;">All amounts are formatted in Malaysian Ringgit (RM) for local users.</p>
                 </div>
 
                 <div class="card">
                     <h3 style="font-size: 16px; font-weight: 600; color: #1f2937; margin: 0 0 12px 0;">Features</h3>
                     <ul style="color: #6b7280; margin: 0; padding-left: 20px;">
-                        <li>Fixed header with status bar and banner</li>
-                        <li>Scrollable content area with smooth iOS-style scrolling</li>
-                        <li>Fixed bottom navigation</li>
-                        <li>Modal forms that overlay everything</li>
-                        <li>Professional mobile app experience</li>
+                        <li>Persistent data storage with localStorage</li>
+                        <li>Full edit and delete functionality</li>
+                        <li>Malaysian payment methods and currency</li>
+                        <li>Financial health tracking and analytics</li>
+                        <li>Mobile-first responsive design</li>
+                        <li>Professional notifications system</li>
                     </ul>
                 </div>
             </div>
 
             <!-- Transactions Tab -->
             <div id="transactions-tab" class="main-content hidden">
-                <!-- Stateless Info -->
+                <!-- Persistent Data Info -->
                 <div class="stateless-info">
-                    <strong>📊 Session Data:</strong> All amounts displayed in Malaysian Ringgit (RM) format.
+                    <strong>📊 Persistent Data:</strong> All amounts displayed in Malaysian Ringgit (RM) and saved locally.
                 </div>
 
                 <div class="card">
                     <div style="padding: 0 0 16px 0; border-bottom: 1px solid #f3f4f6; margin-bottom: 16px;">
                         <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0;">All Transactions</h2>
-                        <p id="transaction-count" style="font-size: 14px; color: #6b7280; margin: 4px 0 0 0;">0 total entries in session</p>
+                        <p id="transaction-count" style="font-size: 14px; color: #6b7280; margin: 4px 0 0 0;">0 total entries saved</p>
                     </div>
                     
                     <div id="all-transactions">
@@ -518,7 +557,7 @@
                                 <line x1="3" y1="12" x2="3.01" y2="12"/>
                                 <line x1="3" y1="18" x2="3.01" y2="18"/>
                             </svg>
-                            <p style="font-size: 18px; margin: 0 0 8px 0;">No transactions in this session</p>
+                            <p style="font-size: 18px; margin: 0 0 8px 0;">No transactions saved yet</p>
                             <p style="font-size: 14px; margin: 0 0 16px 0;">Add transactions or load demo data to see them here</p>
                             <button onclick="loadDemoData()" class="btn btn-demo">Load Demo Data</button>
                         </div>
@@ -528,27 +567,27 @@
 
             <!-- Analytics Tab -->
             <div id="analytics-tab" class="main-content hidden">
-                <!-- Stateless Info -->
+                <!-- Persistent Data Info -->
                 <div class="stateless-info">
-                    <strong>📈 RM Analytics:</strong> All calculations and insights in Malaysian Ringgit currency.
+                    <strong>📈 RM Analytics:</strong> All calculations and insights in Malaysian Ringgit with persistent data.
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
                     <!-- Summary Card -->
                     <div class="card">
-                        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Session Financial Summary</h2>
+                        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Financial Summary</h2>
                         <div style="display: flex; flex-direction: column; gap: 16px;">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span style="color: #6b7280;">Session Income</span>
+                                <span style="color: #6b7280;">Total Income</span>
                                 <span id="analytics-income" style="color: #374151; font-weight: 600; font-size: 18px;">RM 0.00</span>
                             </div>
                             <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span style="color: #6b7280;">Session Expenses</span>
+                                <span style="color: #6b7280;">Total Expenses</span>
                                 <span id="analytics-expenses" style="color: #6b7280; font-weight: 600; font-size: 18px;">RM 0.00</span>
                             </div>
                             <div style="border-top: 1px solid #f3f4f6; padding-top: 16px;">
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <span style="color: #1f2937; font-weight: 500;">Session Balance</span>
+                                    <span style="color: #1f2937; font-weight: 500;">Net Balance</span>
                                     <span id="analytics-balance" style="font-weight: bold; font-size: 20px; color: #374151;">RM 0.00</span>
                                 </div>
                             </div>
@@ -569,7 +608,7 @@
 
                     <!-- Activity Summary -->
                     <div class="card">
-                        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Session Activity</h2>
+                        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Transaction Activity</h2>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                             <div style="text-align: center; padding: 16px; background-color: #f9fafb; border-radius: 12px;">
                                 <p id="income-count" style="font-size: 24px; font-weight: bold; color: #374151; margin: 0;">0</p>
@@ -584,22 +623,22 @@
 
                     <!-- Health Score -->
                     <div class="card">
-                        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Session Health Score</h2>
+                        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Financial Health Score</h2>
                         <div style="text-align: center;">
                             <div id="health-score" style="font-size: 48px; font-weight: bold; margin-bottom: 8px; color: #6b7280;">-</div>
-                            <p id="health-message" style="font-size: 14px; color: #6b7280; margin: 0;">Add income to calculate session score</p>
+                            <p id="health-message" style="font-size: 14px; color: #6b7280; margin: 0;">Add income to calculate health score</p>
                         </div>
                     </div>
 
-                    <!-- Demo Actions -->
+                    <!-- Data Management -->
                     <div class="card">
-                        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Demo Controls</h2>
+                        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Data Management</h2>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                             <button onclick="loadDemoData()" class="btn" style="background-color: #f59e0b; color: white;">
                                 Load Sample Data
                             </button>
                             <button onclick="clearAllData()" class="btn" style="background-color: #ef4444; color: white;">
-                                Reset Session
+                                Clear All Data
                             </button>
                         </div>
                     </div>
@@ -637,7 +676,7 @@
             </button>
         </div>
 
-        <!-- Add Transaction Modal -->
+        <!-- Add/Edit Transaction Modal -->
         <div id="add-modal" class="modal hidden">
             <div class="modal-content">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
@@ -665,6 +704,18 @@
                             <span style="color: #374151; font-weight: 500;">Payment Recording Mode</span>
                         </div>
                         <p style="color: #6b7280; font-size: 14px; margin: 4px 0 0 0;">Recording a bill payment or transaction</p>
+                    </div>
+
+                    <!-- Edit Mode Indicator -->
+                    <div id="edit-mode-indicator" class="hidden" style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 12px; padding: 12px;">
+                        <div style="display: flex; align-items: center;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" style="width: 20px; height: 20px; margin-right: 8px;">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                            <span style="color: #92400e; font-weight: 500;">Edit Transaction Mode</span>
+                        </div>
+                        <p style="color: #92400e; font-size: 14px; margin: 4px 0 0 0;">Modifying existing transaction details</p>
                     </div>
 
                     <!-- Amount -->
@@ -734,10 +785,15 @@
     </div>
 
     <script>
-        // Global state - NO localStorage, purely in-memory
+        // Global state with localStorage persistence
         let transactions = [];
         let currentType = 'expense';
         let isPaymentMode = false;
+        let isEditMode = false;
+        let editingTransactionId = null;
+
+        // LocalStorage key
+        const STORAGE_KEY = 'malaysiaPlanningTransactions';
 
         // Demo data for showcasing features (Malaysian Ringgit amounts)
         const demoTransactions = [
@@ -820,31 +876,56 @@
             }
         ];
 
+        // Notification system
+        function showNotification(message, type = 'success') {
+            const toast = document.getElementById('notification-toast');
+            toast.textContent = message;
+            toast.className = `notification-toast show ${type}`;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Local Storage functions
+        function saveTransactions() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
+            } catch (e) {
+                showNotification('Error saving data locally', 'error');
+                console.error('Error saving to localStorage:', e);
+            }
+        }
+
+        function loadTransactions() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    transactions = JSON.parse(saved);
+                    showNotification('Data loaded successfully', 'success');
+                }
+            } catch (e) {
+                showNotification('Error loading saved data', 'error');
+                console.error('Error loading from localStorage:', e);
+                transactions = [];
+            }
+        }
+
         // Load demo data
         function loadDemoData() {
             transactions = [...demoTransactions];
+            saveTransactions();
             updateDisplays();
-            
-            // Show success message
-            const originalText = document.querySelector('.demo-banner').textContent;
-            document.querySelector('.demo-banner').textContent = '✅ Demo data loaded! Explore Malaysian financial tracking features.';
-            setTimeout(() => {
-                document.querySelector('.demo-banner').textContent = originalText;
-            }, 3000);
+            showNotification('🎯 Demo data loaded successfully!', 'success');
         }
 
         // Clear all data
         function clearAllData() {
-            if (confirm('Clear all session data? This cannot be undone.')) {
+            if (confirm('Clear all saved data? This cannot be undone.')) {
                 transactions = [];
+                saveTransactions();
                 updateDisplays();
-                
-                // Show success message
-                const originalText = document.querySelector('.demo-banner').textContent;
-                document.querySelector('.demo-banner').textContent = '🗑️ All session data cleared! Ready for new Malaysian Ringgit tracking.';
-                setTimeout(() => {
-                    document.querySelector('.demo-banner').textContent = originalText;
-                }, 3000);
+                showNotification('🗑️ All data cleared successfully', 'warning');
             }
         }
 
@@ -871,10 +952,16 @@
         function openAddForm(type) {
             currentType = type;
             isPaymentMode = false;
+            isEditMode = false;
+            editingTransactionId = null;
+            
             document.getElementById('modal-title').textContent = `Add ${type.charAt(0).toUpperCase() + type.slice(1)}`;
             document.getElementById('type-toggle').style.display = 'flex';
             document.getElementById('payment-mode-indicator').classList.add('hidden');
+            document.getElementById('edit-mode-indicator').classList.add('hidden');
+            
             setType(type);
+            clearForm();
             document.getElementById('add-modal').classList.remove('hidden');
         }
 
@@ -882,13 +969,56 @@
         function openPaymentForm() {
             currentType = 'expense';
             isPaymentMode = true;
+            isEditMode = false;
+            editingTransactionId = null;
+            
             document.getElementById('modal-title').textContent = 'Record Payment';
             document.getElementById('type-toggle').style.display = 'none';
             document.getElementById('payment-mode-indicator').classList.remove('hidden');
-            document.getElementById('category-input').value = 'Bills & Utilities';
-            document.getElementById('payment-input').value = 'Bank Transfer';
+            document.getElementById('edit-mode-indicator').classList.add('hidden');
             document.getElementById('submit-btn').className = 'btn btn-blue';
             document.getElementById('submit-btn').textContent = 'Record Payment';
+            
+            clearForm();
+            document.getElementById('category-input').value = 'Bills & Utilities';
+            document.getElementById('payment-input').value = 'Bank Transfer';
+            document.getElementById('add-modal').classList.remove('hidden');
+        }
+
+        // Open edit form
+        function openEditForm(transactionId) {
+            const transaction = transactions.find(t => t.id === transactionId);
+            if (!transaction) return;
+
+            currentType = transaction.type;
+            isPaymentMode = transaction.isPayment;
+            isEditMode = true;
+            editingTransactionId = transactionId;
+
+            document.getElementById('modal-title').textContent = 'Edit Transaction';
+            document.getElementById('type-toggle').style.display = isPaymentMode ? 'none' : 'flex';
+            document.getElementById('payment-mode-indicator').classList.toggle('hidden', !isPaymentMode);
+            document.getElementById('edit-mode-indicator').classList.remove('hidden');
+
+            // Populate form with existing data
+            document.getElementById('amount-input').value = transaction.amount;
+            document.getElementById('description-input').value = transaction.description;
+            document.getElementById('category-input').value = transaction.category;
+            document.getElementById('payment-input').value = transaction.payment;
+
+            if (!isPaymentMode) {
+                setType(transaction.type);
+            } else {
+                document.getElementById('submit-btn').className = 'btn btn-blue';
+                document.getElementById('submit-btn').textContent = 'Update Payment';
+            }
+
+            // Set submit button for edit mode
+            if (!isPaymentMode) {
+                document.getElementById('submit-btn').className = transaction.type === 'income' ? 'btn btn-green' : 'btn btn-red';
+                document.getElementById('submit-btn').textContent = `Update ${transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}`;
+            }
+
             document.getElementById('add-modal').classList.remove('hidden');
         }
 
@@ -906,8 +1036,14 @@
                 incomeBtn.style.background = 'none';
                 incomeBtn.style.color = '#6b7280';
                 incomeBtn.style.boxShadow = 'none';
-                submitBtn.className = 'btn btn-red';
-                submitBtn.textContent = 'Add Expense';
+                
+                if (isEditMode) {
+                    submitBtn.className = 'btn btn-red';
+                    submitBtn.textContent = 'Update Expense';
+                } else {
+                    submitBtn.className = 'btn btn-red';
+                    submitBtn.textContent = 'Add Expense';
+                }
             } else {
                 incomeBtn.style.background = 'white';
                 incomeBtn.style.color = '#1f2937';
@@ -915,23 +1051,35 @@
                 expenseBtn.style.background = 'none';
                 expenseBtn.style.color = '#6b7280';
                 expenseBtn.style.boxShadow = 'none';
-                submitBtn.className = 'btn btn-green';
-                submitBtn.textContent = 'Add Income';
+                
+                if (isEditMode) {
+                    submitBtn.className = 'btn btn-green';
+                    submitBtn.textContent = 'Update Income';
+                } else {
+                    submitBtn.className = 'btn btn-green';
+                    submitBtn.textContent = 'Add Income';
+                }
             }
+        }
+
+        // Clear form
+        function clearForm() {
+            document.getElementById('amount-input').value = '';
+            document.getElementById('description-input').value = '';
+            document.getElementById('category-input').value = '';
+            document.getElementById('payment-input').value = '';
         }
 
         // Close modal
         function closeModal() {
             document.getElementById('add-modal').classList.add('hidden');
-            // Clear form
-            document.getElementById('amount-input').value = '';
-            document.getElementById('description-input').value = '';
-            document.getElementById('category-input').value = '';
-            document.getElementById('payment-input').value = '';
+            clearForm();
             isPaymentMode = false;
+            isEditMode = false;
+            editingTransactionId = null;
         }
 
-        // Add transaction
+        // Add or update transaction
         function addTransaction() {
             const amount = parseFloat(document.getElementById('amount-input').value);
             const description = document.getElementById('description-input').value.trim();
@@ -940,46 +1088,71 @@
 
             // Validation
             if (!description) {
-                alert('Please enter a description');
+                showNotification('Please enter a description', 'error');
                 return;
             }
             if (!amount || amount <= 0) {
-                alert('Please enter a valid amount');
+                showNotification('Please enter a valid amount', 'error');
                 return;
             }
             if (!category) {
-                alert('Please select a category');
+                showNotification('Please select a category', 'error');
                 return;
             }
             if (!payment) {
-                alert('Please select a payment method');
+                showNotification('Please select a payment method', 'error');
                 return;
             }
 
-            // Create transaction
-            const transaction = {
-                id: Date.now(),
-                type: currentType,
-                amount: amount,
-                description: description,
-                category: category,
-                payment: payment,
-                isPayment: isPaymentMode,
-                date: new Date().toLocaleDateString(),
-                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-            };
+            if (isEditMode && editingTransactionId) {
+                // Update existing transaction
+                const transactionIndex = transactions.findIndex(t => t.id === editingTransactionId);
+                if (transactionIndex !== -1) {
+                    transactions[transactionIndex] = {
+                        ...transactions[transactionIndex],
+                        type: currentType,
+                        amount: amount,
+                        description: description,
+                        category: category,
+                        payment: payment,
+                        // Keep original date and time, but update timestamp for modified time
+                        lastModified: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+                    };
+                    
+                    saveTransactions();
+                    showNotification('✅ Transaction updated successfully!', 'success');
+                }
+            } else {
+                // Create new transaction
+                const transaction = {
+                    id: Date.now(),
+                    type: currentType,
+                    amount: amount,
+                    description: description,
+                    category: category,
+                    payment: payment,
+                    isPayment: isPaymentMode,
+                    date: new Date().toLocaleDateString(),
+                    time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+                };
 
-            // Add to transactions (in memory only)
-            transactions.unshift(transaction);
+                // Add to transactions and save
+                transactions.unshift(transaction);
+                saveTransactions();
+                showNotification('✅ Transaction added successfully!', 'success');
+            }
+
             updateDisplays();
             closeModal();
         }
 
         // Delete transaction
         function deleteTransaction(id) {
-            if (confirm('Delete this transaction from session?')) {
+            if (confirm('Delete this transaction? This cannot be undone.')) {
                 transactions = transactions.filter(t => t.id !== id);
+                saveTransactions();
                 updateDisplays();
+                showNotification('🗑️ Transaction deleted successfully', 'warning');
             }
         }
 
@@ -990,12 +1163,12 @@
             updateAllTransactions();
             updateAnalytics();
             updateHealthIndicator();
-            updateSessionInfo();
+            updateDataInfo();
         }
 
-        // Update session info
-        function updateSessionInfo() {
-            document.getElementById('session-transactions').textContent = `${transactions.length} transactions this session`;
+        // Update data info
+        function updateDataInfo() {
+            document.getElementById('total-transactions').textContent = `${transactions.length} total transactions`;
         }
 
         // Update balance card (with RM currency)
@@ -1012,7 +1185,7 @@
             if (transactions.length === 0) {
                 message = "Start tracking or load demo data!";
             } else {
-                message = balance >= 0 ? "Great session progress!" : "Review session spending";
+                message = balance >= 0 ? "Great financial progress!" : "Review your spending";
             }
             document.getElementById('balance-message').textContent = message;
         }
@@ -1061,7 +1234,7 @@
             }
         }
 
-        // Update recent transactions (with RM currency)
+        // Update recent transactions (with RM currency and edit buttons)
         function updateRecentTransactions() {
             const container = document.getElementById('recent-transactions');
             const recent = transactions.slice(0, 5);
@@ -1075,7 +1248,7 @@
                                 <path d="M12 6v6l4 2"/>
                             </svg>
                         </div>
-                        <h3 style="font-weight: 500; color: #1f2937; margin: 0 0 4px 0;">Welcome to Malaysian Demo!</h3>
+                        <h3 style="font-weight: 500; color: #1f2937; margin: 0 0 4px 0;">Welcome to Malaysian Planning!</h3>
                         <p style="font-size: 14px; margin: 0 0 16px 0; color: #6b7280;">Financial tracking in Ringgit Malaysia</p>
                         <div style="display: flex; gap: 8px; justify-content: center;">
                             <button onclick="openAddForm('expense')" class="btn btn-primary">Add Transaction</button>
@@ -1086,7 +1259,7 @@
             } else {
                 container.innerHTML = recent.map(transaction => `
                     <div class="transaction-item">
-                        <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
                             <div style="padding: 8px; border-radius: 50%; background-color: ${transaction.type === 'income' ? '#f3f4f6' : '#f9fafb'}; border: 1px solid #e5e7eb;">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 16px; height: 16px;">
                                     ${transaction.type === 'income' ? 
@@ -1094,16 +1267,34 @@
                                         '<line x1="5" y1="12" x2="19" y2="12"/>'}
                                 </svg>
                             </div>
-                            <div>
+                            <div style="flex: 1;">
                                 <p style="font-weight: 500; color: #1f2937; margin: 0; font-size: 14px;">${transaction.description}</p>
                                 <p style="font-size: 12px; color: #6b7280; margin: 2px 0 0 0;">${transaction.category} • ${transaction.payment}</p>
                             </div>
                         </div>
-                        <div style="text-align: right;">
-                            <p style="font-weight: 600; color: ${transaction.type === 'income' ? '#374151' : '#6b7280'}; margin: 0;">
-                                ${transaction.type === 'income' ? '+' : '-'}RM ${transaction.amount.toFixed(2)}
-                            </p>
-                            <p style="font-size: 12px; color: #9ca3af; margin: 2px 0 0 0;">${transaction.time}</p>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="text-align: right;">
+                                <p style="font-weight: 600; color: ${transaction.type === 'income' ? '#374151' : '#6b7280'}; margin: 0;">
+                                    ${transaction.type === 'income' ? '+' : '-'}RM ${transaction.amount.toFixed(2)}
+                                </p>
+                                <p style="font-size: 12px; color: #9ca3af; margin: 2px 0 0 0;">${transaction.time}</p>
+                            </div>
+                            <div class="transaction-actions">
+                                <button onclick="openEditForm(${transaction.id})" class="action-btn edit-btn" title="Edit transaction">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                    </svg>
+                                </button>
+                                <button onclick="deleteTransaction(${transaction.id})" class="action-btn delete-btn" title="Delete transaction">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                                        <polyline points="3,6 5,6 21,6"/>
+                                        <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"/>
+                                        <line x1="10" y1="11" x2="10" y2="17"/>
+                                        <line x1="14" y1="11" x2="14" y2="17"/>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `).join('');
@@ -1118,21 +1309,39 @@
                 recentPayments.classList.remove('hidden');
                 paymentList.innerHTML = payments.map(payment => `
                     <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; border-left: 4px solid #6b7280; padding-left: 12px; background-color: #f9fafb; border-radius: 0 8px 8px 0; margin-bottom: 8px;">
-                        <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
                             <div style="padding: 8px; border-radius: 50%; background-color: #f3f4f6; border: 1px solid #e5e7eb;">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 16px; height: 16px;">
                                     <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
                                     <line x1="1" y1="10" x2="23" y2="10"/>
                                 </svg>
                             </div>
-                            <div>
+                            <div style="flex: 1;">
                                 <p style="font-weight: 500; color: #1f2937; margin: 0; font-size: 14px;">${payment.description}</p>
                                 <p style="font-size: 12px; color: #6b7280; margin: 2px 0 0 0;">${payment.category} • ${payment.payment}</p>
                             </div>
                         </div>
-                        <div style="text-align: right;">
-                            <p style="font-weight: 600; color: #6b7280; margin: 0;">-RM ${payment.amount.toFixed(2)}</p>
-                            <p style="font-size: 12px; color: #9ca3af; margin: 2px 0 0 0;">${payment.time}</p>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="text-align: right;">
+                                <p style="font-weight: 600; color: #6b7280; margin: 0;">-RM ${payment.amount.toFixed(2)}</p>
+                                <p style="font-size: 12px; color: #9ca3af; margin: 2px 0 0 0;">${payment.time}</p>
+                            </div>
+                            <div class="transaction-actions">
+                                <button onclick="openEditForm(${payment.id})" class="action-btn edit-btn" title="Edit payment">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                    </svg>
+                                </button>
+                                <button onclick="deleteTransaction(${payment.id})" class="action-btn delete-btn" title="Delete payment">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                                        <polyline points="3,6 5,6 21,6"/>
+                                        <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"/>
+                                        <line x1="10" y1="11" x2="10" y2="17"/>
+                                        <line x1="14" y1="11" x2="14" y2="17"/>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `).join('');
@@ -1141,10 +1350,10 @@
             }
         }
 
-        // Update all transactions (with RM currency)
+        // Update all transactions (with RM currency and edit buttons)
         function updateAllTransactions() {
             const container = document.getElementById('all-transactions');
-            document.getElementById('transaction-count').textContent = `${transactions.length} total entries in session`;
+            document.getElementById('transaction-count').textContent = `${transactions.length} total entries saved`;
 
             if (transactions.length === 0) {
                 container.innerHTML = `
@@ -1157,7 +1366,7 @@
                             <line x1="3" y1="12" x2="3.01" y2="12"/>
                             <line x1="3" y1="18" x2="3.01" y2="18"/>
                         </svg>
-                        <p style="font-size: 18px; margin: 0 0 8px 0;">No transactions in this session</p>
+                        <p style="font-size: 18px; margin: 0 0 8px 0;">No transactions saved yet</p>
                         <p style="font-size: 14px; margin: 0 0 16px 0;">Add transactions or load demo data to see them here</p>
                         <button onclick="loadDemoData()" class="btn btn-demo">Load Demo Data</button>
                     </div>
@@ -1180,6 +1389,8 @@
                                         <span>${transaction.category}</span>
                                         <span>${transaction.payment}</span>
                                         <span>${transaction.date}</span>
+                                        ${transaction.lastModified ? `<span style="color: #f59e0b;">Modified ${transaction.lastModified}</span>` : ''}
+                                        ${transaction.isPayment ? '<span style="color: #6b7280; font-weight: 500;">Payment</span>' : ''}
                                     </div>
                                 </div>
                             </div>
@@ -1189,14 +1400,22 @@
                                         ${transaction.type === 'income' ? '+' : '-'}RM ${transaction.amount.toFixed(2)}
                                     </p>
                                 </div>
-                                <button onclick="deleteTransaction(${transaction.id})" style="color: #9ca3af; background: none; border: none; padding: 4px; border-radius: 4px;">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
-                                        <polyline points="3,6 5,6 21,6"/>
-                                        <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"/>
-                                        <line x1="10" y1="11" x2="10" y2="17"/>
-                                        <line x1="14" y1="11" x2="14" y2="17"/>
-                                    </svg>
-                                </button>
+                                <div class="transaction-actions">
+                                    <button onclick="openEditForm(${transaction.id})" class="action-btn edit-btn" title="Edit transaction">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                        </svg>
+                                    </button>
+                                    <button onclick="deleteTransaction(${transaction.id})" class="action-btn delete-btn" title="Delete transaction">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                                            <polyline points="3,6 5,6 21,6"/>
+                                            <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"/>
+                                            <line x1="10" y1="11" x2="10" y2="17"/>
+                                            <line x1="14" y1="11" x2="14" y2="17"/>
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1226,15 +1445,15 @@
                 let score, message, color;
                 if (balance > income * 0.2) {
                     score = 'A+';
-                    message = "Excellent session! Great saving ratio.";
+                    message = "Excellent! Great saving ratio.";
                     color = '#374151';
                 } else if (balance > 0) {
                     score = 'B';
-                    message = 'Good session! Consider saving more.';
+                    message = 'Good! Consider saving more.';
                     color = '#6b7280';
                 } else {
                     score = 'C';
-                    message = 'Review your session spending habits.';
+                    message = 'Review your spending habits.';
                     color = '#9ca3af';
                 }
                 scoreElement.textContent = score;
@@ -1243,7 +1462,7 @@
             } else {
                 scoreElement.textContent = '-';
                 scoreElement.style.color = '#6b7280';
-                messageElement.textContent = 'Add income to calculate session score';
+                messageElement.textContent = 'Add income to calculate health score';
             }
 
             // Category analytics
@@ -1337,16 +1556,24 @@
             }
         }
 
-        // Initialize app - NO localStorage loading
+        // Initialize app with localStorage loading
         document.addEventListener('DOMContentLoaded', function() {
+            // Load saved transactions
+            loadTransactions();
             updateDisplays();
             
             // Show welcome message
+            if (transactions.length === 0) {
+                setTimeout(() => {
+                    showNotification('Welcome! Your data will be saved locally.', 'success');
+                }, 1000);
+            }
+            
             console.log('🇲🇾 Malaysian Financial Planning App Loaded');
-            console.log('📱 Fixed header with scrollable body design');
+            console.log('💾 Data persistence enabled with localStorage');
             console.log('💰 All amounts displayed in Malaysian Ringgit (RM)');
-            console.log('🔄 All data is temporary and resets on page refresh');
-            console.log('🎯 Try loading demo data to explore Malaysian financial features!');
+            console.log('✏️ Full edit functionality available');
+            console.log('📱 Professional mobile app experience');
         });
     </script>
 </body>
