@@ -4,781 +4,1121 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#4b5563">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="My FinPlan">
+    <meta name="theme-color" content="#1f2937">
     <title>My Financial Planning - Malaysia</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         * {
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
+        
         body {
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #f3f4f6;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             overflow: hidden;
             height: 100vh;
+            height: 100dvh;
+            position: fixed;
+            width: 100%;
         }
-        .container {
-            max-width: 384px;
-            margin: 0 auto;
+
+        .mobile-app {
+            width: 100%;
             height: 100vh;
+            height: 100dvh;
+            max-width: 430px;
+            margin: 0 auto;
+            background: #f8fafc;
             position: relative;
-            background-color: #f3f4f6;
             display: flex;
             flex-direction: column;
+            box-shadow: 0 0 50px rgba(0,0,0,0.3);
         }
-        .hidden { display: none !important; }
-        .active-tab { color: #374151 !important; background-color: #e5e7eb !important; }
-        
-        /* Fixed Header Styles */
-        .fixed-header {
-            position: fixed;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 384px;
-            z-index: 40;
-            background-color: #f3f4f6;
+
+        .hidden { 
+            display: none !important; 
         }
-        
+
+        .active-tab { 
+            color: #1f2937 !important; 
+            background-color: #f1f5f9 !important; 
+            transform: scale(1.05);
+        }
+
+        /* Status Bar */
         .status-bar {
-            background-color: #111827;
-            color: #d1d5db;
-            font-size: 12px;
-            padding: 8px;
+            background: #1f2937;
+            color: white;
+            padding: 8px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-        
-        .app-header {
-            background-color: #f3f4f6;
-            padding: 16px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        
-        /* Notification Toast */
-        .notification-toast {
-            position: fixed;
-            top: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #374151;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
             font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .status-time {
+            font-weight: 700;
+        }
+
+        .status-battery {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* App Header */
+        .app-header {
+            background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+            color: white;
+            padding: 20px;
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            opacity: 0.8;
+            margin: 0;
             font-weight: 500;
-            z-index: 60;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-            max-width: 320px;
+        }
+
+        .profile-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            transition: all 0.2s;
+        }
+
+        .profile-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Balance Display */
+        .balance-display {
             text-align: center;
+            padding: 16px 0;
         }
-        .notification-toast.show {
-            opacity: 1;
+
+        .balance-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin: 0 0 8px 0;
+            font-weight: 500;
         }
-        .notification-toast.success {
-            background-color: #059669;
+
+        .balance-amount {
+            font-size: 36px;
+            font-weight: 900;
+            margin: 0;
+            letter-spacing: -1px;
         }
-        .notification-toast.error {
-            background-color: #dc2626;
+
+        .balance-message {
+            font-size: 12px;
+            opacity: 0.8;
+            margin: 8px 0 0 0;
         }
-        .notification-toast.warning {
-            background-color: #d97706;
+
+        .balance-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 20px;
         }
-        
-        /* Scrollable Content Area */
-        .scrollable-content {
+
+        .stat-card {
+            background: rgba(255,255,255,0.15);
+            border-radius: 16px;
+            padding: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 6px;
+        }
+
+        .stat-icon {
+            width: 16px;
+            height: 16px;
+            opacity: 0.9;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+            font-weight: 500;
+        }
+
+        .stat-amount {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        /* Main Content */
+        .main-content {
             flex: 1;
             overflow-y: auto;
-            overflow-x: hidden;
-            margin-top: 80px; /* Reduced since no banner */
-            margin-bottom: 80px; /* Height of bottom nav */
+            padding: 20px;
+            padding-bottom: 100px;
             -webkit-overflow-scrolling: touch;
         }
-        
-        .main-content {
-            padding: 16px;
-            min-height: calc(100vh - 160px);
+
+        .main-content::-webkit-scrollbar {
+            display: none;
         }
-        
-        .balance-card {
-            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
-            border-radius: 16px;
-            padding: 24px;
-            color: white;
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
             margin-bottom: 24px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
         }
+
         .quick-action {
-            padding: 16px;
-            border-radius: 12px;
+            background: white;
+            border: none;
+            border-radius: 20px;
+            padding: 20px 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
-            color: white;
-            font-weight: 600;
+            gap: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .quick-action:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .action-icon {
+            width: 28px;
+            height: 28px;
+            padding: 6px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-icon.income { background: #10b981; color: white; }
+        .action-icon.expense { background: #ef4444; color: white; }
+        .action-icon.payment { background: #3b82f6; color: white; }
+
+        .action-text {
             font-size: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15);
-            transition: transform 0.1s;
+            font-weight: 600;
+            color: #374151;
+            text-align: center;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        .card-action {
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 600;
+            background: none;
             border: none;
             cursor: pointer;
         }
-        .quick-action:active {
-            transform: scale(0.95);
-        }
-        .bg-green { background-color: #6b7280; }
-        .bg-red { background-color: #9ca3af; }
-        .bg-blue { background-color: #4b5563; }
-        .card {
-            background-color: #ffffff;
-            border-radius: 16px;
+
+        /* Transaction Items */
+        .transaction-item {
+            display: flex;
+            align-items: center;
             padding: 16px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e5e7eb;
-            margin-bottom: 16px;
+            background: #f8fafc;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            position: relative;
+            transition: all 0.2s;
         }
-        
-        /* Fixed Bottom Navigation */
+
+        .transaction-item:active {
+            transform: scale(0.98);
+        }
+
+        .transaction-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .transaction-icon.income { background: #d1fae5; color: #10b981; }
+        .transaction-icon.expense { background: #fee2e2; color: #ef4444; }
+
+        .transaction-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .transaction-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0 0 4px 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .transaction-meta {
+            font-size: 12px;
+            color: #6b7280;
+            margin: 0;
+        }
+
+        .transaction-amount {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .amount-value {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0 0 4px 0;
+        }
+
+        .amount-value.income { color: #10b981; }
+        .amount-value.expense { color: #ef4444; }
+
+        .amount-time {
+            font-size: 11px;
+            color: #9ca3af;
+            margin: 0;
+        }
+
+        .transaction-actions {
+            position: absolute;
+            right: 12px;
+            top: 12px;
+            display: flex;
+            gap: 4px;
+            opacity: 0.7;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .action-btn.edit {
+            background: #fef3c7;
+            color: #f59e0b;
+        }
+
+        .action-btn.delete {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        .action-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* Bottom Navigation */
         .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
             width: 100%;
-            max-width: 384px;
-            background-color: #f9fafb;
-            border-top: 1px solid #d1d5db;
-            padding: 8px 16px;
+            max-width: 430px;
+            background: white;
+            padding: 8px 20px 20px;
+            border-top: 1px solid #e5e7eb;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+        }
+
+        .nav-tabs {
             display: flex;
             justify-content: space-around;
-            z-index: 30;
+            gap: 8px;
         }
-        .nav-btn {
+
+        .nav-tab {
+            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 8px 12px;
-            border-radius: 8px;
-            color: #6b7280;
-            font-size: 12px;
-            font-weight: 500;
+            padding: 12px 8px;
+            border-radius: 16px;
             border: none;
             background: none;
-            cursor: pointer;
+            color: #9ca3af;
+            font-size: 12px;
+            font-weight: 600;
             transition: all 0.2s;
+            cursor: pointer;
         }
+
+        .nav-tab.active {
+            color: #1f2937;
+            background: #f1f5f9;
+            transform: scale(1.05);
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 4px;
+        }
+
+        /* Modal */
         .modal {
             position: fixed;
             inset: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 50;
+            background: rgba(0,0,0,0.5);
+            z-index: 100;
             display: flex;
             align-items: flex-end;
+            backdrop-filter: blur(4px);
         }
+
         .modal-content {
-            background-color: #f9fafb;
+            background: white;
             width: 100%;
+            max-width: 430px;
+            margin: 0 auto;
             border-top-left-radius: 24px;
             border-top-right-radius: 24px;
             padding: 24px;
-            transform: translateY(0);
-            transition: transform 0.3s;
             max-height: 80vh;
             overflow-y: auto;
+            animation: slideUp 0.3s ease-out;
         }
-        .form-input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #d1d5db;
-            border-radius: 12px;
-            font-size: 16px;
-            margin-top: 8px;
-            background-color: #ffffff;
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
         }
-        .form-input:focus {
-            outline: none;
-            border-color: #6b7280;
-            box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.1);
-        }
-        .btn {
-            padding: 12px 16px;
-            border-radius: 12px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: all 0.1s;
-        }
-        .btn:active { transform: scale(0.95); }
-        .btn-primary { background-color: #6b7280; color: white; }
-        .btn-green { background-color: #6b7280; color: white; }
-        .btn-red { background-color: #9ca3af; color: white; }
-        .btn-blue { background-color: #4b5563; color: white; }
-        .btn-orange { background-color: #f59e0b; color: white; }
-        .btn-secondary { background-color: #ffffff; color: #374151; border: 1px solid #d1d5db; }
-        .btn-demo { background-color: #f59e0b; color: white; font-size: 11px; padding: 6px 12px; }
-        .transaction-item {
+
+        .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px;
-            background-color: #ffffff;
-            border-radius: 12px;
-            margin-bottom: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            border: 1px solid #f3f4f6;
+            margin-bottom: 24px;
         }
-        .transaction-actions {
-            display: flex;
-            gap: 4px;
-            align-items: center;
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0;
         }
-        .action-btn {
-            padding: 6px;
-            border-radius: 6px;
+
+        .modal-subtitle {
+            font-size: 14px;
+            color: #6b7280;
+            margin: 4px 0 0 0;
+        }
+
+        .close-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f3f4f6;
             border: none;
-            background: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            font-size: 18px;
             cursor: pointer;
-            transition: background-color 0.1s;
         }
-        .action-btn:hover {
-            background-color: #f3f4f6;
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
         }
-        .edit-btn {
-            color: #f59e0b;
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
         }
-        .delete-btn {
-            color: #ef4444;
+
+        .form-input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 500;
+            background: white;
+            transition: all 0.2s;
         }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .amount-input-wrapper {
+            position: relative;
+        }
+
+        .amount-prefix {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            font-weight: 600;
+            color: #6b7280;
+        }
+
+        .amount-input {
+            padding-left: 50px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        /* Type Toggle */
+        .type-toggle {
+            display: flex;
+            background: #f3f4f6;
+            border-radius: 16px;
+            padding: 4px;
+            margin-bottom: 20px;
+        }
+
+        .type-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .type-btn.active {
+            background: white;
+            color: #1f2937;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .type-btn:not(.active) {
+            background: none;
+            color: #6b7280;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 16px 24px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-secondary { background: #f3f4f6; color: #374151; }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .btn-group .btn {
+            flex: 1;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6b7280;
+        }
+
+        .empty-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 16px;
+            background: #f3f4f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+        }
+
+        .empty-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0 0 8px 0;
+        }
+
+        .empty-subtitle {
+            font-size: 14px;
+            margin: 0 0 20px 0;
+        }
+
+        /* Notification Toast */
+        .notification {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2937;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 1000;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            opacity: 0;
+            transition: all 0.3s;
+            max-width: calc(100% - 40px);
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .notification.success { background: #10b981; }
+        .notification.error { background: #ef4444; }
+        .notification.warning { background: #f59e0b; }
+
+        /* Info Banner */
+        .info-banner {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border: 1px solid #f59e0b;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .info-icon {
+            width: 24px;
+            height: 24px;
+            color: #d97706;
+            flex-shrink: 0;
+        }
+
+        .info-text {
+            font-size: 13px;
+            color: #92400e;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .info-btn {
+            background: #f59e0b;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Health Indicator */
+        .health-card {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border: 1px solid #0ea5e9;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .health-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .health-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0c4a6e;
+            margin: 0;
+        }
+
+        .health-ratio {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0369a1;
+        }
+
         .progress-bar {
             width: 100%;
             height: 8px;
-            background-color: #e5e7eb;
+            background: #e0f2fe;
             border-radius: 4px;
             overflow: hidden;
+            margin-bottom: 8px;
         }
+
         .progress-fill {
             height: 100%;
+            background: #0ea5e9;
             transition: width 0.3s;
         }
-        .health-indicator {
-            background-color: #f3f4f6;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 24px;
-        }
-        .grey-accent { background-color: #f3f4f6; border: 1px solid #e5e7eb; }
-        .text-grey { color: #6b7280; }
-        .text-dark-grey { color: #374151; }
-        .text-light-grey { color: #9ca3af; }
-        .stateless-info {
-            background-color: #fef3c7;
-            border: 1px solid #f59e0b;
-            border-radius: 8px;
-            padding: 8px 12px;
-            margin-bottom: 16px;
+
+        .progress-label {
             font-size: 12px;
-            color: #92400e;
+            color: #0369a1;
+            margin: 0;
         }
-        svg {
-            width: 20px;
-            height: 20px;
+
+        /* Responsive adjustments */
+        @media (max-width: 375px) {
+            .balance-amount { font-size: 32px; }
+            .quick-action { padding: 16px 12px; }
+            .main-content { padding: 16px; }
         }
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
-        /* Smooth scrolling for iOS */
-        .scrollable-content {
-            -webkit-overflow-scrolling: touch;
-            scroll-behavior: smooth;
-        }
-        
-        /* Hide scrollbar but keep functionality */
-        .scrollable-content::-webkit-scrollbar {
-            display: none;
-        }
-        .scrollable-content {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+
+        /* Safe area handling for iOS */
+        @supports (padding: max(0px)) {
+            .status-bar {
+                padding-top: max(8px, env(safe-area-inset-top));
+            }
+            
+            .bottom-nav {
+                padding-bottom: max(20px, env(safe-area-inset-bottom));
+            }
         }
     </style>
 </head>
 <body>
     <!-- Notification Toast -->
-    <div id="notification-toast" class="notification-toast"></div>
+    <div id="notification" class="notification"></div>
 
-    <div class="container">
-        <!-- Fixed Header -->
-        <div class="fixed-header">
-            <!-- Status Bar -->
-            <div class="status-bar">
-                <span>9:41</span>
-                <span>My Financial Planning - Malaysia</span>
+    <div class="mobile-app">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span class="status-time">9:41</span>
+            <span style="font-weight: 500;">My FinPlan</span>
+            <div class="status-battery">
                 <span>100%</span>
+                <svg width="24" height="12" viewBox="0 0 24 12" fill="currentColor">
+                    <rect x="0" y="2" width="20" height="8" rx="2" fill="currentColor"/>
+                    <rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/>
+                </svg>
+            </div>
+        </div>
+
+        <!-- App Header -->
+        <div class="app-header">
+            <div class="header-top">
+                <div>
+                    <h1 class="header-title">My Financial Planning</h1>
+                    <p class="header-subtitle">Malaysia Money Management</p>
+                </div>
+                <button class="profile-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                </button>
             </div>
 
-            <!-- App Header -->
-            <div class="app-header">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <h1 style="font-size: 20px; font-weight: bold; color: #1f2937; margin: 0;">My Financial Planning</h1>
-                        <p style="color: #6b7280; font-size: 14px; margin: 4px 0 0 0;">Malaysia Money Management</p>
-                    </div>
-                    <div class="grey-accent" style="padding: 10px; border-radius: 50%;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 24px; height: 24px;">
-                            <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/>
-                            <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/>
-                            <line x1="18" y1="12" x2="18" y2="12"/>
+            <div class="balance-display">
+                <p class="balance-label">Current Balance</p>
+                <h2 class="balance-amount" id="balance-display">RM 0.00</h2>
+                <p class="balance-message" id="balance-message">Start tracking or load demo data!</p>
+            </div>
+
+            <div class="balance-stats">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
                         </svg>
+                        <span class="stat-label">Income</span>
                     </div>
+                    <p class="stat-amount" id="income-display">RM 0.00</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        <span class="stat-label">Expenses</span>
+                    </div>
+                    <p class="stat-amount" id="expenses-display">RM 0.00</p>
                 </div>
             </div>
         </div>
 
-        <!-- Scrollable Content Area -->
-        <div class="scrollable-content">
+        <!-- Main Content -->
+        <div class="main-content">
             <!-- Home Tab -->
-            <div id="home-tab" class="main-content">
-                <!-- Persistent Data Info -->
-                <div class="stateless-info">
-                    <strong>💾 Data Persistence:</strong> All transactions are saved locally and will persist between sessions.
-                    <button onclick="loadDemoData()" class="btn btn-demo" style="margin-left: 8px;">Load Demo Data</button>
-                </div>
-
-                <!-- Balance Card -->
-                <div class="balance-card">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
-                        <div>
-                            <p style="color: rgba(255,255,255,0.8); font-size: 14px; margin: 0;">Current Balance</p>
-                            <h1 id="balance-display" style="font-size: 32px; font-weight: bold; margin: 4px 0;">RM 0.00</h1>
-                            <p id="balance-message" style="color: rgba(255,255,255,0.9); font-size: 12px; margin: 4px 0 0 0;">Start tracking or load demo data!</p>
-                        </div>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" style="width: 32px; height: 32px;">
-                            <circle cx="12" cy="12" r="10"/>
-                            <path d="M12 6v6l4 2"/>
-                        </svg>
+            <div id="home-tab">
+                <!-- Info Banner -->
+                <div class="info-banner">
+                    <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    <div class="info-text">
+                        <strong>Data Persistence:</strong> All transactions saved locally with comma formatting.
                     </div>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px;">
-                        <div style="background: rgba(255,255,255,0.15); border-radius: 12px; padding: 12px;">
-                            <div style="display: flex; align-items: center; margin-bottom: 4px;">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" style="width: 16px; height: 16px; margin-right: 4px;">
-                                    <line x1="12" y1="5" x2="12" y2="19"/>
-                                    <line x1="5" y1="12" x2="19" y2="12"/>
-                                </svg>
-                                <span style="font-size: 12px; color: rgba(255,255,255,0.8);">Income</span>
-                            </div>
-                            <p id="income-display" style="font-size: 18px; font-weight: 600; margin: 0;">RM 0.00</p>
-                        </div>
-                        <div style="background: rgba(255,255,255,0.15); border-radius: 12px; padding: 12px;">
-                            <div style="display: flex; align-items: center; margin-bottom: 4px;">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" style="width: 16px; height: 16px; margin-right: 4px;">
-                                    <line x1="5" y1="12" x2="19" y2="12"/>
-                                </svg>
-                                <span style="font-size: 12px; color: rgba(255,255,255,0.8);">Expenses</span>
-                            </div>
-                            <p id="expenses-display" style="font-size: 18px; font-weight: 600; margin: 0;">RM 0.00</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Data Status -->
-                <div style="background-color: #e0f2fe; border: 1px solid #0284c7; border-radius: 12px; padding: 12px; margin-bottom: 24px;">
-                    <div style="display: flex; align-items: center; justify-content: space-between;">
-                        <div style="display: flex; align-items: center;">
-                            <div class="pulse" style="width: 8px; height: 8px; background-color: #0284c7; border-radius: 50%; margin-right: 8px;"></div>
-                            <span style="color: #0c4a6e; font-size: 14px; font-weight: 500;">Data Saved Locally</span>
-                        </div>
-                        <span id="total-transactions" style="color: #0c4a6e; font-size: 12px;">0 total transactions</span>
-                    </div>
-                </div>
-
-                <!-- Financial Health -->
-                <div class="health-indicator">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-                        <h2 style="font-size: 18px; font-weight: 600; color: #374151; margin: 0;">Financial Health</h2>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 20px; height: 20px;">
-                            <circle cx="12" cy="12" r="10"/>
-                            <polyline points="12,6 12,12 16,14"/>
-                        </svg>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <span style="font-size: 14px; color: #6b7280;">Expense Ratio</span>
-                        <span id="expense-ratio" style="font-size: 14px; font-weight: 500; color: #6b7280;">N/A</span>
-                    </div>
-                    <div class="progress-bar" style="margin-bottom: 8px;">
-                        <div id="expense-progress" class="progress-fill" style="width: 0%; background-color: #6b7280;"></div>
-                    </div>
-                    <p style="font-size: 12px; color: #9ca3af; margin: 0;">Recommended: Keep expenses below 80% of income</p>
-                    
-                    <div id="payment-method-info" class="hidden" style="padding-top: 12px; border-top: 1px solid #e5e7eb; margin-top: 12px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-size: 14px; color: #6b7280;">Most Used Payment</span>
-                            <div style="display: flex; align-items: center; font-size: 14px; font-weight: 500; color: #374151;">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 12px; height: 12px; margin-right: 4px;">
-                                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-                                    <line x1="1" y1="10" x2="23" y2="10"/>
-                                </svg>
-                                <span id="most-used-payment">N/A</span>
-                            </div>
-                        </div>
-                    </div>
+                    <button class="info-btn" onclick="loadDemoData()">Demo</button>
                 </div>
 
                 <!-- Quick Actions -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 24px;">
-                    <button class="quick-action bg-green" onclick="openAddForm('income')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="12" y1="5" x2="12" y2="19"/>
-                            <line x1="5" y1="12" x2="19" y2="12"/>
-                        </svg>
-                        <span>Add Income</span>
+                <div class="quick-actions">
+                    <button class="quick-action" onclick="openAddForm('income')">
+                        <div class="action-icon income">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                        </div>
+                        <span class="action-text">Add Income</span>
                     </button>
-                    <button class="quick-action bg-red" onclick="openAddForm('expense')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="5" y1="12" x2="19" y2="12"/>
-                        </svg>
-                        <span>Add Expense</span>
+                    <button class="quick-action" onclick="openAddForm('expense')">
+                        <div class="action-icon expense">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                        </div>
+                        <span class="action-text">Add Expense</span>
                     </button>
-                    <button class="quick-action bg-blue" onclick="openPaymentForm()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-                            <line x1="1" y1="10" x2="23" y2="10"/>
-                        </svg>
-                        <span>Record Payment</span>
+                    <button class="quick-action" onclick="openPaymentForm()">
+                        <div class="action-icon payment">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                                <line x1="1" y1="10" x2="23" y2="10"/>
+                            </svg>
+                        </div>
+                        <span class="action-text">Payment</span>
                     </button>
                 </div>
 
-                <!-- Demo Actions -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
-                    <button onclick="loadDemoData()" class="btn" style="background-color: #f59e0b; color: white; padding: 12px; font-size: 12px;">
-                        🎯 Load Demo Data
-                    </button>
-                    <button onclick="clearAllData()" class="btn" style="background-color: #ef4444; color: white; padding: 12px; font-size: 12px;">
-                        🗑️ Clear All Data
-                    </button>
+                <!-- Health Card -->
+                <div class="health-card">
+                    <div class="health-header">
+                        <h3 class="health-title">Financial Health</h3>
+                        <span class="health-ratio" id="expense-ratio">N/A</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="expense-progress"></div>
+                    </div>
+                    <p class="progress-label">Keep expenses below 80% of income</p>
                 </div>
 
                 <!-- Recent Transactions -->
                 <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0;">Recent Activity</h2>
-                        <button onclick="showTab('transactions')" style="color: #6b7280; font-size: 14px; font-weight: 500; background: none; border: none;">View All</button>
+                    <div class="card-header">
+                        <h3 class="card-title">Recent Activity</h3>
+                        <button class="card-action" onclick="showTab('transactions')">View All</button>
                     </div>
-                    
                     <div id="recent-transactions">
-                        <div style="text-align: center; padding: 32px 0; color: #9ca3af;">
-                            <div class="grey-accent" style="width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 32px; height: 32px;">
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <circle cx="12" cy="12" r="10"/>
                                     <path d="M12 6v6l4 2"/>
                                 </svg>
                             </div>
-                            <h3 style="font-weight: 500; color: #1f2937; margin: 0 0 4px 0;">Welcome to Malaysian Planning!</h3>
-                            <p style="font-size: 14px; margin: 0 0 16px 0; color: #6b7280;">Financial tracking in Ringgit Malaysia</p>
-                            <div style="display: flex; gap: 8px; justify-content: center;">
-                                <button onclick="openAddForm('expense')" class="btn btn-primary">Add Transaction</button>
-                                <button onclick="loadDemoData()" class="btn btn-demo">Demo Data</button>
+                            <h4 class="empty-title">Welcome to Malaysian Planning!</h4>
+                            <p class="empty-subtitle">Financial tracking in Ringgit Malaysia</p>
+                            <div style="display: flex; gap: 12px; justify-content: center;">
+                                <button class="btn btn-primary" onclick="openAddForm('expense')">Add Transaction</button>
+                                <button class="btn btn-secondary" onclick="loadDemoData()">Demo Data</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Recent Payments -->
-                <div id="recent-payments" class="hidden">
-                    <div class="card">
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-                            <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0;">Recent Payments</h2>
-                            <div class="grey-accent" style="padding: 8px; border-radius: 50%;">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 16px; height: 16px;">
-                                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-                                    <line x1="1" y1="10" x2="23" y2="10"/>
-                                </svg>
-                            </div>
-                        </div>
-                        
-                        <div id="payment-list"></div>
-                    </div>
-                </div>
-
-                <!-- Extra Content for Scroll Testing -->
-                <div class="card">
-                    <h3 style="font-size: 16px; font-weight: 600; color: #1f2937; margin: 0 0 12px 0;">App Features</h3>
-                    <p style="color: #6b7280; margin: 0 0 12px 0;">This financial planning app includes persistent data storage, so your transactions will be saved between sessions.</p>
-                    <p style="color: #6b7280; margin: 0 0 12px 0;">You can add, edit, and delete transactions with full data persistence.</p>
-                    <p style="color: #6b7280; margin: 0;">All amounts are formatted in Malaysian Ringgit (RM) for local users.</p>
-                </div>
-
-                <div class="card">
-                    <h3 style="font-size: 16px; font-weight: 600; color: #1f2937; margin: 0 0 12px 0;">Features</h3>
-                    <ul style="color: #6b7280; margin: 0; padding-left: 20px;">
-                        <li>Persistent data storage with localStorage</li>
-                        <li>Full edit and delete functionality</li>
-                        <li>Malaysian payment methods and currency</li>
-                        <li>Financial health tracking and analytics</li>
-                        <li>Mobile-first responsive design</li>
-                        <li>Professional notifications system</li>
-                    </ul>
+                <!-- Demo Actions -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                    <button class="btn" style="background: #f59e0b; color: white;" onclick="loadDemoData()">
+                        🎯 Load Demo Data
+                    </button>
+                    <button class="btn" style="background: #ef4444; color: white;" onclick="clearAllData()">
+                        🗑️ Clear All Data
+                    </button>
                 </div>
             </div>
 
             <!-- Transactions Tab -->
-            <div id="transactions-tab" class="main-content hidden">
-                <!-- Persistent Data Info -->
-                <div class="stateless-info">
-                    <strong>📊 Persistent Data:</strong> All amounts displayed in Malaysian Ringgit (RM) and saved locally.
-                </div>
-
+            <div id="transactions-tab" class="hidden">
                 <div class="card">
-                    <div style="padding: 0 0 16px 0; border-bottom: 1px solid #f3f4f6; margin-bottom: 16px;">
-                        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0;">All Transactions</h2>
-                        <p id="transaction-count" style="font-size: 14px; color: #6b7280; margin: 4px 0 0 0;">0 total entries saved</p>
+                    <div class="card-header">
+                        <h3 class="card-title">All Transactions</h3>
+                        <span class="card-action" id="transaction-count">0 entries</span>
                     </div>
-                    
                     <div id="all-transactions">
-                        <div style="text-align: center; padding: 48px 0; color: #9ca3af;">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 64px; height: 64px; margin: 0 auto 16px; opacity: 0.3;">
-                                <line x1="8" y1="6" x2="21" y2="6"/>
-                                <line x1="8" y1="12" x2="21" y2="12"/>
-                                <line x1="8" y1="18" x2="21" y2="18"/>
-                                <line x1="3" y1="6" x2="3.01" y2="6"/>
-                                <line x1="3" y1="12" x2="3.01" y2="12"/>
-                                <line x1="3" y1="18" x2="3.01" y2="18"/>
-                            </svg>
-                            <p style="font-size: 18px; margin: 0 0 8px 0;">No transactions saved yet</p>
-                            <p style="font-size: 14px; margin: 0 0 16px 0;">Add transactions or load demo data to see them here</p>
-                            <button onclick="loadDemoData()" class="btn btn-demo">Load Demo Data</button>
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="8" y1="6" x2="21" y2="6"/>
+                                    <line x1="8" y1="12" x2="21" y2="12"/>
+                                    <line x1="8" y1="18" x2="21" y2="18"/>
+                                    <line x1="3" y1="6" x2="3.01" y2="6"/>
+                                    <line x1="3" y1="12" x2="3.01" y2="12"/>
+                                    <line x1="3" y1="18" x2="3.01" y2="18"/>
+                                </svg>
+                            </div>
+                            <h4 class="empty-title">No transactions saved yet</h4>
+                            <p class="empty-subtitle">Add transactions or load demo data to see them here</p>
+                            <button class="btn btn-primary" onclick="loadDemoData()">Load Demo Data</button>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Analytics Tab -->
-            <div id="analytics-tab" class="main-content hidden">
-                <!-- Persistent Data Info -->
-                <div class="stateless-info">
-                    <strong>📈 RM Analytics:</strong> All calculations and insights in Malaysian Ringgit with persistent data.
+            <div id="analytics-tab" class="hidden">
+                <!-- Summary Cards -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                    <div class="card" style="text-align: center; margin-bottom: 0;">
+                        <h4 style="margin: 0 0 8px 0; color: #6b7280; font-size: 14px;">Income Entries</h4>
+                        <p id="income-count" style="margin: 0; font-size: 24px; font-weight: 700; color: #10b981;">0</p>
+                    </div>
+                    <div class="card" style="text-align: center; margin-bottom: 0;">
+                        <h4 style="margin: 0 0 8px 0; color: #6b7280; font-size: 14px;">Expense Entries</h4>
+                        <p id="expense-count" style="margin: 0; font-size: 24px; font-weight: 700; color: #ef4444;">0</p>
+                    </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
-                    <!-- Summary Card -->
-                    <div class="card">
-                        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Financial Summary</h2>
-                        <div style="display: flex; flex-direction: column; gap: 16px;">
+                <!-- Financial Summary -->
+                <div class="card">
+                    <h3 class="card-title">Financial Summary</h3>
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: #6b7280; font-weight: 500;">Total Income</span>
+                            <span id="analytics-income" style="color: #10b981; font-weight: 700; font-size: 16px;">RM 0.00</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: #6b7280; font-weight: 500;">Total Expenses</span>
+                            <span id="analytics-expenses" style="color: #ef4444; font-weight: 700; font-size: 16px;">RM 0.00</span>
+                        </div>
+                        <div style="border-top: 1px solid #f3f4f6; padding-top: 16px;">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span style="color: #6b7280;">Total Income</span>
-                                <span id="analytics-income" style="color: #374151; font-weight: 600; font-size: 18px;">RM 0.00</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span style="color: #6b7280;">Total Expenses</span>
-                                <span id="analytics-expenses" style="color: #6b7280; font-weight: 600; font-size: 18px;">RM 0.00</span>
-                            </div>
-                            <div style="border-top: 1px solid #f3f4f6; padding-top: 16px;">
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <span style="color: #1f2937; font-weight: 500;">Net Balance</span>
-                                    <span id="analytics-balance" style="font-weight: bold; font-size: 20px; color: #374151;">RM 0.00</span>
-                                </div>
+                                <span style="color: #1f2937; font-weight: 600;">Net Balance</span>
+                                <span id="analytics-balance" style="font-weight: 700; font-size: 20px; color: #1f2937;">RM 0.00</span>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Category Breakdown -->
-                    <div id="category-analytics" class="card hidden">
-                        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Spending by Category</h2>
-                        <div id="category-list"></div>
+                <!-- Health Score -->
+                <div class="card">
+                    <h3 class="card-title">Financial Health Score</h3>
+                    <div style="text-align: center;">
+                        <div id="health-score" style="font-size: 48px; font-weight: 900; margin-bottom: 8px; color: #6b7280;">-</div>
+                        <p id="health-message" style="font-size: 14px; color: #6b7280; margin: 0;">Add income to calculate health score</p>
                     </div>
+                </div>
 
-                    <!-- Payment Method Analytics -->
-                    <div id="payment-analytics" class="card hidden">
-                        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Payment Methods</h2>
-                        <div id="payment-method-list"></div>
-                    </div>
-
-                    <!-- Activity Summary -->
-                    <div class="card">
-                        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Transaction Activity</h2>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                            <div style="text-align: center; padding: 16px; background-color: #f9fafb; border-radius: 12px;">
-                                <p id="income-count" style="font-size: 24px; font-weight: bold; color: #374151; margin: 0;">0</p>
-                                <p style="font-size: 14px; color: #6b7280; margin: 4px 0 0 0;">Income Entries</p>
-                            </div>
-                            <div style="text-align: center; padding: 16px; background-color: #f9fafb; border-radius: 12px;">
-                                <p id="expense-count" style="font-size: 24px; font-weight: bold; color: #6b7280; margin: 0;">0</p>
-                                <p style="font-size: 14px; color: #6b7280; margin: 4px 0 0 0;">Expense Entries</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Health Score -->
-                    <div class="card">
-                        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Financial Health Score</h2>
-                        <div style="text-align: center;">
-                            <div id="health-score" style="font-size: 48px; font-weight: bold; margin-bottom: 8px; color: #6b7280;">-</div>
-                            <p id="health-message" style="font-size: 14px; color: #6b7280; margin: 0;">Add income to calculate health score</p>
-                        </div>
-                    </div>
-
-                    <!-- Data Management -->
-                    <div class="card">
-                        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0;">Data Management</h2>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                            <button onclick="loadDemoData()" class="btn" style="background-color: #f59e0b; color: white;">
-                                Load Sample Data
-                            </button>
-                            <button onclick="clearAllData()" class="btn" style="background-color: #ef4444; color: white;">
-                                Clear All Data
-                            </button>
-                        </div>
-                    </div>
+                <!-- Category Analytics -->
+                <div id="category-analytics" class="card hidden">
+                    <h3 class="card-title">Spending by Category</h3>
+                    <div id="category-list"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Fixed Bottom Navigation -->
+        <!-- Bottom Navigation -->
         <div class="bottom-nav">
-            <button class="nav-btn active-tab" onclick="showTab('home')" data-tab="home">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                    <polyline points="9,22 9,12 15,12 15,22"/>
-                </svg>
-                <span>Home</span>
-            </button>
-            <button class="nav-btn" onclick="showTab('transactions')" data-tab="transactions">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="8" y1="6" x2="21" y2="6"/>
-                    <line x1="8" y1="12" x2="21" y2="12"/>
-                    <line x1="8" y1="18" x2="21" y2="18"/>
-                    <line x1="3" y1="6" x2="3.01" y2="6"/>
-                    <line x1="3" y1="12" x2="3.01" y2="12"/>
-                    <line x1="3" y1="18" x2="3.01" y2="18"/>
-                </svg>
-                <span>History</span>
-            </button>
-            <button class="nav-btn" onclick="showTab('analytics')" data-tab="analytics">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="12" y1="20" x2="12" y2="10"/>
-                    <line x1="18" y1="20" x2="18" y2="4"/>
-                    <line x1="6" y1="20" x2="6" y2="16"/>
-                </svg>
-                <span>Analytics</span>
-            </button>
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="showTab('home')" data-tab="home">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9,22 9,12 15,12 15,22"/>
+                    </svg>
+                    <span>Home</span>
+                </button>
+                <button class="nav-tab" onclick="showTab('transactions')" data-tab="transactions">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="8" y1="6" x2="21" y2="6"/>
+                        <line x1="8" y1="12" x2="21" y2="12"/>
+                        <line x1="8" y1="18" x2="21" y2="18"/>
+                        <line x1="3" y1="6" x2="3.01" y2="6"/>
+                        <line x1="3" y1="12" x2="3.01" y2="12"/>
+                        <line x1="3" y1="18" x2="3.01" y2="18"/>
+                    </svg>
+                    <span>History</span>
+                </button>
+                <button class="nav-tab" onclick="showTab('analytics')" data-tab="analytics">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="20" x2="12" y2="10"/>
+                        <line x1="18" y1="20" x2="18" y2="4"/>
+                        <line x1="6" y1="20" x2="6" y2="16"/>
+                    </svg>
+                    <span>Analytics</span>
+                </button>
+            </div>
         </div>
 
         <!-- Add/Edit Transaction Modal -->
         <div id="add-modal" class="modal hidden">
             <div class="modal-content">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <div class="modal-header">
                     <div>
-                        <h2 id="modal-title" style="font-size: 20px; font-weight: 600; margin: 0; color: #1f2937;">Add Transaction</h2>
-                        <p style="font-size: 14px; color: #6b7280; margin: 4px 0 0 0;">Malaysian Ringgit (RM) Format</p>
+                        <h2 class="modal-title" id="modal-title">Add Transaction</h2>
+                        <p class="modal-subtitle">Malaysian Ringgit (RM) Format</p>
                     </div>
-                    <button onclick="closeModal()" style="color: #9ca3af; font-size: 24px; background: none; border: none; padding: 8px;">✕</button>
+                    <button class="close-btn" onclick="closeModal()">✕</button>
                 </div>
 
-                <div style="display: flex; flex-direction: column; gap: 16px;">
-                    <!-- Type Toggle -->
-                    <div id="type-toggle" class="grey-accent" style="display: flex; border-radius: 12px; padding: 4px;">
-                        <button id="expense-btn" onclick="setType('expense')" style="flex: 1; padding: 8px 16px; border-radius: 8px; font-weight: 500; background: white; color: #1f2937; border: none; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);">Expense</button>
-                        <button id="income-btn" onclick="setType('income')" style="flex: 1; padding: 8px 16px; border-radius: 8px; font-weight: 500; background: none; color: #6b7280; border: none;">Income</button>
-                    </div>
+                <!-- Type Toggle -->
+                <div id="type-toggle" class="type-toggle">
+                    <button class="type-btn active" id="expense-btn" onclick="setType('expense')">Expense</button>
+                    <button class="type-btn" id="income-btn" onclick="setType('income')">Income</button>
+                </div>
 
-                    <!-- Payment Mode Indicator -->
-                    <div id="payment-mode-indicator" class="hidden" style="background-color: #f3f4f6; border: 1px solid #d1d5db; border-radius: 12px; padding: 12px;">
-                        <div style="display: flex; align-items: center;">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 20px; height: 20px; margin-right: 8px;">
-                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-                                <line x1="1" y1="10" x2="23" y2="10"/>
-                            </svg>
-                            <span style="color: #374151; font-weight: 500;">Payment Recording Mode</span>
-                        </div>
-                        <p style="color: #6b7280; font-size: 14px; margin: 4px 0 0 0;">Recording a bill payment or transaction</p>
+                <!-- Amount -->
+                <div class="form-group">
+                    <label class="form-label">Amount (RM)</label>
+                    <div class="amount-input-wrapper">
+                        <span class="amount-prefix">RM</span>
+                        <input type="number" id="amount-input" placeholder="0.00" step="0.01" class="form-input amount-input">
                     </div>
+                </div>
 
-                    <!-- Edit Mode Indicator -->
-                    <div id="edit-mode-indicator" class="hidden" style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 12px; padding: 12px;">
-                        <div style="display: flex; align-items: center;">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" style="width: 20px; height: 20px; margin-right: 8px;">
-                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                            </svg>
-                            <span style="color: #92400e; font-weight: 500;">Edit Transaction Mode</span>
-                        </div>
-                        <p style="color: #92400e; font-size: 14px; margin: 4px 0 0 0;">Modifying existing transaction details</p>
-                    </div>
+                <!-- Description -->
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <input type="text" id="description-input" placeholder="Enter description" class="form-input">
+                </div>
 
-                    <!-- Amount -->
-                    <div>
-                        <label style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 8px;">Amount (RM)</label>
-                        <div style="position: relative;">
-                            <span style="position: absolute; left: 12px; top: 12px; color: #9ca3af;">RM</span>
-                            <input type="number" id="amount-input" placeholder="0.00" step="0.01" class="form-input" style="padding-left: 40px; font-size: 18px;">
-                        </div>
-                    </div>
+                <!-- Category -->
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <select id="category-input" class="form-input">
+                        <option value="">Select category</option>
+                        <option value="Food & Dining">Food & Dining</option>
+                        <option value="Transportation">Transportation</option>
+                        <option value="Shopping">Shopping</option>
+                        <option value="Entertainment">Entertainment</option>
+                        <option value="Bills & Utilities">Bills & Utilities</option>
+                        <option value="Healthcare">Healthcare</option>
+                        <option value="Education">Education</option>
+                        <option value="Travel">Travel</option>
+                        <option value="Salary">Salary</option>
+                        <option value="Business">Business</option>
+                        <option value="Investment">Investment</option>
+                        <option value="Gift">Gift</option>
+                        <option value="Savings">Savings</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
 
-                    <!-- Description -->
-                    <div>
-                        <label style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 8px;">Description</label>
-                        <input type="text" id="description-input" placeholder="Enter description" class="form-input">
-                    </div>
+                <!-- Payment Method -->
+                <div class="form-group">
+                    <label class="form-label">Payment Method</label>
+                    <select id="payment-input" class="form-input">
+                        <option value="">Select payment method</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Credit Card">Credit Card</option>
+                        <option value="Debit Card">Debit Card</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                        <option value="Touch 'n Go eWallet">Touch 'n Go eWallet</option>
+                        <option value="Grab Pay">Grab Pay</option>
+                        <option value="Boost">Boost</option>
+                        <option value="Online Banking">Online Banking</option>
+                        <option value="FPX">FPX</option>
+                        <option value="Check">Check</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
 
-                    <!-- Category -->
-                    <div>
-                        <label style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 8px;">Category</label>
-                        <select id="category-input" class="form-input">
-                            <option value="">Select category</option>
-                            <option value="Food & Dining">Food & Dining</option>
-                            <option value="Transportation">Transportation</option>
-                            <option value="Shopping">Shopping</option>
-                            <option value="Entertainment">Entertainment</option>
-                            <option value="Bills & Utilities">Bills & Utilities</option>
-                            <option value="Healthcare">Healthcare</option>
-                            <option value="Education">Education</option>
-                            <option value="Travel">Travel</option>
-                            <option value="Salary">Salary</option>
-                            <option value="Business">Business</option>
-                            <option value="Investment">Investment</option>
-                            <option value="Gift">Gift</option>
-                            <option value="Savings">Savings</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-
-                    <!-- Payment Method -->
-                    <div>
-                        <label style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 8px;">Payment Method</label>
-                        <select id="payment-input" class="form-input">
-                            <option value="">Select payment method</option>
-                            <option value="Cash">Cash</option>
-                            <option value="Credit Card">Credit Card</option>
-                            <option value="Debit Card">Debit Card</option>
-                            <option value="Bank Transfer">Bank Transfer</option>
-                            <option value="Touch 'n Go eWallet">Touch 'n Go eWallet</option>
-                            <option value="Grab Pay">Grab Pay</option>
-                            <option value="Boost">Boost</option>
-                            <option value="Online Banking">Online Banking</option>
-                            <option value="FPX">FPX</option>
-                            <option value="Check">Check</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div style="display: flex; gap: 12px; padding-top: 16px;">
-                        <button onclick="closeModal()" class="btn btn-secondary" style="flex: 1;">Cancel</button>
-                        <button id="submit-btn" onclick="addTransaction()" class="btn btn-primary" style="flex: 1;">Add Transaction</button>
-                    </div>
+                <!-- Action Buttons -->
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button class="btn btn-danger" id="submit-btn" onclick="addTransaction()">Add Expense</button>
                 </div>
             </div>
         </div>
@@ -794,6 +1134,19 @@
 
         // LocalStorage key
         const STORAGE_KEY = 'malaysiaPlanningTransactions';
+
+        // Currency formatting function with commas
+        function formatCurrency(amount) {
+            return `RM ${amount.toLocaleString('en-MY', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })}`;
+        }
+
+        // Parse number input (remove commas and convert to float)
+        function parseAmount(value) {
+            return parseFloat(value.toString().replace(/,/g, ''));
+        }
 
         // Demo data for showcasing features (Malaysian Ringgit amounts)
         const demoTransactions = [
@@ -873,17 +1226,39 @@
                 isPayment: false,
                 date: new Date().toLocaleDateString(),
                 time: '12:30'
+            },
+            {
+                id: 1008,
+                type: 'expense',
+                amount: 25000,
+                description: 'Car Down Payment',
+                category: 'Transportation',
+                payment: 'Bank Transfer',
+                isPayment: false,
+                date: new Date().toLocaleDateString(),
+                time: '11:00'
+            },
+            {
+                id: 1009,
+                type: 'income',
+                amount: 1500,
+                description: 'Bonus Payment',
+                category: 'Salary',
+                payment: 'Bank Transfer',
+                isPayment: false,
+                date: new Date().toLocaleDateString(),
+                time: '15:30'
             }
         ];
 
         // Notification system
         function showNotification(message, type = 'success') {
-            const toast = document.getElementById('notification-toast');
-            toast.textContent = message;
-            toast.className = `notification-toast show ${type}`;
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification show ${type}`;
             
             setTimeout(() => {
-                toast.classList.remove('show');
+                notification.classList.remove('show');
             }, 3000);
         }
 
@@ -938,14 +1313,14 @@
             document.getElementById(tabName + '-tab').classList.remove('hidden');
             
             // Update nav buttons
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active-tab'));
-            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active-tab');
+            document.querySelectorAll('.nav-tab').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
             
             // Update displays when switching tabs
             updateDisplays();
             
             // Scroll to top when switching tabs
-            document.querySelector('.scrollable-content').scrollTop = 0;
+            document.querySelector('.main-content').scrollTop = 0;
         }
 
         // Open add form
@@ -957,8 +1332,6 @@
             
             document.getElementById('modal-title').textContent = `Add ${type.charAt(0).toUpperCase() + type.slice(1)}`;
             document.getElementById('type-toggle').style.display = 'flex';
-            document.getElementById('payment-mode-indicator').classList.add('hidden');
-            document.getElementById('edit-mode-indicator').classList.add('hidden');
             
             setType(type);
             clearForm();
@@ -974,9 +1347,7 @@
             
             document.getElementById('modal-title').textContent = 'Record Payment';
             document.getElementById('type-toggle').style.display = 'none';
-            document.getElementById('payment-mode-indicator').classList.remove('hidden');
-            document.getElementById('edit-mode-indicator').classList.add('hidden');
-            document.getElementById('submit-btn').className = 'btn btn-blue';
+            document.getElementById('submit-btn').className = 'btn btn-primary';
             document.getElementById('submit-btn').textContent = 'Record Payment';
             
             clearForm();
@@ -997,8 +1368,6 @@
 
             document.getElementById('modal-title').textContent = 'Edit Transaction';
             document.getElementById('type-toggle').style.display = isPaymentMode ? 'none' : 'flex';
-            document.getElementById('payment-mode-indicator').classList.toggle('hidden', !isPaymentMode);
-            document.getElementById('edit-mode-indicator').classList.remove('hidden');
 
             // Populate form with existing data
             document.getElementById('amount-input').value = transaction.amount;
@@ -1009,13 +1378,13 @@
             if (!isPaymentMode) {
                 setType(transaction.type);
             } else {
-                document.getElementById('submit-btn').className = 'btn btn-blue';
+                document.getElementById('submit-btn').className = 'btn btn-primary';
                 document.getElementById('submit-btn').textContent = 'Update Payment';
             }
 
             // Set submit button for edit mode
             if (!isPaymentMode) {
-                document.getElementById('submit-btn').className = transaction.type === 'income' ? 'btn btn-green' : 'btn btn-red';
+                document.getElementById('submit-btn').className = transaction.type === 'income' ? 'btn btn-success' : 'btn btn-danger';
                 document.getElementById('submit-btn').textContent = `Update ${transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}`;
             }
 
@@ -1029,34 +1398,27 @@
             const incomeBtn = document.getElementById('income-btn');
             const submitBtn = document.getElementById('submit-btn');
             
+            // Reset button styles
+            document.querySelectorAll('.type-btn').forEach(btn => btn.classList.remove('active'));
+            
             if (type === 'expense') {
-                expenseBtn.style.background = 'white';
-                expenseBtn.style.color = '#1f2937';
-                expenseBtn.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.05)';
-                incomeBtn.style.background = 'none';
-                incomeBtn.style.color = '#6b7280';
-                incomeBtn.style.boxShadow = 'none';
+                expenseBtn.classList.add('active');
                 
                 if (isEditMode) {
-                    submitBtn.className = 'btn btn-red';
+                    submitBtn.className = 'btn btn-danger';
                     submitBtn.textContent = 'Update Expense';
                 } else {
-                    submitBtn.className = 'btn btn-red';
+                    submitBtn.className = 'btn btn-danger';
                     submitBtn.textContent = 'Add Expense';
                 }
             } else {
-                incomeBtn.style.background = 'white';
-                incomeBtn.style.color = '#1f2937';
-                incomeBtn.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.05)';
-                expenseBtn.style.background = 'none';
-                expenseBtn.style.color = '#6b7280';
-                expenseBtn.style.boxShadow = 'none';
+                incomeBtn.classList.add('active');
                 
                 if (isEditMode) {
-                    submitBtn.className = 'btn btn-green';
+                    submitBtn.className = 'btn btn-success';
                     submitBtn.textContent = 'Update Income';
                 } else {
-                    submitBtn.className = 'btn btn-green';
+                    submitBtn.className = 'btn btn-success';
                     submitBtn.textContent = 'Add Income';
                 }
             }
@@ -1081,7 +1443,7 @@
 
         // Add or update transaction
         function addTransaction() {
-            const amount = parseFloat(document.getElementById('amount-input').value);
+            const amount = parseAmount(document.getElementById('amount-input').value);
             const description = document.getElementById('description-input').value.trim();
             const category = document.getElementById('category-input').value;
             const payment = document.getElementById('payment-input').value;
@@ -1115,7 +1477,6 @@
                         description: description,
                         category: category,
                         payment: payment,
-                        // Keep original date and time, but update timestamp for modified time
                         lastModified: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
                     };
                     
@@ -1163,23 +1524,17 @@
             updateAllTransactions();
             updateAnalytics();
             updateHealthIndicator();
-            updateDataInfo();
         }
 
-        // Update data info
-        function updateDataInfo() {
-            document.getElementById('total-transactions').textContent = `${transactions.length} total transactions`;
-        }
-
-        // Update balance card (with RM currency)
+        // Update balance card (with comma-formatted RM currency)
         function updateBalanceCard() {
             const income = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
             const expenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
             const balance = income - expenses;
 
-            document.getElementById('balance-display').textContent = `RM ${balance.toFixed(2)}`;
-            document.getElementById('income-display').textContent = `RM ${income.toFixed(2)}`;
-            document.getElementById('expenses-display').textContent = `RM ${expenses.toFixed(2)}`;
+            document.getElementById('balance-display').textContent = formatCurrency(balance);
+            document.getElementById('income-display').textContent = formatCurrency(income);
+            document.getElementById('expenses-display').textContent = formatCurrency(expenses);
 
             let message;
             if (transactions.length === 0) {
@@ -1202,228 +1557,141 @@
                 const ratio = (expenses / income) * 100;
                 ratioElement.textContent = `${ratio.toFixed(1)}%`;
                 progressElement.style.width = `${Math.min(ratio, 100)}%`;
-                
-                if (ratio < 80) {
-                    progressElement.style.backgroundColor = '#6b7280';
-                } else {
-                    progressElement.style.backgroundColor = '#9ca3af';
-                }
             } else {
                 ratioElement.textContent = 'N/A';
                 progressElement.style.width = '0%';
             }
-
-            // Update most used payment method
-            const paymentInfo = document.getElementById('payment-method-info');
-            const mostUsedElement = document.getElementById('most-used-payment');
-            
-            if (transactions.length > 0) {
-                const paymentCounts = {};
-                transactions.forEach(t => {
-                    paymentCounts[t.payment] = (paymentCounts[t.payment] || 0) + 1;
-                });
-                
-                const mostUsed = Object.keys(paymentCounts).reduce((a, b) => 
-                    paymentCounts[a] > paymentCounts[b] ? a : b
-                );
-                
-                mostUsedElement.textContent = mostUsed;
-                paymentInfo.classList.remove('hidden');
-            } else {
-                paymentInfo.classList.add('hidden');
-            }
         }
 
-        // Update recent transactions (with RM currency and edit buttons)
+        // Update recent transactions (with comma-formatted RM currency and edit buttons)
         function updateRecentTransactions() {
             const container = document.getElementById('recent-transactions');
             const recent = transactions.slice(0, 5);
 
             if (recent.length === 0) {
                 container.innerHTML = `
-                    <div style="text-align: center; padding: 32px 0; color: #9ca3af;">
-                        <div class="grey-accent" style="width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 32px; height: 32px;">
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="12" cy="12" r="10"/>
                                 <path d="M12 6v6l4 2"/>
                             </svg>
                         </div>
-                        <h3 style="font-weight: 500; color: #1f2937; margin: 0 0 4px 0;">Welcome to Malaysian Planning!</h3>
-                        <p style="font-size: 14px; margin: 0 0 16px 0; color: #6b7280;">Financial tracking in Ringgit Malaysia</p>
-                        <div style="display: flex; gap: 8px; justify-content: center;">
-                            <button onclick="openAddForm('expense')" class="btn btn-primary">Add Transaction</button>
-                            <button onclick="loadDemoData()" class="btn btn-demo">Demo Data</button>
+                        <h4 class="empty-title">Welcome to Malaysian Planning!</h4>
+                        <p class="empty-subtitle">Financial tracking in Ringgit Malaysia</p>
+                        <div style="display: flex; gap: 12px; justify-content: center;">
+                            <button class="btn btn-primary" onclick="openAddForm('expense')">Add Transaction</button>
+                            <button class="btn btn-secondary" onclick="loadDemoData()">Demo Data</button>
                         </div>
                     </div>
                 `;
             } else {
                 container.innerHTML = recent.map(transaction => `
                     <div class="transaction-item">
-                        <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
-                            <div style="padding: 8px; border-radius: 50%; background-color: ${transaction.type === 'income' ? '#f3f4f6' : '#f9fafb'}; border: 1px solid #e5e7eb;">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 16px; height: 16px;">
-                                    ${transaction.type === 'income' ? 
-                                        '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>' : 
-                                        '<line x1="5" y1="12" x2="19" y2="12"/>'}
-                                </svg>
-                            </div>
-                            <div style="flex: 1;">
-                                <p style="font-weight: 500; color: #1f2937; margin: 0; font-size: 14px;">${transaction.description}</p>
-                                <p style="font-size: 12px; color: #6b7280; margin: 2px 0 0 0;">${transaction.category} • ${transaction.payment}</p>
-                            </div>
+                        <div class="transaction-icon ${transaction.type}">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                ${transaction.type === 'income' ? 
+                                    '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>' : 
+                                    '<line x1="5" y1="12" x2="19" y2="12"/>'}
+                            </svg>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <div style="text-align: right;">
-                                <p style="font-weight: 600; color: ${transaction.type === 'income' ? '#374151' : '#6b7280'}; margin: 0;">
-                                    ${transaction.type === 'income' ? '+' : '-'}RM ${transaction.amount.toFixed(2)}
-                                </p>
-                                <p style="font-size: 12px; color: #9ca3af; margin: 2px 0 0 0;">${transaction.time}</p>
-                            </div>
-                            <div class="transaction-actions">
-                                <button onclick="openEditForm(${transaction.id})" class="action-btn edit-btn" title="Edit transaction">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
-                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                                    </svg>
-                                </button>
-                                <button onclick="deleteTransaction(${transaction.id})" class="action-btn delete-btn" title="Delete transaction">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
-                                        <polyline points="3,6 5,6 21,6"/>
-                                        <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"/>
-                                        <line x1="10" y1="11" x2="10" y2="17"/>
-                                        <line x1="14" y1="11" x2="14" y2="17"/>
-                                    </svg>
-                                </button>
-                            </div>
+                        <div class="transaction-details">
+                            <p class="transaction-title">${transaction.description}</p>
+                            <p class="transaction-meta">${transaction.category} • ${transaction.payment}</p>
+                        </div>
+                        <div class="transaction-amount">
+                            <p class="amount-value ${transaction.type}">
+                                ${transaction.type === 'income' ? '+' : '-'}${formatCurrency(transaction.amount).replace('RM ', '')}
+                            </p>
+                            <p class="amount-time">${transaction.time}</p>
+                        </div>
+                        <div class="transaction-actions">
+                            <button class="action-btn edit" onclick="openEditForm(${transaction.id})" title="Edit">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                </svg>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteTransaction(${transaction.id})" title="Delete">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3,6 5,6 21,6"/>
+                                    <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"/>
+                                    <line x1="10" y1="11" x2="10" y2="17"/>
+                                    <line x1="14" y1="11" x2="14" y2="17"/>
+                                </svg>
+                            </button>
                         </div>
                     </div>
                 `).join('');
-            }
-
-            // Update recent payments
-            const payments = transactions.filter(t => t.isPayment).slice(0, 3);
-            const recentPayments = document.getElementById('recent-payments');
-            const paymentList = document.getElementById('payment-list');
-            
-            if (payments.length > 0) {
-                recentPayments.classList.remove('hidden');
-                paymentList.innerHTML = payments.map(payment => `
-                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; border-left: 4px solid #6b7280; padding-left: 12px; background-color: #f9fafb; border-radius: 0 8px 8px 0; margin-bottom: 8px;">
-                        <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
-                            <div style="padding: 8px; border-radius: 50%; background-color: #f3f4f6; border: 1px solid #e5e7eb;">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 16px; height: 16px;">
-                                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-                                    <line x1="1" y1="10" x2="23" y2="10"/>
-                                </svg>
-                            </div>
-                            <div style="flex: 1;">
-                                <p style="font-weight: 500; color: #1f2937; margin: 0; font-size: 14px;">${payment.description}</p>
-                                <p style="font-size: 12px; color: #6b7280; margin: 2px 0 0 0;">${payment.category} • ${payment.payment}</p>
-                            </div>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <div style="text-align: right;">
-                                <p style="font-weight: 600; color: #6b7280; margin: 0;">-RM ${payment.amount.toFixed(2)}</p>
-                                <p style="font-size: 12px; color: #9ca3af; margin: 2px 0 0 0;">${payment.time}</p>
-                            </div>
-                            <div class="transaction-actions">
-                                <button onclick="openEditForm(${payment.id})" class="action-btn edit-btn" title="Edit payment">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
-                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                                    </svg>
-                                </button>
-                                <button onclick="deleteTransaction(${payment.id})" class="action-btn delete-btn" title="Delete payment">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
-                                        <polyline points="3,6 5,6 21,6"/>
-                                        <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"/>
-                                        <line x1="10" y1="11" x2="10" y2="17"/>
-                                        <line x1="14" y1="11" x2="14" y2="17"/>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-            } else {
-                recentPayments.classList.add('hidden');
             }
         }
 
-        // Update all transactions (with RM currency and edit buttons)
+        // Update all transactions (with comma-formatted RM currency and edit buttons)
         function updateAllTransactions() {
             const container = document.getElementById('all-transactions');
-            document.getElementById('transaction-count').textContent = `${transactions.length} total entries saved`;
+            const countElement = document.getElementById('transaction-count');
+            
+            countElement.textContent = `${transactions.length} entries`;
 
             if (transactions.length === 0) {
                 container.innerHTML = `
-                    <div style="text-align: center; padding: 48px 0; color: #9ca3af;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 64px; height: 64px; margin: 0 auto 16px; opacity: 0.3;">
-                            <line x1="8" y1="6" x2="21" y2="6"/>
-                            <line x1="8" y1="12" x2="21" y2="12"/>
-                            <line x1="8" y1="18" x2="21" y2="18"/>
-                            <line x1="3" y1="6" x2="3.01" y2="6"/>
-                            <line x1="3" y1="12" x2="3.01" y2="12"/>
-                            <line x1="3" y1="18" x2="3.01" y2="18"/>
-                        </svg>
-                        <p style="font-size: 18px; margin: 0 0 8px 0;">No transactions saved yet</p>
-                        <p style="font-size: 14px; margin: 0 0 16px 0;">Add transactions or load demo data to see them here</p>
-                        <button onclick="loadDemoData()" class="btn btn-demo">Load Demo Data</button>
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="8" y1="6" x2="21" y2="6"/>
+                                <line x1="8" y1="12" x2="21" y2="12"/>
+                                <line x1="8" y1="18" x2="21" y2="18"/>
+                                <line x1="3" y1="6" x2="3.01" y2="6"/>
+                                <line x1="3" y1="12" x2="3.01" y2="12"/>
+                                <line x1="3" y1="18" x2="3.01" y2="18"/>
+                            </svg>
+                        </div>
+                        <h4 class="empty-title">No transactions saved yet</h4>
+                        <p class="empty-subtitle">Add transactions or load demo data to see them here</p>
+                        <button class="btn btn-primary" onclick="loadDemoData()">Load Demo Data</button>
                     </div>
                 `;
             } else {
                 container.innerHTML = transactions.map(transaction => `
-                    <div style="padding: 16px; border-bottom: 1px solid #f3f4f6;">
-                        <div style="display: flex; align-items: center; justify-content: space-between;">
-                            <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
-                                <div style="padding: 8px; border-radius: 50%; background-color: ${transaction.type === 'income' ? '#f3f4f6' : '#f9fafb'}; border: 1px solid #e5e7eb;">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 16px; height: 16px;">
-                                        ${transaction.type === 'income' ? 
-                                            '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>' : 
-                                            '<line x1="5" y1="12" x2="19" y2="12"/>'}
-                                    </svg>
-                                </div>
-                                <div style="flex: 1;">
-                                    <p style="font-weight: 500; color: #1f2937; margin: 0;">${transaction.description}</p>
-                                    <div style="display: flex; align-items: center; gap: 12px; font-size: 12px; color: #6b7280; margin-top: 4px;">
-                                        <span>${transaction.category}</span>
-                                        <span>${transaction.payment}</span>
-                                        <span>${transaction.date}</span>
-                                        ${transaction.lastModified ? `<span style="color: #f59e0b;">Modified ${transaction.lastModified}</span>` : ''}
-                                        ${transaction.isPayment ? '<span style="color: #6b7280; font-weight: 500;">Payment</span>' : ''}
-                                    </div>
-                                </div>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <div style="text-align: right;">
-                                    <p style="font-weight: 600; color: ${transaction.type === 'income' ? '#374151' : '#6b7280'}; margin: 0;">
-                                        ${transaction.type === 'income' ? '+' : '-'}RM ${transaction.amount.toFixed(2)}
-                                    </p>
-                                </div>
-                                <div class="transaction-actions">
-                                    <button onclick="openEditForm(${transaction.id})" class="action-btn edit-btn" title="Edit transaction">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
-                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                                        </svg>
-                                    </button>
-                                    <button onclick="deleteTransaction(${transaction.id})" class="action-btn delete-btn" title="Delete transaction">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
-                                            <polyline points="3,6 5,6 21,6"/>
-                                            <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"/>
-                                            <line x1="10" y1="11" x2="10" y2="17"/>
-                                            <line x1="14" y1="11" x2="14" y2="17"/>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
+                    <div class="transaction-item">
+                        <div class="transaction-icon ${transaction.type}">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                ${transaction.type === 'income' ? 
+                                    '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>' : 
+                                    '<line x1="5" y1="12" x2="19" y2="12"/>'}
+                            </svg>
+                        </div>
+                        <div class="transaction-details">
+                            <p class="transaction-title">${transaction.description}</p>
+                            <p class="transaction-meta">${transaction.category} • ${transaction.payment} • ${transaction.date}${transaction.lastModified ? ` • Modified ${transaction.lastModified}` : ''}${transaction.isPayment ? ' • Payment' : ''}</p>
+                        </div>
+                        <div class="transaction-amount">
+                            <p class="amount-value ${transaction.type}">
+                                ${transaction.type === 'income' ? '+' : '-'}${formatCurrency(transaction.amount).replace('RM ', '')}
+                            </p>
+                        </div>
+                        <div class="transaction-actions">
+                            <button class="action-btn edit" onclick="openEditForm(${transaction.id})" title="Edit">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                </svg>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteTransaction(${transaction.id})" title="Delete">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3,6 5,6 21,6"/>
+                                    <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"/>
+                                    <line x1="10" y1="11" x2="10" y2="17"/>
+                                    <line x1="14" y1="11" x2="14" y2="17"/>
+                                </svg>
+                            </button>
                         </div>
                     </div>
                 `).join('');
             }
         }
 
-        // Update analytics (with RM currency)
+        // Update analytics (with comma-formatted RM currency)
         function updateAnalytics() {
             const income = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
             const expenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
@@ -1431,9 +1699,9 @@
             const incomeCount = transactions.filter(t => t.type === 'income').length;
             const expenseCount = transactions.filter(t => t.type === 'expense').length;
 
-            document.getElementById('analytics-income').textContent = `RM ${income.toFixed(2)}`;
-            document.getElementById('analytics-expenses').textContent = `RM ${expenses.toFixed(2)}`;
-            document.getElementById('analytics-balance').textContent = `RM ${balance.toFixed(2)}`;
+            document.getElementById('analytics-income').textContent = formatCurrency(income);
+            document.getElementById('analytics-expenses').textContent = formatCurrency(expenses);
+            document.getElementById('analytics-balance').textContent = formatCurrency(balance);
             document.getElementById('income-count').textContent = incomeCount;
             document.getElementById('expense-count').textContent = expenseCount;
 
@@ -1446,15 +1714,15 @@
                 if (balance > income * 0.2) {
                     score = 'A+';
                     message = "Excellent! Great saving ratio.";
-                    color = '#374151';
+                    color = '#10b981';
                 } else if (balance > 0) {
                     score = 'B';
                     message = 'Good! Consider saving more.';
-                    color = '#6b7280';
+                    color = '#f59e0b';
                 } else {
                     score = 'C';
                     message = 'Review your spending habits.';
-                    color = '#9ca3af';
+                    color = '#ef4444';
                 }
                 scoreElement.textContent = score;
                 scoreElement.style.color = color;
@@ -1467,10 +1735,9 @@
 
             // Category analytics
             updateCategoryAnalytics();
-            updatePaymentAnalytics();
         }
 
-        // Update category analytics (with RM currency)
+        // Update category analytics (with comma-formatted RM currency)
         function updateCategoryAnalytics() {
             const categories = {};
             const totalExpenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
@@ -1490,69 +1757,24 @@
                 categoryAnalytics.classList.remove('hidden');
                 categoryListElement.innerHTML = categoryList.map(([category, amount], index) => {
                     const percentage = totalExpenses > 0 ? (amount / totalExpenses) * 100 : 0;
-                    const colors = ['#6b7280', '#9ca3af', '#d1d5db', '#e5e7eb', '#f3f4f6'];
+                    const colors = ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6'];
                     return `
                         <div style="margin-bottom: 16px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                <span style="font-size: 14px; font-weight: 500; color: #374151;">${category}</span>
-                                <span style="font-size: 14px; color: #6b7280;">RM ${amount.toFixed(2)}</span>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="font-size: 14px; font-weight: 600; color: #1f2937;">${category}</span>
+                                <span style="font-size: 14px; color: ${colors[index]}; font-weight: 600;">${formatCurrency(amount)}</span>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill" style="width: ${percentage}%; background-color: ${colors[index]};"></div>
+                            </div>
+                            <div style="text-align: right; margin-top: 4px;">
+                                <span style="font-size: 12px; color: #6b7280;">${percentage.toFixed(1)}%</span>
                             </div>
                         </div>
                     `;
                 }).join('');
             } else {
                 categoryAnalytics.classList.add('hidden');
-            }
-        }
-
-        // Update payment analytics (with RM currency)
-        function updatePaymentAnalytics() {
-            const payments = {};
-            const totalAmount = transactions.reduce((sum, t) => sum + t.amount, 0);
-            
-            transactions.forEach(t => {
-                payments[t.payment] = (payments[t.payment] || 0) + t.amount;
-            });
-
-            const paymentList = Object.entries(payments)
-                .sort(([,a], [,b]) => b - a)
-                .slice(0, 5);
-
-            const paymentAnalytics = document.getElementById('payment-analytics');
-            const paymentListElement = document.getElementById('payment-method-list');
-
-            if (paymentList.length > 0) {
-                paymentAnalytics.classList.remove('hidden');
-                paymentListElement.innerHTML = paymentList.map(([method, amount], index) => {
-                    const percentage = totalAmount > 0 ? (amount / totalAmount) * 100 : 0;
-                    const colors = ['#6b7280', '#9ca3af', '#d1d5db', '#e5e7eb', '#f3f4f6'];
-                    return `
-                        <div style="margin-bottom: 16px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                <div style="display: flex; align-items: center;">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" style="width: 16px; height: 16px; margin-right: 8px;">
-                                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-                                        <line x1="1" y1="10" x2="23" y2="10"/>
-                                    </svg>
-                                    <span style="font-size: 14px; font-weight: 500; color: #374151;">${method}</span>
-                                </div>
-                                <span style="font-size: 14px; color: #6b7280;">RM ${amount.toFixed(2)}</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${percentage}%; background-color: ${colors[index]};"></div>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; margin-top: 4px;">
-                                <span style="font-size: 12px; color: #9ca3af;">${transactions.filter(t => t.payment === method).length} transactions</span>
-                                <span style="font-size: 12px; color: #9ca3af;">${percentage.toFixed(1)}%</span>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            } else {
-                paymentAnalytics.classList.add('hidden');
             }
         }
 
@@ -1569,11 +1791,11 @@
                 }, 1000);
             }
             
-            console.log('🇲🇾 Malaysian Financial Planning App Loaded');
+            console.log('🇲🇾 Malaysian Financial Planning Mobile App Loaded');
             console.log('💾 Data persistence enabled with localStorage');
-            console.log('💰 All amounts displayed in Malaysian Ringgit (RM)');
+            console.log('💰 All amounts displayed in Malaysian Ringgit (RM) with comma formatting');
             console.log('✏️ Full edit functionality available');
-            console.log('📱 Professional mobile app experience');
+            console.log('📱 Native mobile app experience');
         });
     </script>
 </body>
